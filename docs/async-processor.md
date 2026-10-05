@@ -126,3 +126,6 @@ reservations, drops/checkpoints, copying, barrier high-water marks, cancellation
 reentry, and joined worker exit. Benchmarks use bounded no-loss producer windows
 with drains outside the producer timer, and measure drain separately; do not
 present fast rejection/no-op loops as accepted-record throughput.
+
+The [enabled benchmark report](async-benchmarks.md) records queue configuration,
+producer/drain methodology, allocation caveats, and contemporaneous Sync results.

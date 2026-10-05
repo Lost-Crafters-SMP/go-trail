@@ -35,7 +35,7 @@ unreleased and awaiting real-capture freeze review. Production uses only stdlib.
   segment closure well-defined without inventing a public trace-session API.
 - Target zero allocations for the bare disabled Start/End path; measure option
   construction separately. Measurements are recorded below and in the
-  [async contract](async-processor.md).
+  [async benchmark report](async-benchmarks.md).
 
 The major tradeoff is interoperability versus incomplete-span recovery. If
 direct OTLP file ingestion is more important than recording unfinished spans,
@@ -414,8 +414,8 @@ and old/new tracer snapshots across replacement. Existing tracers and active spa
 must retain their provider; preconfiguration tracers must remain no-op. Verify
 concurrent registration/lookup under the race detector, no separately stored
 global tracer, and no implicit lifecycle or sink calls during registration/lookup.
-Run processor-independent cases against SyncProcessor first and AsyncProcessor
-later, without adding public testing conveniences.
+Processor-independent cases now run against both SyncProcessor and AsyncProcessor,
+without adding public testing conveniences.
 
 ## 5. Context and span lifecycle
 
@@ -640,11 +640,11 @@ The mandatory architecture is:
 ```text
 Tracer / Span -> provider lifecycle bookkeeping -> Processor -> Sink
 
-v0.1:   SyncProcessor  -> Sink
-future: AsyncProcessor -> bounded queue -> one background writer -> same Sink
+explicit sync:  SyncProcessor  -> Sink
+explicit async: AsyncProcessor -> bounded queue -> one background writer -> same Sink
 ```
 
-Proposed minimum boundaries (names remain provisional):
+Implemented minimum boundaries:
 
 ```go
 type Processor interface {
@@ -675,7 +675,7 @@ processors. A no-overflow AsyncProcessor run must produce the same logical
 journal as SyncProcessor for the same ordered input. Delivery timing and possible
 loss differ, not the span/trace semantics. Loss fields/records are common to both:
 SyncProcessor must also report input-limit loss and failed admissions. Their exact
-schema is part of the journal-freeze gate, not an implemented async format.
+schema is shared and implemented; real-capture journal freeze review remains.
 
 Generate IDs and sample wall/elapsed times in instrumentation, not on background
 dequeue. Processor delay must not extend span duration or change event timestamps.
@@ -730,7 +730,7 @@ sibling, scheduler, or global wall-timestamp ordering is promised.
 
 ### Initial SyncProcessor
 
-Implement only SyncProcessor in the first milestone. Process validates the record,
+The first milestone implemented SyncProcessor. Process validates the record,
 invokes Sink.WriteRecord in order, latches failures, and returns after the attempt.
 No worker or queue. Flush/Shutdown delegate in order after preceding calls complete.
 This makes lifecycle, journal, crash-tail recovery, error propagation, and resource
@@ -741,7 +741,7 @@ public contract is still a logical-end and processor-submission attempt, not
 "bytes written before return". Sync delivery is an implementation-specific stronger
 property, not a guarantee applications may assume for every processor. Use Flush
 or Shutdown for processor-independent delivery guarantees. OTel's nonblocking-End
-expectation is a useful target for the future async mode, not a promise about sync
+expectation is met by the explicit async mode, not a promise about sync
 configuration [S8].
 
 ### Implemented AsyncProcessor: explicit bounded processing
@@ -1070,12 +1070,12 @@ Failure policy:
 | Flush/Sync/Close failure | Return error, retain earlier failure context, still attempt owned-resource cleanup |
 | Unended spans/admission loss | Report incomplete capture in Flush/Shutdown results as applicable |
 
-Propose a pipeline-local optional `WithErrorHandler(func(error))`, not global
-logging. Wire a shared diagnostic reporter at provider/processor construction so
+Use pipeline-local optional `WithErrorHandler(func(error))`, not global
+logging. Built-in async provider/processor construction wires a shared reporter so
 immediate Process errors and background writer errors reach the same
 policy without adding callback machinery to Span APIs. SyncProcessor returns
-per-call errors for the provider to report after unlocking; AsyncProcessor must
-also report failures that occur when no further instrumentation call is made.
+per-call errors for the provider to report after unlocking; AsyncProcessor also
+reports failures that occur when no further instrumentation call is made.
 Implemented v0.1 policy: `WithErrorHandler(func(error))` is an optional Provider
 option, with **no implicit stderr output** (nil means no notifications). Notify
 the first latched failure once and additional terminal cleanup failures once;
@@ -1216,9 +1216,9 @@ last admitted span of A ends -> trace_end -> segment 1 may finish draining
 
 The pipeline must bind a trace when its root span_start is **admitted**, before
 returning a recording root or accepting its children. SyncProcessor can naturally
-do this during its root submission. A future AsyncProcessor must not defer binding
+do this during its root submission. AsyncProcessor must not defer future segment binding
 to dequeue time: rotation could happen while the root record waits in RAM.
-Every later record includes TraceID/RootSpanID; queued records retain the already
+Every later span/trace record includes TraceID/RootSpanID; queued records retain the already
 chosen route. Routing tokens/generations are processing metadata, not processor-
 specific journal fields or SpanOptions.
 
@@ -1433,7 +1433,8 @@ allocation benchmarks.
 3. **Processor delivery budget:** the enabled SyncProcessor baseline is recorded
    in section 12; validate real workloads before tuning it. AsyncProcessor's
    design gate is closed and implementation is explicit opt-in; see its linked
-   contract and benchmark measurements. Real workload validation remains useful.
+   contract and [benchmark measurements](async-benchmarks.md). Real workload
+   validation remains useful.
 4. **Public pipeline surface:** settle Processor/Record names, ownership, shared
    diagnostic wiring, and sink evolution rules using the conformance suite. Keep
    root-admission routing separate from dequeue for future rotation; avoid a
