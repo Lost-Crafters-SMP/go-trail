@@ -87,9 +87,70 @@ func encodeRecord(record trail.Record) ([]byte, error) {
 		b = appendIDString(b, r.RootSpanID[:])
 		b = append(b, `,"durationNano":`...)
 		b = appendDurationString(b, r.Duration)
-		// Drop counts are totals for the span; the bounded drop model
-		// arrives with the attributes and events milestone.
-		b = append(b, `,"droppedAttributes":"0","droppedEvents":"0"}`...)
+		b = append(b, `,"droppedAttributes":`...)
+		b = appendUintString(b, r.DroppedAttributes)
+		b = append(b, `,"droppedEvents":`...)
+		b = appendUintString(b, r.DroppedEvents)
+		b = append(b, '}')
+
+	case trail.SpanUpdate:
+		if err := validateSpanIDs("span_update", r.TraceID, r.SpanID, r.RootSpanID); err != nil {
+			return nil, err
+		}
+		if r.Seq == 0 {
+			return nil, errField("span_update", "seq")
+		}
+		if len(r.Attributes) == 0 && r.Status == nil {
+			return nil, errField("span_update", "attributes or status")
+		}
+		b = append(b, `{"type":"span_update","seq":`...)
+		b = appendUintString(b, r.Seq)
+		b = append(b, `,"timeUnixNano":`...)
+		b = appendIntString(b, r.Wall.UnixNano())
+		b = append(b, `,"elapsedNano":`...)
+		b = appendDurationString(b, r.Elapsed)
+		b = append(b, `,"traceId":`...)
+		b = appendIDString(b, r.TraceID[:])
+		b = append(b, `,"spanId":`...)
+		b = appendIDString(b, r.SpanID[:])
+		b = append(b, `,"rootSpanId":`...)
+		b = appendIDString(b, r.RootSpanID[:])
+		if len(r.Attributes) > 0 {
+			b = appendAttributes(b, r.Attributes)
+		}
+		if r.Status != nil {
+			b = appendStatus(b, r.Status)
+		}
+		b = append(b, '}')
+
+	case trail.Event:
+		if err := validateSpanIDs("event", r.TraceID, r.SpanID, r.RootSpanID); err != nil {
+			return nil, err
+		}
+		if r.Seq == 0 {
+			return nil, errField("event", "seq")
+		}
+		if r.Name == "" {
+			return nil, errField("event", "name")
+		}
+		b = append(b, `{"type":"event","seq":`...)
+		b = appendUintString(b, r.Seq)
+		b = append(b, `,"timeUnixNano":`...)
+		b = appendIntString(b, r.Wall.UnixNano())
+		b = append(b, `,"elapsedNano":`...)
+		b = appendDurationString(b, r.Elapsed)
+		b = append(b, `,"traceId":`...)
+		b = appendIDString(b, r.TraceID[:])
+		b = append(b, `,"spanId":`...)
+		b = appendIDString(b, r.SpanID[:])
+		b = append(b, `,"rootSpanId":`...)
+		b = appendIDString(b, r.RootSpanID[:])
+		b = append(b, `,"name":`...)
+		b = appendJSONString(b, r.Name)
+		if len(r.Attributes) > 0 {
+			b = appendAttributes(b, r.Attributes)
+		}
+		b = append(b, '}')
 
 	case trail.TraceEnd:
 		if err := validateSpanIDs("trace_end", r.TraceID, r.RootSpanID, r.RootSpanID); err != nil {
@@ -142,6 +203,65 @@ func errField(kind, field string) error {
 
 func errUnsupported(record trail.Record) error {
 	return &UnsupportedRecordError{Record: record}
+}
+
+// appendAttributes appends the attributes array with typed key/value
+// entries. Signed, unsigned, and duration values are decimal strings.
+func appendAttributes(b []byte, attrs []trail.Attribute) []byte {
+	b = append(b, `,"attributes":[`...)
+	for i, a := range attrs {
+		if i > 0 {
+			b = append(b, ',')
+		}
+		b = append(b, `{"key":`...)
+		b = appendJSONString(b, a.Key())
+		switch a.Kind() {
+		case trail.KindString:
+			b = append(b, `,"type":"string","value":`...)
+			b = appendJSONString(b, a.String())
+		case trail.KindBool:
+			b = append(b, `,"type":"bool","value":`...)
+			b = append(b, strconv.FormatBool(a.Bool())...)
+		case trail.KindInt64:
+			b = append(b, `,"type":"int64","value":`...)
+			b = appendIntString(b, a.Int64())
+		case trail.KindUint64:
+			b = append(b, `,"type":"uint64","value":`...)
+			b = appendUintString(b, a.Uint64())
+		case trail.KindFloat64:
+			b = append(b, `,"type":"float64","value":`...)
+			b = strconv.AppendFloat(b, a.Float64(), 'g', -1, 64)
+		case trail.KindDuration:
+			b = append(b, `,"type":"duration","value":`...)
+			b = appendDurationString(b, a.Duration())
+		case trail.KindStrings:
+			b = append(b, `,"type":"strings","value":[`...)
+			for j, v := range a.Strings() {
+				if j > 0 {
+					b = append(b, ',')
+				}
+				b = appendJSONString(b, v)
+			}
+			b = append(b, ']')
+		default:
+			b = append(b, `,"type":"invalid"}`...)
+			continue
+		}
+		b = append(b, '}')
+	}
+	return append(b, ']')
+}
+
+// appendStatus appends a status object with its wire code name and, when
+// present, its description.
+func appendStatus(b []byte, status *trail.SpanStatus) []byte {
+	b = append(b, `,"status":{"code":`...)
+	b = appendJSONString(b, status.Code.String())
+	if status.Description != "" {
+		b = append(b, `,"description":`...)
+		b = appendJSONString(b, status.Description)
+	}
+	return append(b, '}')
 }
 
 // FieldError reports a record missing a required field or carrying an

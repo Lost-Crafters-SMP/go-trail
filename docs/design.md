@@ -537,6 +537,13 @@ test seam remains provisional. Concurrent scheduler order is not deterministic.
 
 ## 7. Attributes, events, status, and logging
 
+The typed attribute model, bounded span/event attribute batches, streamed
+events, RecordError, last-write status, and the per-span drop counts
+serialized on span_end are implemented for v0.1, including the active-span
+capacity limit with release on every End path. Loss summary *records* and
+Flush/Shutdown loss reporting remain open until the lifecycle completion
+milestone wires them.
+
 ### Typed attributes
 
 Use a closed, small Attribute/Value representation, not `map[string]any` or a

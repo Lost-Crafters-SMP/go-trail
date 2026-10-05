@@ -4,15 +4,29 @@ package trail
 // be created by this package.
 type StartOption func(*startConfig)
 
-// startConfig collects StartOption values for one span start.
+// An EventOption configures event recording in Span.AddEvent and
+// Span.RecordError. It is an alias of StartOption so WithAttributes applies
+// to both positions; options irrelevant to one context are ignored there.
+type EventOption = StartOption
+
+// startConfig collects option values for one span start or event.
 type startConfig struct {
-	newRoot bool
+	newRoot    bool
+	attributes []Attribute
 }
 
 // WithNewRoot starts a new trace instead of joining the span carried by the
 // context, even when that span is an active parent from the same provider.
+// It is ignored in event positions.
 func WithNewRoot() StartOption {
 	return func(c *startConfig) { c.newRoot = true }
+}
+
+// WithAttributes supplies attributes for a span start or an event. The
+// slice is borrowed: bounds, deduplication, and copying happen when the
+// value is recorded, so disabled calls do not copy.
+func WithAttributes(attrs ...Attribute) StartOption {
+	return func(c *startConfig) { c.attributes = attrs }
 }
 
 // A ProviderOption configures a Provider at construction. Options can only

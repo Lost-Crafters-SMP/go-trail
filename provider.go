@@ -33,6 +33,9 @@ type providerState struct {
 	seq    uint64
 	traces map[TraceID]*traceState
 
+	liveSpans      int
+	rejectedStarts uint64
+
 	closed    bool
 	stickyErr error
 }
@@ -80,9 +83,10 @@ func NewProvider(processor Processor, opts ...ProviderOption) (*Provider, error)
 
 // Tracer returns a handle whose spans are attributed to scope. The scope is
 // a component or instrumentation name; an empty scope means unknown. Tracer
-// handles are cheap values that share the provider's state.
+// handles are cheap values that share the provider's state. Overlong scopes
+// are truncated on a UTF-8 boundary.
 func (p *Provider) Tracer(scope string) Tracer {
-	return Tracer{provider: p, scope: scope}
+	return Tracer{provider: p, scope: truncateUTF8(scope, maxNameBytes)}
 }
 
 // enabled reports whether the provider can admit recording spans. It is safe
@@ -117,6 +121,7 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 	if name == "" {
 		name = unnamedSpanName
 	}
+	name = truncateUTF8(name, maxNameBytes)
 
 	spanID, err := ps.ids.newSpanID()
 	if err != nil {
@@ -132,6 +137,13 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 	defer ps.mu.Unlock()
 
 	if ps.closed {
+		return ctx, Span{}
+	}
+	// Active-span capacity bounds provider-owned bookkeeping; a full
+	// provider rejects admission without recording. The loss is counted for
+	// Flush and Shutdown reporting.
+	if ps.liveSpans >= maxActiveSpans {
+		ps.rejectedStarts++
 		return ctx, Span{}
 	}
 
@@ -194,6 +206,7 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 	} else {
 		ts.live++
 	}
+	ps.liveSpans++
 	st := &spanState{
 		provider:   ps,
 		traceID:    traceID,
@@ -201,6 +214,30 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 		rootSpanID: rootSpanID,
 		start:      reading,
 		trace:      ts,
+	}
+	// Initial attributes are emitted as a bounded update following
+	// span_start; oversized or invalid entries are dropped with counters.
+	if len(cfg.attributes) > 0 {
+		newKeys, resolved, dropped := resolveSpanAttributes(st.keys, cfg.attributes)
+		st.keys = newKeys
+		st.droppedAttrs += uint64(dropped)
+		switch {
+		case len(resolved) == 0:
+		case oversizedRecord("", resolved):
+			st.droppedAttrs += uint64(len(resolved))
+		default:
+			if err := ps.processor.Process(SpanUpdate{
+				Seq:        ps.nextSeq(),
+				Wall:       reading.wall,
+				Elapsed:    reading.tick,
+				TraceID:    traceID,
+				SpanID:     spanID,
+				RootSpanID: rootSpanID,
+				Attributes: resolved,
+			}); err != nil {
+				ps.latchError(err)
+			}
+		}
 	}
 	return ContextWithSpan(ctx, Span{state: st}), Span{state: st}
 }

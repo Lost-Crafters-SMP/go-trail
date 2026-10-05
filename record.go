@@ -32,15 +32,18 @@ type SpanStart struct {
 }
 
 // SpanEnd reports that a span ended. Duration is measured from the monotonic
-// clock and is authoritative; it is not derived from wall timestamps.
+// clock and is authoritative; it is not derived from wall timestamps. The
+// drop counts are totals for the span's lifetime.
 type SpanEnd struct {
-	Seq        uint64
-	Wall       time.Time
-	Elapsed    time.Duration
-	TraceID    TraceID
-	SpanID     SpanID
-	RootSpanID SpanID
-	Duration   time.Duration
+	Seq               uint64
+	Wall              time.Time
+	Elapsed           time.Duration
+	TraceID           TraceID
+	SpanID            SpanID
+	RootSpanID        SpanID
+	Duration          time.Duration
+	DroppedAttributes uint64
+	DroppedEvents     uint64
 }
 
 // TraceEnd claims that a trace completed: its root ended and no admitted
@@ -53,7 +56,36 @@ type TraceEnd struct {
 	RootSpanID SpanID
 }
 
+// SpanUpdate reports bounded attribute or status updates for a span that
+// has started and not ended. Attributes are sorted by key; status replaces
+// any previous status.
+type SpanUpdate struct {
+	Seq        uint64
+	Wall       time.Time
+	Elapsed    time.Duration
+	TraceID    TraceID
+	SpanID     SpanID
+	RootSpanID SpanID
+	Attributes []Attribute
+	Status     *SpanStatus
+}
+
+// Event reports a timestamped event recorded on a span. RecordError is an
+// ordinary event under these rules. Attributes are sorted by key.
+type Event struct {
+	Seq        uint64
+	Wall       time.Time
+	Elapsed    time.Duration
+	TraceID    TraceID
+	SpanID     SpanID
+	RootSpanID SpanID
+	Name       string
+	Attributes []Attribute
+}
+
 func (CaptureStart) record() {}
 func (SpanStart) record()    {}
+func (SpanUpdate) record()   {}
+func (Event) record()        {}
 func (SpanEnd) record()      {}
 func (TraceEnd) record()     {}

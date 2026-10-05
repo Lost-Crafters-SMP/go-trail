@@ -15,7 +15,7 @@ type Span struct {
 
 // spanState holds the state of a recording span. The ended flag is atomic so
 // advisory checks stay race-free; its authoritative transitions happen under
-// the provider admission gate.
+// the provider admission gate, which also serializes mutations against End.
 type spanState struct {
 	provider   *providerState
 	traceID    TraceID
@@ -23,6 +23,10 @@ type spanState struct {
 	rootSpanID SpanID
 	start      timeReading
 	trace      *traceState
+
+	keys         map[string]struct{}
+	droppedAttrs uint64
+	droppedEvts  uint64
 
 	ended atomic.Bool
 }
@@ -51,6 +55,58 @@ func (s Span) SpanContext() SpanContext {
 	return s.state.spanContext()
 }
 
+// SetAttributes records bounded attribute updates on the span. Invalid
+// attributes, over-limit new keys, and oversized update batches are dropped
+// with counters; updates to existing keys remain permitted at the key
+// limit. It is a no-op after End.
+func (s Span) SetAttributes(attrs ...Attribute) {
+	if s.state != nil {
+		s.state.setAttributes(attrs)
+	}
+}
+
+// AddEvent records a timestamped event with optional attributes on the
+// span. It is a no-op after End.
+func (s Span) AddEvent(name string, opts ...EventOption) {
+	if s.state != nil {
+		var cfg startConfig
+		for _, opt := range opts {
+			if opt != nil {
+				opt(&cfg)
+			}
+		}
+		s.state.addEvent(name, cfg.attributes, nil)
+	}
+}
+
+// RecordError records one event named "error" carrying an error.message
+// attribute derived from err.Error(), plus any supplied attributes; the
+// derived error.message overwrites a supplied key with the same name. It is
+// a no-op for nil errors and after End, and it does not set status, walk
+// causes, or capture a stack.
+func (s Span) RecordError(err error, opts ...EventOption) {
+	if err == nil || s.state == nil {
+		return
+	}
+	var cfg startConfig
+	for _, opt := range opts {
+		if opt != nil {
+			opt(&cfg)
+		}
+	}
+	s.state.addEvent("error", cfg.attributes, err)
+}
+
+// SetStatus records an explicit status update; the last accepted call wins,
+// including a reset to Unset. Description is meaningful only for Error and
+// is cleared for other codes. Status is never inferred at End. It is a
+// no-op after End.
+func (s Span) SetStatus(code StatusCode, description string) {
+	if s.state != nil {
+		s.state.setStatus(code, description)
+	}
+}
+
 // end processes the winning End call: mark ended, submit span_end, release
 // the live count, and submit trace_end when the root has ended and no
 // admitted span remains live. Output failures release bookkeeping and latch
@@ -72,19 +128,22 @@ func (s *spanState) end() {
 	s.ended.Store(true)
 
 	if err := ps.processor.Process(SpanEnd{
-		Seq:        ps.nextSeq(),
-		Wall:       reading.wall,
-		Elapsed:    reading.tick,
-		TraceID:    s.traceID,
-		SpanID:     s.spanID,
-		RootSpanID: s.rootSpanID,
-		Duration:   duration,
+		Seq:               ps.nextSeq(),
+		Wall:              reading.wall,
+		Elapsed:           reading.tick,
+		TraceID:           s.traceID,
+		SpanID:            s.spanID,
+		RootSpanID:        s.rootSpanID,
+		Duration:          duration,
+		DroppedAttributes: s.droppedAttrs,
+		DroppedEvents:     s.droppedEvts,
 	}); err != nil {
 		ps.latchError(err)
 	}
 
 	ts := s.trace
 	ts.live--
+	ps.liveSpans--
 	if s.spanID == ts.rootSpanID {
 		ts.rootEnded = true
 	}
@@ -99,6 +158,113 @@ func (s *spanState) end() {
 			ps.latchError(err)
 		}
 		delete(ps.traces, ts.traceID)
+	}
+}
+
+// setAttributes resolves a bounded update against the span's keys and
+// submits it. Invalid or over-limit pairs count as drops; an oversized
+// batch is dropped whole.
+func (s *spanState) setAttributes(attrs []Attribute) {
+	ps := s.provider
+	reading := ps.clock.now()
+
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+	if s.ended.Load() {
+		return
+	}
+	newKeys, resolved, dropped := resolveSpanAttributes(s.keys, attrs)
+	s.keys = newKeys
+	s.droppedAttrs += uint64(dropped)
+	if len(resolved) == 0 {
+		return
+	}
+	if oversizedRecord("", resolved) {
+		s.droppedAttrs += uint64(len(resolved))
+		return
+	}
+	if err := ps.processor.Process(SpanUpdate{
+		Seq:        ps.nextSeq(),
+		Wall:       reading.wall,
+		Elapsed:    reading.tick,
+		TraceID:    s.traceID,
+		SpanID:     s.spanID,
+		RootSpanID: s.rootSpanID,
+		Attributes: resolved,
+	}); err != nil {
+		ps.latchError(err)
+	}
+}
+
+// addEvent records one bounded event; err non-nil marks an error event
+// whose message is derived outside the admission gate.
+func (s *spanState) addEvent(name string, attrs []Attribute, err error) {
+	ps := s.provider
+	// User formatting happens before the gate: no error/string code runs
+	// while internal locks are held.
+	if err != nil {
+		attrs = append(attrs, String("error.message", err.Error()))
+	}
+	if name == "" {
+		name = unnamedSpanName
+	}
+	reading := ps.clock.now()
+
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+	if s.ended.Load() {
+		return
+	}
+	name = truncateUTF8(name, maxNameBytes)
+	resolved, dropped := resolveEventAttributes(attrs)
+	s.droppedAttrs += uint64(dropped)
+	if oversizedRecord(name, resolved) {
+		s.droppedEvts++
+		return
+	}
+	if err := ps.processor.Process(Event{
+		Seq:        ps.nextSeq(),
+		Wall:       reading.wall,
+		Elapsed:    reading.tick,
+		TraceID:    s.traceID,
+		SpanID:     s.spanID,
+		RootSpanID: s.rootSpanID,
+		Name:       name,
+		Attributes: resolved,
+	}); err != nil {
+		ps.latchError(err)
+	}
+}
+
+// setStatus submits an explicit status update with the documented clearing
+// rules.
+func (s *spanState) setStatus(code StatusCode, description string) {
+	if code != StatusUnset && code != StatusOK && code != StatusError {
+		return // unknown codes are ignored
+	}
+	if code != StatusError {
+		description = ""
+	} else {
+		description = truncateUTF8(description, maxStringValueBytes)
+	}
+	ps := s.provider
+	reading := ps.clock.now()
+
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+	if s.ended.Load() {
+		return
+	}
+	if err := ps.processor.Process(SpanUpdate{
+		Seq:        ps.nextSeq(),
+		Wall:       reading.wall,
+		Elapsed:    reading.tick,
+		TraceID:    s.traceID,
+		SpanID:     s.spanID,
+		RootSpanID: s.rootSpanID,
+		Status:     &SpanStatus{Code: code, Description: description},
+	}); err != nil {
+		ps.latchError(err)
 	}
 }
 
