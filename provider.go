@@ -35,8 +35,13 @@ type providerState struct {
 	seq    uint64
 	traces map[TraceID]*traceState
 
-	liveSpans      int
-	rejectedStarts uint64
+	liveSpans             int
+	rejectedStarts        uint64
+	droppedAttrs          uint64
+	droppedEvts           uint64
+	liveDroppedAttrs      uint64
+	liveDroppedEvts       uint64
+	finalSummaryAttempted bool
 
 	stage     providerStage
 	stickyErr error
@@ -114,8 +119,9 @@ func (p *Provider) enabled() bool {
 }
 
 // Flush inserts an admission barrier, waits for the processor to deliver
-// preceding records and flush its sink, and returns sticky output and
-// admission-loss errors. It does not end active spans or close output. A
+// preceding records (including a cumulative capture loss snapshot) and flush
+// its sink, and returns sticky output and admission-loss errors. It does not
+// end active spans or close output. A
 // nil or uninitialized Provider is a no-op.
 func (p *Provider) Flush(ctx context.Context) error {
 	if !p.enabled() {
@@ -125,8 +131,9 @@ func (p *Provider) Flush(ctx context.Context) error {
 }
 
 // Shutdown closes admission, reports remaining active spans and admission
-// loss as an incomplete capture, and asks the processor to drain, flush,
-// and close its owned sink. It never waits for forgotten spans to End;
+// loss as an incomplete capture, submits a final cumulative loss snapshot,
+// and asks the processor to drain, flush, and close its owned sink. It never
+// waits for forgotten spans to End;
 // their starts remain in the journal without ends, and subsequent span
 // methods become no-ops. Repeated calls return the same terminal result.
 // A canceled context leaves shutdown resumable with a fresh context without
@@ -150,7 +157,13 @@ func (ps *providerState) flush(ctx context.Context) error {
 	if ps.stage == stageClosed {
 		return ps.termErr
 	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	var errs []error
+	if err := ps.submitLossSummary(); err != nil {
+		errs = append(errs, err)
+	}
 	if err := ps.processor.Flush(ctx); err != nil {
 		errs = append(errs, err)
 		if !isCancellation(err) {
@@ -178,10 +191,16 @@ func (ps *providerState) shutdown(ctx context.Context) error {
 		return err
 	}
 	var errs []error
+	if !ps.finalSummaryAttempted {
+		ps.finalSummaryAttempted = true
+		if err := ps.submitLossSummary(); err != nil {
+			errs = append(errs, err)
+		}
+	}
 	if err := ps.processor.Shutdown(ctx); err != nil {
 		errs = append(errs, err)
 		if isCancellation(err) {
-			return errors.Join(errs...)
+			return errors.Join(append(errs, ps.stickyErr)...)
 		}
 		ps.notifyCleanupError(err)
 	}
@@ -196,6 +215,29 @@ func (ps *providerState) shutdown(ctx context.Context) error {
 	return ps.termErr
 }
 
+// submitLossSummary checkpoints bounded counters under the admission gate.
+// Zero snapshots are intentional: absence means unknown, not zero. A failed
+// submission is latched, and shutdown never retries an uncertain final write.
+func (ps *providerState) submitLossSummary() error {
+	reading := ps.clock.now()
+	err := ps.processor.Process(LossSummary{
+		Seq:                      ps.nextSeq(),
+		Wall:                     reading.wall,
+		Elapsed:                  reading.tick,
+		RejectedStarts:           ps.rejectedStarts,
+		DroppedAttributes:        ps.droppedAttrs,
+		DroppedEvents:            ps.droppedEvts,
+		UnendedSpans:             uint64(ps.liveSpans),
+		UnendedDroppedAttributes: ps.liveDroppedAttrs,
+		UnendedDroppedEvents:     ps.liveDroppedEvts,
+	})
+	if err != nil {
+		ps.latchError(err)
+		return fmt.Errorf("trail: submit loss summary: %w", err)
+	}
+	return nil
+}
+
 // lossError reports admission loss recorded during the capture, if any.
 func (ps *providerState) lossError() error {
 	if ps.liveSpans == 0 && ps.rejectedStarts == 0 {
@@ -208,7 +250,7 @@ func (ps *providerState) lossError() error {
 }
 
 // IncompleteError reports that a capture is not a complete record of the
-// work it observed: spans that never ended, or starts rejected by bounds.
+// work it observed: spans that never ended, or failed span admissions.
 // Their journal starts remain useful evidence without fabricated ends.
 type IncompleteError struct {
 	UnendedSpans   uint64
@@ -274,6 +316,7 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 	// Injected ID sources and the failure latch are serialized by admission.
 	spanID, err := ps.ids.newSpanID()
 	if err != nil {
+		ps.rejectedStarts++
 		ps.latchError(fmt.Errorf("trail: generate span ID: %w", err))
 		return ctx, Span{}
 	}
@@ -306,6 +349,7 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 		for {
 			traceID, err = ps.ids.newTraceID()
 			if err != nil {
+				ps.rejectedStarts++
 				ps.latchError(fmt.Errorf("trail: generate trace ID: %w", err))
 				return ctx, Span{}
 			}
@@ -328,6 +372,7 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 		Name:         name,
 	}
 	if err := ps.processor.Process(record); err != nil {
+		ps.rejectedStarts++
 		ps.latchError(err)
 		return ctx, Span{}
 	}
@@ -351,11 +396,11 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 	if len(cfg.attributes) > 0 {
 		newKeys, resolved, dropped := resolveSpanAttributes(st.keys, cfg.attributes)
 		st.keys = newKeys
-		st.droppedAttrs += uint64(dropped)
+		st.addDrops(uint64(dropped), 0)
 		switch {
 		case len(resolved) == 0:
 		case oversizedRecord("", resolved):
-			st.droppedAttrs += uint64(len(resolved))
+			st.addDrops(uint64(len(resolved)), 0)
 		default:
 			if err := ps.processor.Process(SpanUpdate{
 				Seq:        ps.nextSeq(),

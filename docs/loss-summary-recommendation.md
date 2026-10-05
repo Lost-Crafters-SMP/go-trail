@@ -1,64 +1,85 @@
-# Loss-summary recommendation (review required)
+# Loss-summary decision (accepted and implemented)
 
-**Recommend one capture-scoped, cumulative summary at Shutdown for v0.1.**
-This is a proposal only: no record type, encoding, or journal version changes
-are implemented by this recommendation.
+**Use capture-scoped cumulative replacement snapshots at both Flush and Shutdown.**
+This replaces the original Shutdown-only recommendation: explicit Flush checkpoints
+preserve current loss evidence even if a process hangs or crashes before Shutdown.
+There are no timers, periodic emissions, automatic checkpoints, or per-drop records.
 
-## Shutdown only versus Flush + Shutdown
+## Emission and failure contract
 
-- **Shutdown only (recommended):** close admission, snapshot loss counters, submit
-  a summary before processor cleanup/drain, then shut down. Emit only if loss or
-  unfinished work exists. This is a simple final accounting point and does not
-  make repeated Flush grow the journal or require periodic reporting machinery.
-  Cancellation before submission must permit retry without duplicate submission.
-- **Flush + Shutdown:** gives earlier visibility for long-lived processes and
-  better crash evidence, but requires snapshot/barrier ordering and duplicate
-  suppression. Keep this as a future extension using the same cumulative model,
-  not deltas. A process killed before Shutdown will not have the recommended
-  final summary; lifecycle records remain its primary crash evidence.
+- Every enabled Provider Flush submits `loss_summary` under the admission gate
+  before invoking the processor's Flush barrier. Successful Flush includes delivery
+  of that summary under the processor contract, plus the sink's normal flush policy.
+- Shutdown closes admission, submits the final snapshot before processor drain/flush/
+  closure, and does not invent span Ends. Repeated completed Shutdown (or Flush after
+  closure) returns the terminal result without emitting another record.
+- A context canceled before submission emits nothing. If Shutdown cleanup is
+  canceled after submission, retry resumes cleanup without resubmitting the final
+  snapshot, even if the first attempt failed. Uncertain writes are never retried.
+- Emit even all-zero snapshots, including an unchanged snapshot on repeated Flush.
+  This avoids suppression state and permits an explicit known-zero checkpoint.
+  Absence of a summary means **unknown accounting**, not zero losses.
+- Submission errors are latched and returned through Flush/Shutdown. Cleanup still
+  runs, and existing error-handler notification rules apply. A summary cannot
+  promise persistence on a broken stream; returned errors remain authoritative.
 
-## Contents and scope
+## Journal-v1 schema
 
-Use **capture scope**, associated with the preceding `capture_start` boundary.
-Rejected roots have no admitted trace, so a trace-scoped record cannot account
-for them honestly. Do not invent trace/span IDs for rejected work. A future
-multi-capture or rotating stream must review explicit capture identity separately.
+`loss_summary` belongs to the preceding `capture_start` in the single-capture file.
+It carries no trace/span/root IDs, duration, completion flag, or emission-reason
+field. Required fields are `type`, `seq`, `timeUnixNano`, `elapsedNano`, and all six
+counters below; zero counters are present. Sequence and counters are quoted uint64
+decimal strings. Wall timestamp and monotonic-derived elapsed nanoseconds are
+quoted int64 decimal strings, following the ordinary record encoding.
 
-Proposed semantic counters (field names and encoding are not frozen):
+| Field | Meaning |
+| --- | --- |
+| `rejectedStarts` | Cumulative failed admission attempts: active-span capacity, span/trace ID generation failure, or processor rejection of span_start; counted once per attempt, including children |
+| `droppedAttributes` | Cumulative bounded-data attribute drops across all admitted spans, including initial attributes and event attributes |
+| `droppedEvents` | Cumulative oversized event drops across all admitted spans |
+| `unendedSpans` | Point-in-time count of logically live admitted spans |
+| `unendedDroppedAttributes` | Attribute-drop subtotal on those logically live spans |
+| `unendedDroppedEvents` | Event-drop subtotal on those logically live spans |
 
-- Cumulative **rejected starts**, counted once per failed admission attempt;
-  bounded reason categories such as active-span capacity, ID generation, or
-  processor rejection. Exclude Starts after Shutdown and deliberate no-op use.
-  Include rejected children; failed admission preserves their parent's context
-  but still represents missing detail. Existing code counts capacity rejection
-  only; other categories would need implementation and tests.
-- Cumulative **dropped attributes/events for the entire capture**, including
-  both ended and unfinished spans. These are authoritative aggregate totals,
-  not additions to per-span `span_end` counts. Avoid double-counting the same
-  failed admission or oversized batch through multiple categories.
-- A snapshot **unfinished-span count** and **unfinished-span attribute/event
-  drops**. They preserve losses whose `span_end` will never be written, without
-  synthesizing Ends, durations, or trace completion. Do not emit an unbounded
-  list of live spans; their existing starts identify unfinished work during replay.
+Starts on disabled providers or after admission closes are intentional no-ops,
+not rejections. Rejected attempts have no admitted identity; reason categories
+are deliberately omitted for the smallest clean contract. Valid truncation and
+ignored invalid status codes retain their existing semantics and are not newly
+classified as loss. Pipeline errors are not attributed as attribute/event drops;
+they remain sticky output errors and sequence/reconstruction diagnostics, not a
+fabricated count of missing delivered records. No other existing numeric
+capture-loss counter is omitted.
 
-Maintain bounded provider-level totals and live-span drop subtotals as mutations
-occur; release the live subtotals when a span logically ends. No full live-span
-registry is required. Logical End does not prove sink delivery: missing End
-records still require sequence/replay diagnostics and returned output errors.
+All drops count once in capture lifetime totals. Existing per-span `span_end`
+counts remain unchanged and overlap those totals. Live subtotals are released at
+logical End, even if End delivery fails; the lifetime totals still include its
+drops. Provider accounting uses bounded scalar counters, not a live-span registry.
+Unended subtotals must not exceed lifetime totals and must be zero when
+`unendedSpans` is zero. No unbounded lists of span IDs are emitted.
 
-## Replay if multiple summaries eventually exist
+## Decoding and replay
 
-Each record is a **replacement cumulative snapshot**, ordered by capture sequence.
-The latest valid summary in the capture supersedes earlier snapshots; never sum
-summary records, and never add their totals to per-span End counters. Lifetime
-totals must not decrease; unfinished-work subtotals are point-in-time gauges and
-may decrease after work ends. A regressing lifetime total is a diagnostic, not
-an invitation to guess a delta. Missing summaries mean accounting is unknown,
-not zero. A summary is not a `trace_end` or a clean-shutdown/durability claim.
+Process complete validated records in file/sequence order. Within the capture,
+**the latest successfully read valid cumulative summary replaces prior summaries**.
+Never sum snapshots and never add their totals to span_end counters. Lifetime
+totals must not decrease; live-span counts/subtotals may decrease after Ends. A
+regressing lifetime total is a corruption diagnostic, not a delta to reconstruct.
+Counters are authoritative through the snapshot's sequence, not necessarily EOF;
+later ordinary records can contain work not included in the last snapshot.
 
-Summary submission itself can fail, especially on an already broken stream.
-Do not retry uncertain writes or promise a persisted loss report: callbacks and
-Flush/Shutdown return values remain authoritative for output failures.
+Require every field and validate integer ranges and live-subtotal invariants;
+missing/null fields do not default to zero. Preserve the last valid snapshot if
+the final line is torn/invalid and report the tail diagnostic. Invalid interior
+records remain corruption errors, not silently skipped data. Unknown fields may
+be ignored under the normal v1 compatibility contract.
 
-**Review requested:** approve Shutdown-only cumulative capture scope and these
-counter semantics before specifying required fields or changing the journal.
+A summary is not `trace_end`, proof of clean shutdown, proof of sink delivery of
+every End, or a durability claim. Lifecycle replay still identifies unfinished
+spans from starts without Ends. A future multi-capture/rotating stream must review
+explicit capture identity separately. This completes the loss-record gate within
+the still-unreleased journal v1; no version bump is made. Real-capture freeze review
+and limits/truncation tuning remain outstanding.
+
+The library still exposes no production reader API. Wire decoding/range validation
+and replacement replay are pinned by test-only reference decoding and fixtures;
+a general reader/viewer is intentionally outside this change.

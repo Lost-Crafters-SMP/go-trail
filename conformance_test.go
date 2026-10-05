@@ -87,6 +87,27 @@ func TestSyncProcessorConformance(t *testing.T) {
 }
 
 func runProcessorConformance(t *testing.T, factory processorFactory) {
+	t.Run("loss snapshots precede barriers", func(t *testing.T) {
+		sink := &concurrencySink{recordingSink: recordingSink{}}
+		provider := newConformanceProvider(t, factory, sink)
+		_, span := provider.Tracer("conf").Start(context.Background(), "live", WithAttributes(Attribute{}))
+		if err := provider.Flush(context.Background()); err != nil {
+			t.Fatal(err)
+		}
+		first := lossSummaries(&sink.recordingSink)
+		if len(first) != 1 || first[0].UnendedDroppedAttributes != 1 {
+			t.Fatalf("checkpoint not delivered by Flush: %+v", first)
+		}
+		span.End()
+		if err := provider.Shutdown(context.Background()); err != nil {
+			t.Fatal(err)
+		}
+		all := lossSummaries(&sink.recordingSink)
+		if len(all) != 2 || all[1].DroppedAttributes != 1 || all[1].UnendedDroppedAttributes != 0 {
+			t.Fatalf("final snapshot not delivered by Shutdown: %+v", all)
+		}
+	})
+
 	t.Run("ordered journal for ordered input", func(t *testing.T) {
 		sink := &concurrencySink{recordingSink: recordingSink{}}
 		provider := newConformanceProvider(t, factory, sink)
@@ -105,7 +126,7 @@ func runProcessorConformance(t *testing.T, factory processorFactory) {
 		}
 		want := []string{
 			"capture_start", "span_start", "span_update", "span_start",
-			"span_update", "event", "span_end", "span_update", "span_end", "trace_end",
+			"span_update", "event", "span_end", "span_update", "span_end", "trace_end", "loss_summary",
 		}
 		if len(sink.records) != len(want) {
 			t.Fatalf("journal has %d records, want %d: %+v", len(sink.records), len(want), sink.records)
@@ -127,6 +148,8 @@ func runProcessorConformance(t *testing.T, factory processorFactory) {
 				kind, seq = "span_end", r.Seq
 			case TraceEnd:
 				kind, seq = "trace_end", r.Seq
+			case LossSummary:
+				kind, seq = "loss_summary", r.Seq
 			}
 			if kind != want[i] {
 				t.Fatalf("record %d = %s, want %s", i, kind, want[i])
@@ -173,7 +196,7 @@ func runProcessorConformance(t *testing.T, factory processorFactory) {
 		if err := provider.Shutdown(context.Background()); err != nil {
 			t.Fatalf("Shutdown unexpected error: %v", err)
 		}
-		last := sink.records[len(sink.records)-1]
+		last := sink.records[len(sink.records)-2]
 		if _, ok := last.(TraceEnd); !ok {
 			t.Fatalf("last record = %T, want TraceEnd", last)
 		}

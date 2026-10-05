@@ -541,9 +541,10 @@ The typed attribute model, bounded span/event attribute batches, streamed
 events, RecordError, last-write status, and the per-span drop counts
 serialized on span_end are implemented for v0.1, including the active-span
 capacity limit with release on every End path. Flush/Shutdown return output
-and admission-loss errors. Loss-summary *records* remain unimplemented;
-[the review recommendation](loss-summary-recommendation.md) proposes their
-scope and accounting without changing the journal schema.
+and admission-loss errors. Capture-scoped cumulative `loss_summary` records
+checkpoint rejected admissions and bounded-data drops at both Flush and Shutdown;
+[the accepted decision](loss-summary-recommendation.md) specifies the schema,
+zero-snapshot behavior, and replacement replay contract.
 
 ### Typed attributes
 
@@ -852,13 +853,12 @@ The following is a **draft synthetic fixture**, not the finalized schema. The
 root ends while its child remains active; the trace completes only after the
 child. `span_update` may contain attributes, status, or both.
 
-Implementation status: the header line and the `capture_start`, `span_start`,
-`span_end`, and `trace_end` encodings are implemented as shown for version 1
-by `go.lostcrafters.com/trail/file`, including decimal-string numerics,
-hex identifiers, and absent `parentSpanId` for roots. `span_update` and
-`event` entries arrive with the attributes and events milestone. The
-`droppedAttributes`/`droppedEvents` fields are emitted as `"0"` until the
-bounded drop model fills them with real counts.
+Implementation status: the header and all records below are implemented for
+the still-unreleased version 1 by `go.lostcrafters.com/trail/file`, including
+decimal-string numerics, hex identifiers, absent `parentSpanId` for roots,
+typed updates/events, per-span drops, and capture-scoped loss snapshots.
+Adding the accepted loss record completes that gate without a version bump;
+real-capture schema-freeze review remains required before declaring v1 stable.
 
 ```jsonl
 {"format":"trail","version":1}
@@ -870,6 +870,7 @@ bounded drop model fills them with real counts.
 {"type":"span_update","seq":"6","timeUnixNano":"1700000000000000022","elapsedNano":"22","traceId":"11111111111111111111111111111111","spanId":"3333333333333333","rootSpanId":"2222222222222222","status":{"code":"error","description":"lookup failed"}}
 {"type":"span_end","seq":"7","timeUnixNano":"1700000000000000030","elapsedNano":"30","traceId":"11111111111111111111111111111111","spanId":"3333333333333333","rootSpanId":"2222222222222222","durationNano":"20","droppedAttributes":"0","droppedEvents":"0"}
 {"type":"trace_end","seq":"8","timeUnixNano":"1700000000000000030","elapsedNano":"30","traceId":"11111111111111111111111111111111","rootSpanId":"2222222222222222"}
+{"type":"loss_summary","seq":"9","timeUnixNano":"1700000000000000040","elapsedNano":"40","rejectedStarts":"0","droppedAttributes":"0","droppedEvents":"0","unendedSpans":"0","unendedDroppedAttributes":"0","unendedDroppedEvents":"0"}
 ```
 
 Draft native attribute encoding: key/type/value entries, with type names
@@ -911,7 +912,20 @@ semantic total order promised by instrumentation.
 5. **trace_end:** record a completion claim only after the root ended and every
    observed live span ended. Missing starts, unexplained gaps, invalid lifecycles,
    or reported losses qualify that claim; distinguish completion from fidelity.
-6. **EOF/live tail:** starts without Ends remain unfinished; traces without
+6. **loss_summary:** replace the capture's previous loss snapshot with the latest
+   successfully read valid summary. Required quoted uint64 counters are
+   `rejectedStarts`, `droppedAttributes`, `droppedEvents`, `unendedSpans`,
+   `unendedDroppedAttributes`, and `unendedDroppedEvents`. The first three are
+   lifetime totals; the last three describe logically live spans at that sequence.
+   Never sum snapshots or add totals to overlapping span_end counts. Live subtotals
+   can decrease at logical End (even if its record fails delivery); lifetime totals
+   must not decrease. Missing summaries mean unknown accounting, not zero. A torn
+   final summary does not replace a previous valid snapshot. Missing/null fields,
+   out-of-range counters, subtotals exceeding totals, nonzero live drops with zero
+   live spans, or regressing totals are corruption diagnostics. The summary has
+   no IDs and is neither completion nor durability evidence. Totals are current
+   through its sequence only; later records do not retroactively update it.
+7. **EOF/live tail:** starts without Ends remain unfinished; traces without
    trace_end are open or completion-unconfirmed. If all span Ends are present but
    the final trace_end was torn, distinguish inferred quiescence from a recorded
    completion marker. EOF does not reveal when or why a process stopped.
@@ -983,14 +997,25 @@ because a capture stops growing.
 | Operation | Proposed guarantee |
 | --- | --- |
 | End | Winning call ends recording and submits its completion record to Processor before returning; no universal sink-delivery/durability guarantee and no implicit child join |
-| Flush(ctx) | Inserts an admission barrier, waits through Processor for preceding retained records and Sink.Flush, returns sticky output/loss errors; does not end active spans or close output |
-| Shutdown(ctx) | Closes provider admission, reports remaining active spans as incomplete, asks Processor to drain accepted records and flush/close its sink; never waits indefinitely for forgotten spans to End |
+| Flush(ctx) | Submits a cumulative capture loss snapshot under the admission gate before the processor delivery/Sink.Flush barrier; returns sticky output/loss errors; does not end active spans or close output |
+| Shutdown(ctx) | Closes provider admission, submits the final cumulative loss snapshot before processor closure, reports remaining active spans as incomplete, drains/flushes/closes; never waits for forgotten spans to End |
 
 Normal applications stop/join their work and End spans **before** Shutdown. A
 shutdown does not synthesize successful Ends or fake durations for live work.
 If active spans remain, return an identifiable unended-span error/count, leave
 their starts without ends in the journal, and make subsequent span methods no-ops.
 No full registry/snapshot of all live spans is required to report a count.
+
+Snapshots are emitted even with zero losses, and each explicit Flush writes a
+replacement even if counters are unchanged. There are no automatic checkpoints.
+Rejected capacity, ID-generation, and processor admission failures count once per
+Start attempt; disabled/post-shutdown Starts do not count. Bounded attribute/event
+drop totals include initial, ended, and unfinished spans. Per-span End counts are
+preserved, not added to these aggregate totals. A canceled entry emits nothing;
+Shutdown canceled after final submission resumes cleanup without resubmission.
+Summary acceptance/delivery failures use existing sticky errors and authoritative
+Flush/Shutdown results; cleanup still runs. See the accepted loss-summary decision
+for the full field, failure, and replay contract and test-only decoding fixtures.
 
 Lifecycle state is running -> closing -> closed, not reversible. Concurrent calls
 coordinate one cleanup attempt; successful repeated Shutdown returns the same
@@ -1350,7 +1375,8 @@ Recommended v0.1 acceptance slice, now implemented:
    shared sink contract and exclusive-create JSONL file sink; multiple concurrent
    traces, early records, incomplete-span recovery semantics.
 4. Clear error reporting, Flush/Shutdown barriers, optional Sync-on-Flush, safe
-   resource cleanup, and explicit unended-span reporting via IncompleteError.
+   resource cleanup, explicit unended-span reporting via IncompleteError, and
+   cumulative capture loss snapshots at explicit Flush/Shutdown checkpoints.
 5. A processor-parameterized semantic conformance suite, concurrency/failure
    tests, race runs, and disabled allocation benchmarks. Journals are readable
    with generic JSON tooling; no dedicated viewer is required.
@@ -1370,10 +1396,10 @@ allocation benchmarks.
 1. **Journal schema freeze:** the clarified direction favors early crash-useful
    records and semantic OTLP alignment, not completed-span-only storage. The v1
    header, record types, decimal-string numerics, typed attribute values, and
-   status objects are implemented as the design fixture specifies; loss-summary
-   records and a freeze review against real captures remain before calling the
-   schema stable. Direct OTLP JSONL remains a researched alternative, not the
-   selected native format.
+   status objects and Flush/Shutdown loss-summary records are implemented as the
+   design fixture specifies; a freeze review against real captures remains before
+   calling the schema stable. Direct OTLP JSONL remains a researched alternative,
+   not the selected native format.
 2. **Ended-parent boundary:** accept new-root behavior, or require OTel-like late
    parenting? The latter needs an explicit trace lease/close concept before
    promising both safe draining closure and indefinitely reusable contexts.
@@ -1389,7 +1415,8 @@ allocation benchmarks.
 5. **Limits and diagnostics:** validate the proposed byte/count limits and
    truncation behavior. The default-policy gate is closed: optional
    WithErrorHandler plus authoritative Flush/Shutdown errors, no implicit stderr.
-   Loss-summary schema remains review-only; see the linked recommendation.
+   Loss-summary schema is implemented with cumulative replacement checkpoints;
+   see the linked accepted decision. Real-capture limits tuning remains open.
 6. **Unsigned/duration conversion:** confirm whether future OTLP conversion
    should use the specified type-loss mapping or require explicit user policy.
 7. **Durability defaults:** implemented as recommended: no per-record Sync and

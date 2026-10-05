@@ -34,7 +34,7 @@ func TestProviderFlushBarrier(t *testing.T) {
 }
 
 func TestProviderFlushReportsAdmissionLoss(t *testing.T) {
-	provider, _, _, _ := newLifecycleProvider(t, randomIDs())
+	provider, sink, _, _ := newLifecycleProvider(t, randomIDs())
 	tracer := provider.Tracer("myapp")
 
 	for range maxActiveSpans {
@@ -58,6 +58,9 @@ func TestProviderFlushReportsAdmissionLoss(t *testing.T) {
 	}
 	if incomplete.UnendedSpans != 0 {
 		t.Fatalf("UnendedSpans = %d, want 0 while spans are merely active", incomplete.UnendedSpans)
+	}
+	if summary := lossSummaries(sink)[0]; summary.RejectedStarts != 1 || summary.UnendedSpans != maxActiveSpans {
+		t.Fatalf("capacity-loss snapshot = %+v", summary)
 	}
 }
 
@@ -91,8 +94,8 @@ func TestProviderShutdownClean(t *testing.T) {
 	root.SetAttributes(String("k", "v"))
 	root.AddEvent("late")
 	root.End()
-	if got := len(sink.records); got != 6 { // capture, 2 starts, 2 ends, trace_end
-		t.Fatalf("journal has %d records after post-shutdown mutations, want 6", got)
+	if got := len(sink.records); got != 7 { // capture, 2 starts, 2 ends, trace_end, summary
+		t.Fatalf("journal has %d records after post-shutdown mutations, want 7", got)
 	}
 }
 

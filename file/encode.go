@@ -37,6 +37,34 @@ func encodeRecord(record trail.Record) ([]byte, error) {
 		b = appendIntString(b, r.Wall.UnixNano())
 		b = append(b, `,"elapsedNano":"0"}`...)
 
+	case trail.LossSummary:
+		if r.Seq == 0 {
+			return nil, errField("loss_summary", "seq")
+		}
+		if r.UnendedDroppedAttributes > r.DroppedAttributes || r.UnendedDroppedEvents > r.DroppedEvents ||
+			(r.UnendedSpans == 0 && (r.UnendedDroppedAttributes != 0 || r.UnendedDroppedEvents != 0)) {
+			return nil, errField("loss_summary", "unended drop subtotals")
+		}
+		b = append(b, `{"type":"loss_summary","seq":`...)
+		b = appendUintString(b, r.Seq)
+		b = append(b, `,"timeUnixNano":`...)
+		b = appendIntString(b, r.Wall.UnixNano())
+		b = append(b, `,"elapsedNano":`...)
+		b = appendDurationString(b, r.Elapsed)
+		b = append(b, `,"rejectedStarts":`...)
+		b = appendUintString(b, r.RejectedStarts)
+		b = append(b, `,"droppedAttributes":`...)
+		b = appendUintString(b, r.DroppedAttributes)
+		b = append(b, `,"droppedEvents":`...)
+		b = appendUintString(b, r.DroppedEvents)
+		b = append(b, `,"unendedSpans":`...)
+		b = appendUintString(b, r.UnendedSpans)
+		b = append(b, `,"unendedDroppedAttributes":`...)
+		b = appendUintString(b, r.UnendedDroppedAttributes)
+		b = append(b, `,"unendedDroppedEvents":`...)
+		b = appendUintString(b, r.UnendedDroppedEvents)
+		b = append(b, '}')
+
 	case trail.SpanStart:
 		if err := validateSpanIDs("span_start", r.TraceID, r.SpanID, r.RootSpanID); err != nil {
 			return nil, err

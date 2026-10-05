@@ -126,6 +126,8 @@ func (s *spanState) end() {
 		return // a concurrent End won the gate, or the provider stopped admitting
 	}
 	s.ended.Store(true)
+	ps.liveDroppedAttrs -= s.droppedAttrs
+	ps.liveDroppedEvts -= s.droppedEvts
 
 	if err := ps.processor.Process(SpanEnd{
 		Seq:               ps.nextSeq(),
@@ -175,12 +177,12 @@ func (s *spanState) setAttributes(attrs []Attribute) {
 	}
 	newKeys, resolved, dropped := resolveSpanAttributes(s.keys, attrs)
 	s.keys = newKeys
-	s.droppedAttrs += uint64(dropped)
+	s.addDrops(uint64(dropped), 0)
 	if len(resolved) == 0 {
 		return
 	}
 	if oversizedRecord("", resolved) {
-		s.droppedAttrs += uint64(len(resolved))
+		s.addDrops(uint64(len(resolved)), 0)
 		return
 	}
 	if err := ps.processor.Process(SpanUpdate{
@@ -217,9 +219,9 @@ func (s *spanState) addEvent(name string, attrs []Attribute, err error) {
 	}
 	name = truncateUTF8(name, maxNameBytes)
 	resolved, dropped := resolveEventAttributes(attrs)
-	s.droppedAttrs += uint64(dropped)
+	s.addDrops(uint64(dropped), 0)
 	if oversizedRecord(name, resolved) {
-		s.droppedEvts++
+		s.addDrops(0, 1)
 		return
 	}
 	if err := ps.processor.Process(Event{
@@ -266,6 +268,17 @@ func (s *spanState) setStatus(code StatusCode, description string) {
 	}); err != nil {
 		ps.latchError(err)
 	}
+}
+
+// addDrops updates lifetime totals and live subtotals without retaining spans.
+// The caller holds the provider admission gate.
+func (s *spanState) addDrops(attrs, events uint64) {
+	s.droppedAttrs += attrs
+	s.droppedEvts += events
+	s.provider.droppedAttrs += attrs
+	s.provider.droppedEvts += events
+	s.provider.liveDroppedAttrs += attrs
+	s.provider.liveDroppedEvts += events
 }
 
 // isRecording reports whether the span has not ended.

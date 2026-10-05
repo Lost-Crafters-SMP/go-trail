@@ -57,8 +57,8 @@ func TestPipelineWritesJournalOnDisk(t *testing.T) {
 		}
 		lines = append(lines, decoded)
 	}
-	if len(lines) != 9 {
-		t.Fatalf("journal has %d records, want 9 (header + capture + 3 starts + 3 ends + trace_end)", len(lines))
+	if len(lines) != 11 {
+		t.Fatalf("journal has %d records, want 11 (header + capture + 3 starts + 3 ends + trace_end + 2 summaries)", len(lines))
 	}
 	if format := lines[0]["format"]; format != "trail" {
 		t.Fatalf("header format = %v, want trail", format)
@@ -68,7 +68,7 @@ func TestPipelineWritesJournalOnDisk(t *testing.T) {
 	}
 	wantTypes := []string{
 		"capture_start", "span_start", "span_start", "span_start",
-		"span_end", "span_end", "span_end", "trace_end",
+		"span_end", "span_end", "span_end", "trace_end", "loss_summary", "loss_summary",
 	}
 	for i, want := range wantTypes {
 		if got := lines[i+1]["type"]; got != want {
@@ -121,7 +121,24 @@ func TestUnfinishedSpanSurvivesAsJournalStart(t *testing.T) {
 	}
 	tracer := provider.Tracer("example/hang")
 	_, hanging := tracer.Start(context.Background(), "stuck.operation")
-	_ = hanging // simulate a hang: the span never ends
+	hanging.SetAttributes(trail.Attribute{})
+	if err := provider.Flush(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	// Read the explicit checkpoint while output is still open: graceful
+	// shutdown and span_end are not needed to recover bounded-data loss.
+	checkpoint, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var snapshot map[string]string
+	checkpointLines := splitLines(string(checkpoint))
+	if err := json.Unmarshal([]byte(checkpointLines[len(checkpointLines)-1]), &snapshot); err != nil {
+		t.Fatal(err)
+	}
+	if snapshot["type"] != "loss_summary" || snapshot["droppedAttributes"] != "1" || snapshot["unendedDroppedAttributes"] != "1" || snapshot["unendedSpans"] != "1" {
+		t.Fatalf("live checkpoint = %+v", snapshot)
+	}
 	if err := provider.Shutdown(context.Background()); err == nil {
 		t.Fatal("Shutdown with a live span succeeded, want incomplete-capture error")
 	} else {
@@ -136,8 +153,8 @@ func TestUnfinishedSpanSurvivesAsJournalStart(t *testing.T) {
 		t.Fatalf("read journal: %v", err)
 	}
 	lines := splitLines(string(data))
-	if len(lines) != 3 {
-		t.Fatalf("hung journal has %d lines, want 3 (header, capture_start, span_start)", len(lines))
+	if len(lines) != 5 {
+		t.Fatalf("hung journal has %d lines, want 5 (header, capture_start, span_start, 2 summaries)", len(lines))
 	}
 	var spanStart map[string]any
 	if err := json.Unmarshal([]byte(lines[2]), &spanStart); err != nil {
