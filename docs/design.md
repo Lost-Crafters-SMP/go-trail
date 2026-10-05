@@ -631,7 +631,11 @@ Unknown codes are ignored with a diagnostic. Status is never inferred at End.
 Expose SpanContextFromContext and ID formatting so applications can attach
 `trace_id`/`span_id` through their own `slog.Handler` or log calls. `log/slog` is
 standard-library code, but the tracing core need not import or configure it.
-No logger ownership, automatic event-to-log conversion, or slog subpackage yet.
+The former "no slog subpackage yet" gate is closed by
+`go.lostcrafters.com/trail/instrumentation/trailslog`: an optional decorator
+that injects correlation identifiers into records and delegates formatting,
+filtering, and output to the wrapped handler. It writes no Trail records, and
+log records are not mirrored into span events.
 
 ## 8. Processor, sink, and concurrency contracts
 
@@ -1114,6 +1118,39 @@ metadata. No automatic environment variables, request headers, authorization,
 tokens, local filesystem paths, usernames, command arguments, URLs, stack traces,
 hostname, resource detectors, or build-path discovery.
 
+The enumeration above describes the Trail core: left uninstrumented, the core
+records nothing beyond caller-supplied data and captures nothing about the host
+environment on its own.
+
+### Instrumentation adapters
+
+Caller-installed packages under `go.lostcrafters.com/trail/instrumentation/`
+are a separate boundary. Constructing one is an explicit opt-in to operation
+instrumentation, and each package may record a documented minimal field set by
+default:
+
+- `trailhttp`: request method, URL scheme, server address and port, URL path,
+  the matched route template when one is available, the HTTP protocol version,
+  the response status code, the response byte count, and bounded connection and
+  phase timing events.
+- `trailosexec`: the command name as passed, the argument count, the process ID
+  after a successful start, and the exit code.
+- `trailslog`: reads trace/span identifiers only and writes no Trail records.
+
+Everything beyond these sets stays opt-in through explicit adapter options:
+URL query strings, network peer addresses, raw error or panic text, request
+headers, cookies, request and response bodies, argv contents, environment
+variables, the working directory, and absolute executable paths.
+
+Trail does not claim OpenTelemetry semantic-convention compliance. Where HTTP
+semantics are informed by those conventions, the intentional deviations are
+part of this design: server span names use the route template when available
+and the method alone otherwise (never the raw path), client span names use the
+method plus host, `url.path` is recorded by default while the query string is
+opt-in, `url.full` and `X-Forwarded-Host` precedence are not implemented,
+DNS/connect/TLS phases are events rather than child spans, and the client span
+ends when the transport returns rather than when the response body is consumed.
+
 Explicit error recording can leak paths, URLs, or secrets in err.Error(). Names,
 scope labels, status descriptions, and output filenames can also be sensitive;
 redacting attribute keys alone is not sufficient. Hosts should pass classified
@@ -1358,6 +1395,8 @@ into Trail for convenience.
 ```text
 go.lostcrafters.com/trail     common API, context, IDs, typed records, provider/processor
 go.lostcrafters.com/trail/file local journal serialization and file ownership
+go.lostcrafters.com/trail/instrumentation/{trailslog,trailosexec,trailhttp}
+                              optional stdlib instrumentation adapters
 internal/...                 only proven shared implementation details
 docs/design.md              this proposal
 ```
