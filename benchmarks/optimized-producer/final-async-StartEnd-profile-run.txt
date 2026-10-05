@@ -1,0 +1,7 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+BenchmarkAsyncEnabled/memory/StartEnd-16         	  100000	     18840 ns/op	        96.12 drain-ns/op	     528 B/op	       8 allocs/op
+PASS
+ok  	go.lostcrafters.com/trail	1.956s

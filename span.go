@@ -72,10 +72,8 @@ func (s Span) SetAttributes(attrs ...Attribute) {
 func (s Span) AddEvent(name string, opts ...EventOption) {
 	if s.state != nil {
 		var cfg startConfig
-		for _, opt := range opts {
-			if opt != nil {
-				opt(&cfg)
-			}
+		if len(opts) != 0 {
+			cfg = resolveStartOptions(opts)
 		}
 		s.state.addEvent(name, cfg.attributes, nil)
 	}
@@ -189,7 +187,7 @@ func (s *spanState) setAttributes(attrs []Attribute) {
 		s.addDrops(uint64(len(resolved)), 0)
 		return
 	}
-	if err := ps.processor.Process(SpanUpdate{
+	if err := ps.processFreshUpdate(SpanUpdate{
 		Seq:        ps.nextSeq(),
 		Wall:       reading.wall,
 		Elapsed:    reading.tick,
@@ -232,7 +230,7 @@ func (s *spanState) addEvent(name string, attrs []Attribute, err error) {
 		s.addDrops(0, 1)
 		return
 	}
-	if err := ps.processor.Process(Event{
+	if err := ps.processFreshEvent(Event{
 		Seq:        ps.nextSeq(),
 		Wall:       reading.wall,
 		Elapsed:    reading.tick,

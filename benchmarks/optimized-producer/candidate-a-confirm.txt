@@ -1,0 +1,16 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+BenchmarkEnabled/memory/AddEvent-16         	14998818	        84.98 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16         	13817720	        84.89 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16         	15247621	        91.01 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16         	13156567	        89.66 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16         	13755552	        89.66 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16         	13075356	        93.17 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16         	13074387	        92.15 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16         	12835926	        93.29 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16         	12873339	       101.8 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16         	13164693	        91.80 ns/op	     112 B/op	       1 allocs/op
+PASS
+ok  	go.lostcrafters.com/trail	13.320s

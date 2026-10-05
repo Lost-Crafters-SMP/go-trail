@@ -1,0 +1,26 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+BenchmarkAsyncEnabled/memory/SetAttributes-16         	 2813788	       427.7 ns/op	        10.39 drain-ns/op	     432 B/op	       6 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16         	 2808801	       622.6 ns/op	        18.09 drain-ns/op	     432 B/op	       6 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16         	 1874664	       640.5 ns/op	        20.29 drain-ns/op	     432 B/op	       6 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16         	 1874690	       658.3 ns/op	        17.03 drain-ns/op	     432 B/op	       6 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16         	 1867966	       628.6 ns/op	        22.56 drain-ns/op	     432 B/op	       6 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16         	 1854234	       629.8 ns/op	        18.36 drain-ns/op	     432 B/op	       6 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16         	 1826787	       640.8 ns/op	        16.88 drain-ns/op	     432 B/op	       6 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16         	 1868146	       643.2 ns/op	        21.09 drain-ns/op	     432 B/op	       6 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16         	 1872732	       646.7 ns/op	        19.07 drain-ns/op	     432 B/op	       6 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16         	 1908037	       637.2 ns/op	        15.60 drain-ns/op	     432 B/op	       6 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16              	 4694350	       276.2 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16              	 4918395	       259.9 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16              	 4668673	       268.5 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16              	 4122078	       277.6 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16              	 4476645	       285.9 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16              	 4110872	       281.5 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16              	 4384141	       272.8 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16              	 4536543	       270.2 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16              	 4626904	       294.8 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16              	 4896987	       278.2 ns/op	     304 B/op	       2 allocs/op
+PASS
+ok  	go.lostcrafters.com/trail	39.570s

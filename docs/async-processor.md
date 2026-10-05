@@ -27,6 +27,14 @@ at most 64 KiB; normal input bounds still apply. Copies own attribute slices,
 string-array slices/elements, status objects/descriptions, names/scopes, and keys/
 values. No caller-owned mutable payload survives successful Process return.
 
+Public Process defensively copies borrowed payloads. A private typed producer
+handoff may transfer freshly resolved, unexposed attribute/string-array slices;
+spare-capacity batches compact so length-based charging still covers retained
+backing storage. Strings still receive bounded independent backing copies.
+Admission precedes ownership work, and the concrete record is boxed once for
+FIFO retention. This changes neither public record/sink APIs nor queue entries,
+reservation policy, overflow accounting, or ordering.
+
 ## Reservations and overflow
 
 Accepting span_start atomically reserves its own charge, one 256-byte span_end

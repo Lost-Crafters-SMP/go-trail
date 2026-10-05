@@ -15,6 +15,18 @@ type startConfig struct {
 	attributes []Attribute
 }
 
+// resolveStartOptions isolates the configuration passed to opaque option
+// functions. Callers with no options need not allocate that configuration.
+func resolveStartOptions(opts []StartOption) startConfig {
+	var cfg startConfig
+	for _, opt := range opts {
+		if opt != nil {
+			opt(&cfg)
+		}
+	}
+	return cfg
+}
+
 // WithNewRoot starts a new trace instead of joining the span carried by the
 // context, even when that span is an active parent from the same provider.
 // It is ignored in event positions.

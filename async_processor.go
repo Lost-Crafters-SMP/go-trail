@@ -136,6 +136,17 @@ func (p *AsyncProcessor) Process(record Record) error {
 	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
+	if err := p.admitLocked(record, size); err != nil {
+		return err
+	}
+	p.enqueueLocked(asyncEntry{record: cloneAsyncRecord(record), bytes: size})
+	return nil
+}
+
+// admitLocked is shared by public borrowed records and the private typed
+// producer handoff. It checks and commits exactly the same lifecycle credits;
+// callers keep the lock through ownership preparation and FIFO insertion.
+func (p *AsyncProcessor) admitLocked(record Record, size int) error {
 	if p.closed {
 		return ErrProcessorShutdown
 	}
@@ -179,7 +190,6 @@ func (p *AsyncProcessor) Process(record Record) error {
 	if credits > p.recordLimit-p.usedRecords || bytes > p.byteLimit-p.usedBytes {
 		return ErrQueueFull
 	}
-	owned := cloneAsyncRecord(record)
 	switch r := record.(type) {
 	case SpanStart:
 		p.ends[endKey] = struct{}{}
@@ -193,7 +203,6 @@ func (p *AsyncProcessor) Process(record Record) error {
 	}
 	p.usedRecords += credits
 	p.usedBytes += bytes
-	p.enqueueLocked(asyncEntry{record: owned, bytes: size})
 	return nil
 }
 
@@ -463,16 +472,25 @@ func asyncRecordSize(record Record) (int, error) {
 	return size, nil
 }
 
-func cloneAsyncAttributes(attrs []Attribute) []Attribute {
+func cloneAsyncAttributes(attrs []Attribute, resolved bool) []Attribute {
 	if len(attrs) == 0 {
 		return nil
 	}
-	owned := make([]Attribute, len(attrs))
+	owned := attrs
+	// Charging uses length. A partially filled resolution batch may have spare
+	// capacity after deduplication/drops, so compact it rather than retain more
+	// backing storage than the ordinary byte budget accounts for.
+	if !resolved || cap(attrs) != len(attrs) {
+		owned = make([]Attribute, len(attrs))
+	}
 	for i, a := range attrs {
 		a.key = strings.Clone(a.key)
 		a.str = strings.Clone(a.str)
 		if a.strs != nil {
-			values := make([]string, len(a.strs))
+			values := a.strs
+			if !resolved || cap(values) != len(values) {
+				values = make([]string, len(a.strs))
+			}
 			for j, v := range a.strs {
 				values[j] = strings.Clone(v)
 			}
@@ -489,7 +507,7 @@ func cloneAsyncRecord(record Record) Record {
 		r.Name, r.Scope = strings.Clone(r.Name), strings.Clone(r.Scope)
 		return r
 	case SpanUpdate:
-		r.Attributes = cloneAsyncAttributes(r.Attributes)
+		r.Attributes = cloneAsyncAttributes(r.Attributes, false)
 		if r.Status != nil {
 			status := *r.Status
 			status.Description = strings.Clone(status.Description)
@@ -498,7 +516,7 @@ func cloneAsyncRecord(record Record) Record {
 		return r
 	case Event:
 		r.Name = strings.Clone(r.Name)
-		r.Attributes = cloneAsyncAttributes(r.Attributes)
+		r.Attributes = cloneAsyncAttributes(r.Attributes, false)
 		return r
 	default:
 		return record

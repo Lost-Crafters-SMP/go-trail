@@ -1,0 +1,287 @@
+./async_processor.go:149:6: cannot inline (*AsyncProcessor).admitLocked: function too complex: cost 270 exceeds budget 80
+./async_processor.go:475:6: cannot inline cloneAsyncAttributes: function too complex: cost 188 exceeds budget 80
+./async_processor.go:504:6: cannot inline cloneAsyncRecord: function too complex: cost 313 exceeds budget 80
+./async_processor.go:132:6: cannot inline (*AsyncProcessor).Process: unhandled op DEFER
+./async_processor.go:138:2: can inline (*AsyncProcessor).Process.deferwrap1 with cost 76 as: func() { (*sync.Mutex).Unlock(.autotmp_7) }
+./owned_record.go:9:6: cannot inline processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; ParentSpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Scope string; Name string }]: unhandled op DEFER
+./owned_record.go:15:2: can inline processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; ParentSpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Scope string; Name string }].deferwrap1 with cost 76 as: func() { (*sync.Mutex).Unlock(.autotmp_9) }
+./owned_record.go:23:6: can inline ownFreshStart with cost 73 as: func(SpanStart) SpanStart { r.Name, r.Scope = strings.Clone(r.Name), strings.Clone(r.Scope); return r }
+./async_provider.go:10:6: cannot inline (*providerState).processFreshStart: function too complex: cost 141 exceeds budget 80
+./owned_record.go:9:6: cannot inline processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Attributes []go.lostcrafters.com/trail.Attribute; Status *go.lostcrafters.com/trail.SpanStatus }]: unhandled op DEFER
+./owned_record.go:15:2: can inline processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Attributes []go.lostcrafters.com/trail.Attribute; Status *go.lostcrafters.com/trail.SpanStatus }].deferwrap1 with cost 76 as: func() { (*sync.Mutex).Unlock(.autotmp_9) }
+./owned_record.go:28:6: cannot inline ownFreshUpdate: function too complex: cost 120 exceeds budget 80
+./async_provider.go:17:6: cannot inline (*providerState).processFreshUpdate: function too complex: cost 141 exceeds budget 80
+./owned_record.go:9:6: cannot inline processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }]: unhandled op DEFER
+./owned_record.go:15:2: can inline processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }].deferwrap1 with cost 76 as: func() { (*sync.Mutex).Unlock(.autotmp_9) }
+./owned_record.go:38:6: cannot inline ownFreshEvent: function too complex: cost 103 exceeds budget 80
+./async_provider.go:24:6: cannot inline (*providerState).processFreshEvent: function too complex: cost 141 exceeds budget 80
+./attributes.go:251:25: can inline resolveSpanAttributes.func1 with cost 74 as: func(Attribute, Attribute) int { return strings.Compare(a.key, b.key) }
+./attributes.go:225:6: cannot inline resolveSpanAttributes: function too complex: cost 357 exceeds budget 80
+./attributes.go:283:25: can inline resolveEventAttributes.func1 with cost 74 as: func(Attribute, Attribute) int { return strings.Compare(a.key, b.key) }
+./attributes.go:261:6: cannot inline resolveEventAttributes: function too complex: cost 332 exceeds budget 80
+./context.go:14:6: can inline ContextWithSpan with cost 65 as: func(context.Context, Span) context.Context { return context.WithValue(ctx, spanKey, span) }
+./options.go:20:6: can inline resolveStartOptions with cost 77 as: func([]StartOption) startConfig { cfg = <nil>; for loop; return cfg }
+./provider.go:309:6: cannot inline (*providerState).start: unhandled op DEFER
+./provider.go:324:2: can inline (*providerState).start.deferwrap1 with cost 59 as: func() { (*providerState).unlockAndReport(.autotmp_9) }
+./span.go:114:6: cannot inline (*spanState).end: unhandled op DEFER
+./span.go:123:2: can inline (*spanState).end.deferwrap1 with cost 59 as: func() { (*providerState).unlockAndReport(.autotmp_4) }
+./span.go:40:6: can inline Span.End with cost 65 as: method(Span) func() { if s.state != nil { (*spanState).end(s.state) } }
+./span.go:171:6: cannot inline (*spanState).setAttributes: unhandled op DEFER
+./span.go:176:2: can inline (*spanState).setAttributes.deferwrap1 with cost 59 as: func() { (*providerState).unlockAndReport(.autotmp_4) }
+./span.go:64:6: can inline Span.SetAttributes with cost 66 as: method(Span) func(...Attribute) { if s.state != nil { (*spanState).setAttributes(s.state, attrs) } }
+./span.go:209:6: cannot inline (*spanState).addEvent: unhandled op DEFER
+./span.go:222:2: can inline (*spanState).addEvent.deferwrap1 with cost 59 as: func() { (*providerState).unlockAndReport(.autotmp_6) }
+./span.go:72:6: cannot inline Span.AddEvent: function too complex: cost 160 exceeds budget 80
+./owned_record.go:9:6: can inline processFresh[go.lostcrafters.com/trail.Event] with cost 65 as: func(*AsyncProcessor, Event, func(Event) Event) error { return processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }](&.dict.processFresh[go.lostcrafters.com/trail.Event], p, record, own) }
+./owned_record.go:9:6: can inline processFresh[go.lostcrafters.com/trail.SpanUpdate] with cost 65 as: func(*AsyncProcessor, SpanUpdate, func(SpanUpdate) SpanUpdate) error { return processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Attributes []go.lostcrafters.com/trail.Attribute; Status *go.lostcrafters.com/trail.SpanStatus }](&.dict.processFresh[go.lostcrafters.com/trail.SpanUpdate], p, record, own) }
+./owned_record.go:9:6: can inline processFresh[go.lostcrafters.com/trail.SpanStart] with cost 65 as: func(*AsyncProcessor, SpanStart, func(SpanStart) SpanStart) error { return processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; ParentSpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Scope string; Name string }](&.dict.processFresh[go.lostcrafters.com/trail.SpanStart], p, record, own) }
+./async_processor.go:149:7: parameter p leaks to ~r0 for (*AsyncProcessor).admitLocked with derefs=1:
+./async_processor.go:165:21: &errors.errorString{...} escapes to heap in (*AsyncProcessor).admitLocked:
+./async_processor.go:171:22: &errors.errorString{...} escapes to heap in (*AsyncProcessor).admitLocked:
+./async_processor.go:176:21: &errors.errorString{...} escapes to heap in (*AsyncProcessor).admitLocked:
+./async_processor.go:181:21: &errors.errorString{...} escapes to heap in (*AsyncProcessor).admitLocked:
+./async_processor.go:186:21: &errors.errorString{...} escapes to heap in (*AsyncProcessor).admitLocked:
+./async_processor.go:149:7: leaking param: p to result ~r0 level=1
+./async_processor.go:149:38: record does not escape
+./async_processor.go:165:21: &errors.errorString{...} escapes to heap
+./async_processor.go:171:22: &errors.errorString{...} escapes to heap
+./async_processor.go:176:21: &errors.errorString{...} escapes to heap
+./async_processor.go:181:21: &errors.errorString{...} escapes to heap
+./async_processor.go:186:21: &errors.errorString{...} escapes to heap
+./async_processor.go:475:27: parameter attrs leaks to {heap} for cloneAsyncAttributes with derefs=1:
+./async_processor.go:492:18: make([]string, len(a.strs)) escapes to heap in cloneAsyncAttributes:
+./async_processor.go:495:30: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncAttributes:
+./async_processor.go:487:24: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncAttributes:
+./async_processor.go:488:24: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncAttributes:
+./async_processor.go:475:27: parameter attrs leaks to ~r0 for cloneAsyncAttributes with derefs=0:
+./async_processor.go:484:15: make([]Attribute, len(attrs)) escapes to heap in cloneAsyncAttributes:
+./async_processor.go:475:27: leaking param content: attrs
+./async_processor.go:475:27: leaking param: attrs to result ~r0 level=0
+./async_processor.go:484:15: make([]Attribute, len(attrs)) escapes to heap
+./async_processor.go:487:24: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:488:24: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:492:18: make([]string, len(a.strs)) escapes to heap
+./async_processor.go:495:30: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:504:23: parameter record leaks to {heap} for cloneAsyncRecord with derefs=2:
+./async_processor.go:513:38: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncRecord:
+./async_processor.go:508:10: r escapes to heap in cloneAsyncRecord:
+./async_processor.go:516:10: r escapes to heap in cloneAsyncRecord:
+./async_processor.go:520:10: r escapes to heap in cloneAsyncRecord:
+./async_processor.go:504:23: parameter record leaks to ~r0 for cloneAsyncRecord with derefs=0:
+./async_processor.go:504:23: parameter record leaks to {storage for r} for cloneAsyncRecord with derefs=1:
+./async_processor.go:518:25: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncRecord:
+./async_processor.go:512:4: status escapes to heap in cloneAsyncRecord:
+./async_processor.go:504:23: parameter record leaks to {storage for r} for cloneAsyncRecord with derefs=1:
+./async_processor.go:504:23: parameter record leaks to status for cloneAsyncRecord with derefs=2:
+./async_processor.go:504:23: parameter record leaks to {storage for r} for cloneAsyncRecord with derefs=1:
+./async_processor.go:507:34: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncRecord:
+./async_processor.go:507:57: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncRecord:
+./async_processor.go:504:23: leaking param content: record
+./async_processor.go:504:23: leaking param: record to result ~r0 level=0
+./async_processor.go:507:34: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:507:57: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:508:10: r escapes to heap
+./async_processor.go:513:38: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:516:10: r escapes to heap
+./async_processor.go:518:25: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:520:10: r escapes to heap
+./async_processor.go:132:34: parameter record leaks to {heap} for (*AsyncProcessor).Process with derefs=1:
+./async_processor.go:132:7: parameter p leaks to {heap} for (*AsyncProcessor).Process with derefs=0:
+./async_processor.go:132:34: parameter record leaks to {heap} for (*AsyncProcessor).Process with derefs=0:
+./async_processor.go:132:7: parameter p leaks to ~r0 for (*AsyncProcessor).Process with derefs=1:
+./async_processor.go:132:7: leaking param: p
+./async_processor.go:132:34: leaking param: record
+./owned_record.go:9:48: parameter record leaks to {heap} for processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; ParentSpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Scope string; Name string }] with derefs=0:
+./owned_record.go:19:40: own(record) escapes to heap in processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; ParentSpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Scope string; Name string }]:
+./owned_record.go:9:29: parameter p leaks to {heap} for processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; ParentSpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Scope string; Name string }] with derefs=0:
+./owned_record.go:9:29: parameter p leaks to ~r0 for processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; ParentSpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Scope string; Name string }] with derefs=1:
+./owned_record.go:10:31: record does not escape
+./owned_record.go:16:26: record does not escape
+./owned_record.go:19:40: own(record) escapes to heap
+./owned_record.go:23:20: parameter r leaks to ~r0 for ownFreshStart with derefs=0:
+./owned_record.go:24:33: make([]byte, len(stringslite.s)) escapes to heap in ownFreshStart:
+./owned_record.go:24:56: make([]byte, len(stringslite.s)) escapes to heap in ownFreshStart:
+./owned_record.go:23:20: leaking param: r to result ~r0 level=0
+./owned_record.go:24:33: make([]byte, len(stringslite.s)) escapes to heap
+./owned_record.go:24:56: make([]byte, len(stringslite.s)) escapes to heap
+./async_provider.go:14:30: record escapes to heap in (*providerState).processFreshStart:
+./async_provider.go:10:44: parameter record leaks to {heap} for (*providerState).processFreshStart with derefs=0:
+./async_provider.go:10:7: parameter ps leaks to {heap} for (*providerState).processFreshStart with derefs=1:
+./async_provider.go:10:44: parameter record leaks to {storage for record} for (*providerState).processFreshStart with derefs=0:
+./async_provider.go:10:7: leaking param content: ps
+./async_provider.go:10:44: leaking param: record
+./async_provider.go:14:30: record escapes to heap
+./owned_record.go:9:48: parameter record leaks to {heap} for processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Attributes []go.lostcrafters.com/trail.Attribute; Status *go.lostcrafters.com/trail.SpanStatus }] with derefs=0:
+./owned_record.go:19:40: own(record) escapes to heap in processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Attributes []go.lostcrafters.com/trail.Attribute; Status *go.lostcrafters.com/trail.SpanStatus }]:
+./owned_record.go:9:29: parameter p leaks to {heap} for processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Attributes []go.lostcrafters.com/trail.Attribute; Status *go.lostcrafters.com/trail.SpanStatus }] with derefs=0:
+./owned_record.go:9:29: parameter p leaks to ~r0 for processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Attributes []go.lostcrafters.com/trail.Attribute; Status *go.lostcrafters.com/trail.SpanStatus }] with derefs=1:
+./owned_record.go:10:31: record does not escape
+./owned_record.go:16:26: record does not escape
+./owned_record.go:19:40: own(record) escapes to heap
+./owned_record.go:28:21: parameter r leaks to {heap} for ownFreshUpdate with derefs=1:
+./owned_record.go:32:37: make([]byte, len(stringslite.s)) escapes to heap in ownFreshUpdate:
+./owned_record.go:28:21: parameter r leaks to ~r0 for ownFreshUpdate with derefs=0:
+./owned_record.go:31:3: status escapes to heap in ownFreshUpdate:
+./owned_record.go:28:21: parameter r leaks to status for ownFreshUpdate with derefs=1:
+./owned_record.go:28:21: leaking param content: r
+./owned_record.go:28:21: leaking param: r to result ~r0 level=0
+./owned_record.go:32:37: make([]byte, len(stringslite.s)) escapes to heap
+./async_provider.go:21:30: record escapes to heap in (*providerState).processFreshUpdate:
+./async_provider.go:17:45: parameter record leaks to {heap} for (*providerState).processFreshUpdate with derefs=0:
+./async_provider.go:17:7: parameter ps leaks to {heap} for (*providerState).processFreshUpdate with derefs=1:
+./async_provider.go:17:45: parameter record leaks to {storage for record} for (*providerState).processFreshUpdate with derefs=0:
+./async_provider.go:17:7: leaking param content: ps
+./async_provider.go:17:45: leaking param: record
+./async_provider.go:21:30: record escapes to heap
+./owned_record.go:9:48: parameter record leaks to {heap} for processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }] with derefs=0:
+./owned_record.go:19:40: own(record) escapes to heap in processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }]:
+./owned_record.go:9:29: parameter p leaks to {heap} for processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }] with derefs=0:
+./owned_record.go:9:29: parameter p leaks to ~r0 for processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }] with derefs=1:
+./owned_record.go:10:31: record does not escape
+./owned_record.go:16:26: record does not escape
+./owned_record.go:19:40: own(record) escapes to heap
+./owned_record.go:38:20: parameter r leaks to {heap} for ownFreshEvent with derefs=1:
+./owned_record.go:38:20: parameter r leaks to ~r0 for ownFreshEvent with derefs=0:
+./owned_record.go:39:24: make([]byte, len(stringslite.s)) escapes to heap in ownFreshEvent:
+./owned_record.go:38:20: leaking param content: r
+./owned_record.go:38:20: leaking param: r to result ~r0 level=0
+./owned_record.go:39:24: make([]byte, len(stringslite.s)) escapes to heap
+./async_provider.go:28:30: record escapes to heap in (*providerState).processFreshEvent:
+./async_provider.go:24:44: parameter record leaks to {heap} for (*providerState).processFreshEvent with derefs=0:
+./async_provider.go:24:7: parameter ps leaks to {heap} for (*providerState).processFreshEvent with derefs=1:
+./async_provider.go:24:44: parameter record leaks to {storage for record} for (*providerState).processFreshEvent with derefs=0:
+./async_provider.go:24:7: leaking param content: ps
+./async_provider.go:24:44: leaking param: record
+./async_provider.go:28:30: record escapes to heap
+./attributes.go:251:30: parameter a leaks to {heap} for resolveSpanAttributes.func1 with derefs=0:
+./attributes.go:251:33: parameter b leaks to {heap} for resolveSpanAttributes.func1 with derefs=0:
+./attributes.go:251:30: leaking param: a
+./attributes.go:251:33: leaking param: b
+./attributes.go:225:54: parameter attrs leaks to {heap} for resolveSpanAttributes with derefs=1:
+./attributes.go:230:26: make([]byte, len(stringslite.s)) escapes to heap in resolveSpanAttributes:
+./attributes.go:226:15: make([]Attribute, 0, min(len(attrs), 64)) escapes to heap in resolveSpanAttributes:
+./attributes.go:249:17: append(batch, attr) escapes to heap in resolveSpanAttributes:
+./attributes.go:225:28: parameter keys leaks to ~r0 for resolveSpanAttributes with derefs=0:
+./attributes.go:245:15: make(map[string]struct {}) escapes to heap in resolveSpanAttributes:
+./attributes.go:225:28: leaking param: keys to result ~r0 level=0
+./attributes.go:225:54: leaking param content: attrs
+./attributes.go:226:15: make([]Attribute, 0, min(len(attrs), 64)) escapes to heap
+./attributes.go:227:15: make(map[string]int, len(attrs)) does not escape
+./attributes.go:230:26: make([]byte, len(stringslite.s)) escapes to heap
+./attributes.go:245:15: make(map[string]struct {}) escapes to heap
+./attributes.go:249:17: append escapes to heap
+./attributes.go:251:25: func literal does not escape
+./attributes.go:283:30: parameter a leaks to {heap} for resolveEventAttributes.func1 with derefs=0:
+./attributes.go:283:33: parameter b leaks to {heap} for resolveEventAttributes.func1 with derefs=0:
+./attributes.go:283:30: leaking param: a
+./attributes.go:283:33: leaking param: b
+./attributes.go:261:29: parameter attrs leaks to {heap} for resolveEventAttributes with derefs=1:
+./attributes.go:266:26: make([]byte, len(stringslite.s)) escapes to heap in resolveEventAttributes:
+./attributes.go:262:15: make([]Attribute, 0, min(len(attrs), 32)) escapes to heap in resolveEventAttributes:
+./attributes.go:281:17: append(batch, attr) escapes to heap in resolveEventAttributes:
+./attributes.go:261:29: leaking param content: attrs
+./attributes.go:262:15: make([]Attribute, 0, min(len(attrs), 32)) escapes to heap
+./attributes.go:263:15: make(map[string]int, len(attrs)) does not escape
+./attributes.go:266:26: make([]byte, len(stringslite.s)) escapes to heap
+./attributes.go:281:17: append escapes to heap
+./attributes.go:283:25: func literal does not escape
+./context.go:15:32: spanKey escapes to heap in ContextWithSpan:
+./context.go:14:22: parameter ctx leaks to {heap} for ContextWithSpan with derefs=0:
+./context.go:14:43: parameter span leaks to {heap} for ContextWithSpan with derefs=0:
+./context.go:14:22: leaking param: ctx
+./context.go:14:43: leaking param: span
+./context.go:15:32: spanKey escapes to heap
+./options.go:21:6: cfg escapes to heap in resolveStartOptions:
+./options.go:20:26: opts does not escape
+./provider.go:312:28: cfg escapes to heap in (*providerState).start:
+./provider.go:340:16: append(ps.pendingErrors, err) escapes to heap in (*providerState).start:
+./provider.go:348:34: spanKey escapes to heap in (*providerState).start:
+./provider.go:373:18: append(ps.pendingErrors, err) escapes to heap in (*providerState).start:
+./provider.go:397:17: append(ps.pendingErrors, err) escapes to heap in (*providerState).start:
+./provider.go:439:19: append(ps.pendingErrors, err) escapes to heap in (*providerState).start:
+./provider.go:444:24: spanKey escapes to heap in (*providerState).start:
+./provider.go:309:7: parameter ps leaks to {heap} for (*providerState).start with derefs=1:
+./provider.go:309:7: parameter ps leaks to {heap} for (*providerState).start with derefs=0:
+./provider.go:309:32: parameter ctx leaks to {heap} for (*providerState).start with derefs=0:
+./provider.go:309:53: parameter tracer leaks to {heap} for (*providerState).start with derefs=0:
+./provider.go:309:68: parameter name leaks to {heap} for (*providerState).start with derefs=0:
+./provider.go:402:8: &traceState{...} escapes to heap in (*providerState).start:
+./provider.go:408:8: &spanState{...} escapes to heap in (*providerState).start:
+./provider.go:340:27: &errors.errorString{...} escapes to heap in (*providerState).start:
+./provider.go:373:29: &errors.errorString{...} escapes to heap in (*providerState).start:
+./provider.go:317:21: make([]byte, len(stringslite.s)) escapes to heap in (*providerState).start:
+./provider.go:309:7: parameter ps leaks to {storage for &spanState{...}} for (*providerState).start with derefs=0:
+./provider.go:309:32: parameter ctx leaks to ~r0 for (*providerState).start with derefs=0:
+./provider.go:309:7: leaking param: ps
+./provider.go:309:32: leaking param: ctx
+./provider.go:309:53: leaking param: tracer
+./provider.go:309:68: leaking param: name
+./provider.go:309:81: opts does not escape
+./provider.go:317:21: make([]byte, len(stringslite.s)) escapes to heap
+./provider.go:340:27: ... argument does not escape
+./provider.go:340:27: &errors.errorString{...} escapes to heap
+./provider.go:340:16: append escapes to heap
+./provider.go:348:34: spanKey escapes to heap
+./provider.go:373:29: ... argument does not escape
+./provider.go:373:29: &errors.errorString{...} escapes to heap
+./provider.go:373:18: append escapes to heap
+./provider.go:397:17: append escapes to heap
+./provider.go:402:8: &traceState{...} escapes to heap
+./provider.go:408:8: &spanState{...} escapes to heap
+./provider.go:439:19: append escapes to heap
+./provider.go:444:24: spanKey escapes to heap
+./span.go:133:40: SpanEnd{...} escapes to heap in (*spanState).end:
+./span.go:145:16: append(ps.pendingErrors, err) escapes to heap in (*spanState).end:
+./span.go:155:42: TraceEnd{...} escapes to heap in (*spanState).end:
+./span.go:162:17: append(ps.pendingErrors, err) escapes to heap in (*spanState).end:
+./span.go:114:7: parameter s leaks to {heap} for (*spanState).end with derefs=2:
+./span.go:114:7: parameter s leaks to {heap} for (*spanState).end with derefs=1:
+./span.go:114:7: leaking param content: s
+./span.go:133:40: SpanEnd{...} escapes to heap
+./span.go:145:16: append escapes to heap
+./span.go:155:42: TraceEnd{...} escapes to heap
+./span.go:162:17: append escapes to heap
+./span.go:40:7: parameter s leaks to {heap} for Span.End with derefs=1:
+./span.go:40:7: leaking param content: s
+./span.go:202:17: append(ps.pendingErrors, err) escapes to heap in (*spanState).setAttributes:
+./span.go:171:35: parameter attrs leaks to {heap} for (*spanState).setAttributes with derefs=1:
+./span.go:171:7: parameter s leaks to {heap} for (*spanState).setAttributes with derefs=2:
+./span.go:171:7: parameter s leaks to {heap} for (*spanState).setAttributes with derefs=1:
+./span.go:171:7: leaking param content: s
+./span.go:171:35: leaking param content: attrs
+./span.go:202:17: append escapes to heap
+./span.go:64:29: parameter attrs leaks to {heap} for Span.SetAttributes with derefs=1:
+./span.go:64:7: parameter s leaks to {heap} for Span.SetAttributes with derefs=1:
+./span.go:64:7: leaking param content: s
+./span.go:64:29: leaking param content: attrs
+./span.go:246:17: append(ps.pendingErrors, err) escapes to heap in (*spanState).addEvent:
+./span.go:209:62: parameter err leaks to {heap} for (*spanState).addEvent with derefs=0:
+./span.go:209:43: parameter attrs leaks to {heap} for (*spanState).addEvent with derefs=1:
+./span.go:209:30: parameter name leaks to {heap} for (*spanState).addEvent with derefs=0:
+./span.go:209:7: parameter s leaks to {heap} for (*spanState).addEvent with derefs=2:
+./span.go:209:7: parameter s leaks to {heap} for (*spanState).addEvent with derefs=1:
+./span.go:226:21: make([]byte, len(stringslite.s)) escapes to heap in (*spanState).addEvent:
+./span.go:209:7: leaking param content: s
+./span.go:209:30: leaking param: name
+./span.go:209:43: leaking param content: attrs
+./span.go:209:62: leaking param: err
+./span.go:214:17: append does not escape
+./span.go:226:21: make([]byte, len(stringslite.s)) escapes to heap
+./span.go:246:17: append escapes to heap
+./span.go:76:29: cfg escapes to heap in Span.AddEvent:
+./span.go:72:24: parameter name leaks to {heap} for Span.AddEvent with derefs=0:
+./span.go:72:7: parameter s leaks to {heap} for Span.AddEvent with derefs=1:
+./span.go:72:7: leaking param content: s
+./span.go:72:24: leaking param: name
+./span.go:72:37: opts does not escape
+./owned_record.go:9:29: parameter p leaks to {heap} for processFresh[go.lostcrafters.com/trail.Event] with derefs=0:
+./owned_record.go:9:48: parameter record leaks to {heap} for processFresh[go.lostcrafters.com/trail.Event] with derefs=0:
+./owned_record.go:9:29: parameter p leaks to {heap} for processFresh[go.lostcrafters.com/trail.SpanUpdate] with derefs=0:
+./owned_record.go:9:48: parameter record leaks to {heap} for processFresh[go.lostcrafters.com/trail.SpanUpdate] with derefs=0:
+./owned_record.go:9:29: parameter p leaks to {heap} for processFresh[go.lostcrafters.com/trail.SpanStart] with derefs=0:
+./owned_record.go:9:48: parameter record leaks to {heap} for processFresh[go.lostcrafters.com/trail.SpanStart] with derefs=0:
+./span.go:72:24: parameter name leaks to {heap} for (*Span).AddEvent with derefs=0:
+./span.go:72:7: parameter s leaks to {heap} for (*Span).AddEvent with derefs=2:
+./span.go:40:7: parameter s leaks to {heap} for (*Span).End with derefs=2:
+./span.go:64:29: parameter attrs leaks to {heap} for (*Span).SetAttributes with derefs=1:
+./span.go:64:7: parameter s leaks to {heap} for (*Span).SetAttributes with derefs=2:

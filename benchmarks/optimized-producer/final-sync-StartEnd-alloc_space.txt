@@ -1,0 +1,22 @@
+File: final-sync-StartEnd.test.exe
+Build ID: <temp>/go-build3678236396/b001/trail.test.exe2026-10-05 22:33:42.8463754 +0100 BST
+Type: alloc_space
+Time: 2026-10-05 22:33:44 BST
+Showing nodes accounting for 48.83MB, 99.40% of 49.12MB total
+Dropped 341 nodes (cum <= 0.25MB)
+      flat  flat%   sum%        cum   cum%
+   12.21MB 24.85% 24.85%    12.21MB 24.85%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:408
+   10.68MB 21.74% 46.60%    10.68MB 21.74%  go.lostcrafters.com/trail.(*providerState).processFreshStart <repo>/async_provider.go:14
+   10.68MB 21.74% 68.34%    10.68MB 21.74%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:133
+    6.10MB 12.43% 80.76%     6.10MB 12.43%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:155
+    4.58MB  9.32% 90.08%     4.58MB  9.32%  context.WithValue <cache>/toolchains/go/1.27.1/src/context/context.go:738
+    4.58MB  9.32% 99.40%     4.58MB  9.32%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:402
+         0     0% 99.40%    10.68MB 21.74%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:394
+         0     0% 99.40%     4.58MB  9.32%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:444
+         0     0% 99.40%     4.58MB  9.32%  go.lostcrafters.com/trail.ContextWithSpan <repo>/context.go:15 (inline)
+         0     0% 99.40%    16.78MB 34.17%  go.lostcrafters.com/trail.Span.End <repo>/span.go:42 (inline)
+         0     0% 99.40%    32.04MB 65.23%  go.lostcrafters.com/trail.Tracer.Start <repo>/tracer.go:37
+         0     0% 99.40%    32.04MB 65.23%  go.lostcrafters.com/trail_test.BenchmarkEnabled.func1.1 <repo>/enabled_bench_test.go:52
+         0     0% 99.40%    16.78MB 34.17%  go.lostcrafters.com/trail_test.BenchmarkEnabled.func1.1 <repo>/enabled_bench_test.go:53
+         0     0% 99.40%    48.83MB 99.40%  testing.(*B).launch <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:347
+         0     0% 99.40%       49MB 99.76%  testing.(*B).runN <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:219

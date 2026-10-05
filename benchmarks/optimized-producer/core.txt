@@ -1,0 +1,66 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+BenchmarkAsyncEnabled/memory/StartEnd-16         	 1225227	       980.7 ns/op	        13.20 drain-ns/op	     528 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/memory/StartEnd-16         	 1000000	      1229 ns/op	        19.38 drain-ns/op	     528 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/memory/StartEnd-16         	  828643	      1420 ns/op	        16.55 drain-ns/op	     528 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/memory/StartEnd-16         	  814060	      1391 ns/op	        19.11 drain-ns/op	     528 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/memory/StartEnd-16         	  773983	      1383 ns/op	        19.26 drain-ns/op	     528 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/memory/StartEnd-16         	  839283	      1405 ns/op	        14.37 drain-ns/op	     528 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/memory/StartEnd-16         	  729421	      1389 ns/op	        15.61 drain-ns/op	     528 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/memory/StartEnd-16         	  831093	      1385 ns/op	        19.59 drain-ns/op	     528 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/memory/StartEnd-16         	  758398	      1413 ns/op	        21.74 drain-ns/op	     528 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/memory/StartEnd-16         	  832419	      1381 ns/op	        18.32 drain-ns/op	     528 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/memory/AddEvent-16         	 4834812	       251.3 ns/op	        16.88 drain-ns/op	     128 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/memory/AddEvent-16         	 4839694	       246.8 ns/op	        18.07 drain-ns/op	     128 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/memory/AddEvent-16         	 4863231	       247.5 ns/op	        15.84 drain-ns/op	     128 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/memory/AddEvent-16         	 4855630	       248.4 ns/op	        17.14 drain-ns/op	     128 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/memory/AddEvent-16         	 4859042	       247.3 ns/op	        15.40 drain-ns/op	     128 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/memory/AddEvent-16         	 4891807	       248.0 ns/op	        14.87 drain-ns/op	     128 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/memory/AddEvent-16         	 4825177	       247.5 ns/op	        15.32 drain-ns/op	     128 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/memory/AddEvent-16         	 4811434	       247.6 ns/op	        16.90 drain-ns/op	     128 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/memory/AddEvent-16         	 4835468	       249.9 ns/op	        17.02 drain-ns/op	     128 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/memory/AddEvent-16         	 4855966	       252.2 ns/op	        19.24 drain-ns/op	     128 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16    	 2025092	       595.5 ns/op	        18.19 drain-ns/op	     320 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16    	 2047406	       592.5 ns/op	        16.87 drain-ns/op	     320 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16    	 2044540	       597.6 ns/op	        21.60 drain-ns/op	     320 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16    	 1962760	       585.2 ns/op	        20.09 drain-ns/op	     320 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16    	 2054498	       587.0 ns/op	        16.53 drain-ns/op	     320 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16    	 2032545	       590.8 ns/op	        17.09 drain-ns/op	     320 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16    	 2039127	       595.5 ns/op	        19.90 drain-ns/op	     320 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16    	 2040385	       585.3 ns/op	        15.96 drain-ns/op	     320 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16    	 2060772	       592.8 ns/op	        18.43 drain-ns/op	     320 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/memory/SetAttributes-16    	 2060953	       584.5 ns/op	        18.00 drain-ns/op	     320 B/op	       5 allocs/op
+BenchmarkEnabled/memory/StartEnd-16              	 2241177	       509.2 ns/op	     512 B/op	       6 allocs/op
+BenchmarkEnabled/memory/StartEnd-16              	 2314438	       511.6 ns/op	     512 B/op	       6 allocs/op
+BenchmarkEnabled/memory/StartEnd-16              	 2360401	       525.8 ns/op	     512 B/op	       6 allocs/op
+BenchmarkEnabled/memory/StartEnd-16              	 2295667	       516.0 ns/op	     512 B/op	       6 allocs/op
+BenchmarkEnabled/memory/StartEnd-16              	 2258163	       523.4 ns/op	     512 B/op	       6 allocs/op
+BenchmarkEnabled/memory/StartEnd-16              	 2328792	       506.8 ns/op	     512 B/op	       6 allocs/op
+BenchmarkEnabled/memory/StartEnd-16              	 2356812	       505.9 ns/op	     512 B/op	       6 allocs/op
+BenchmarkEnabled/memory/StartEnd-16              	 2206045	       555.7 ns/op	     512 B/op	       6 allocs/op
+BenchmarkEnabled/memory/StartEnd-16              	 2405712	       540.3 ns/op	     512 B/op	       6 allocs/op
+BenchmarkEnabled/memory/StartEnd-16              	 2201236	       518.6 ns/op	     512 B/op	       6 allocs/op
+BenchmarkEnabled/memory/AddEvent-16              	14485580	        80.29 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16              	14714500	        81.91 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16              	15034296	        79.82 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16              	15311258	        80.98 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16              	14456385	        78.56 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16              	15195470	        81.47 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16              	15669927	        79.88 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16              	15508664	        80.66 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16              	14282890	        80.94 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/AddEvent-16              	15371431	        81.76 ns/op	     112 B/op	       1 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16         	 5262608	       225.4 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16         	 5106897	       246.1 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16         	 4992495	       237.8 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16         	 5150490	       234.5 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16         	 5176618	       237.9 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16         	 4939202	       248.1 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16         	 5059909	       231.7 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16         	 5302174	       229.6 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16         	 5280600	       228.5 ns/op	     304 B/op	       2 allocs/op
+BenchmarkEnabled/memory/SetAttributes-16         	 5263866	       237.4 ns/op	     304 B/op	       2 allocs/op
+PASS
+ok  	go.lostcrafters.com/trail	109.222s

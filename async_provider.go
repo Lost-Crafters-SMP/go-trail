@@ -5,6 +5,29 @@ import (
 	"errors"
 )
 
+// These typed handoffs accept only internal records with freshly resolved
+// batches. Generic processors still receive the ordinary borrowed Record.
+func (ps *providerState) processFreshStart(record SpanStart) error {
+	if ap, ok := ps.processor.(*AsyncProcessor); ok {
+		return processFresh(ap, record, ownFreshStart)
+	}
+	return ps.processor.Process(record)
+}
+
+func (ps *providerState) processFreshUpdate(record SpanUpdate) error {
+	if ap, ok := ps.processor.(*AsyncProcessor); ok {
+		return processFresh(ap, record, ownFreshUpdate)
+	}
+	return ps.processor.Process(record)
+}
+
+func (ps *providerState) processFreshEvent(record Event) error {
+	if ap, ok := ps.processor.(*AsyncProcessor); ok {
+		return processFresh(ap, record, ownFreshEvent)
+	}
+	return ps.processor.Process(record)
+}
+
 // backgroundError never runs on the writer. Callback reentry cannot block it.
 func (ps *providerState) backgroundError(err error) {
 	ps.mu.Lock()

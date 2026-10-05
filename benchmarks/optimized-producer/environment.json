@@ -1,0 +1,13 @@
+{
+  "sourceParent": "269fddf5614146c7f93300e33d94af9afc526f51",
+  "measuredBaseline": "3e9e4cf3436a84c16d13b4e477422bfd9f9edded",
+  "go": "go version go1.27.1 windows/amd64",
+  "os": "Microsoft Windows 10.0.26200",
+  "architecture": "X64",
+  "cpu": "AMD Ryzen 7 5800X3D 8-Core Processor",
+  "logicalProcessors": 16,
+  "GOMAXPROCS": null,
+  "benchmarkTempDirectory": "<temp>",
+  "benchstat": "golang.org/x/perf v0.0.0-20260929162123-406019bb8b68",
+  "captured": "2026-10-05T22:56:19.6211655+01:00"
+}

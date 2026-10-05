@@ -308,10 +308,8 @@ func (ps *providerState) submitCaptureStart() error {
 // non-recording span.
 func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, opts []StartOption) (context.Context, Span) {
 	var cfg startConfig
-	for _, opt := range opts {
-		if opt != nil {
-			opt(&cfg)
-		}
+	if len(opts) != 0 {
+		cfg = resolveStartOptions(opts)
 	}
 	if name == "" {
 		name = unnamedSpanName
@@ -393,7 +391,7 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 		Scope:        tracer.scope,
 		Name:         name,
 	}
-	if err := ps.processor.Process(record); err != nil {
+	if err := ps.processFreshStart(record); err != nil {
 		ps.rejectedStarts++
 		if !errors.Is(err, ErrQueueFull) {
 			ps.latchError(err)
@@ -426,7 +424,7 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 		case oversizedRecord("", resolved):
 			st.addDrops(uint64(len(resolved)), 0)
 		default:
-			if err := ps.processor.Process(SpanUpdate{
+			if err := ps.processFreshUpdate(SpanUpdate{
 				Seq:        ps.nextSeq(),
 				Wall:       reading.wall,
 				Elapsed:    reading.tick,

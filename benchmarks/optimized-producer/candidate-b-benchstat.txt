@@ -1,0 +1,46 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+                                     │ benchmarks/baseline/core.txt │ benchmarks/optimized-producer/candidate-b.txt │
+                                     │            sec/op            │       sec/op         vs base                  │
+AsyncEnabled/memory/StartEnd-16                         1.040µ ± 7%
+AsyncEnabled/memory/AddEvent-16                         213.2n ± 4%
+AsyncEnabled/memory/SetAttributes-16                    469.1n ± 2%           638.9n ± 3%  +36.19% (p=0.001 n=10)
+Enabled/memory/StartEnd-16                              497.6n ± 1%
+Enabled/memory/AddEvent-16                              90.87n ± 3%
+Enabled/memory/SetAttributes-16                         230.0n ± 2%           276.9n ± 3%  +20.39% (p=0.000 n=10)
+geomean                                                 320.4n                420.6n       +28.05%                ¹
+¹ benchmark set differs from baseline; geomeans may not be comparable
+
+                                     │ benchmarks/baseline/core.txt │ benchmarks/optimized-producer/candidate-b.txt │
+                                     │         drain-sec/op         │    drain-sec/op      vs base                  │
+AsyncEnabled/memory/StartEnd-16                        14.28n ± 18%
+AsyncEnabled/memory/AddEvent-16                        12.34n ± 15%
+AsyncEnabled/memory/SetAttributes-16                   12.73n ± 14%          18.22n ± 16%  +43.17% (p=0.002 n=10)
+geomean                                                13.09n                18.22n        +43.17%                ¹
+¹ benchmark set differs from baseline; geomeans may not be comparable
+
+                                     │ benchmarks/baseline/core.txt │ benchmarks/optimized-producer/candidate-b.txt │
+                                     │             B/op             │        B/op          vs base                  │
+AsyncEnabled/memory/StartEnd-16                          672.0 ± 0%
+AsyncEnabled/memory/AddEvent-16                          272.0 ± 0%
+AsyncEnabled/memory/SetAttributes-16                     624.0 ± 0%            432.0 ± 0%  -30.77% (p=0.000 n=10)
+Enabled/memory/StartEnd-16                               544.0 ± 0%
+Enabled/memory/AddEvent-16                               144.0 ± 0%
+Enabled/memory/SetAttributes-16                          304.0 ± 0%            304.0 ± 0%        ~ (p=1.000 n=10) ¹
+geomean                                                  373.5                 362.4       -16.79%                ²
+¹ all samples are equal
+² benchmark set differs from baseline; geomeans may not be comparable
+
+                                     │ benchmarks/baseline/core.txt │ benchmarks/optimized-producer/candidate-b.txt │
+                                     │          allocs/op           │      allocs/op       vs base                  │
+AsyncEnabled/memory/StartEnd-16                          10.00 ± 0%
+AsyncEnabled/memory/AddEvent-16                          4.000 ± 0%
+AsyncEnabled/memory/SetAttributes-16                     7.000 ± 0%            6.000 ± 0%  -14.29% (p=0.000 n=10)
+Enabled/memory/StartEnd-16                               7.000 ± 0%
+Enabled/memory/AddEvent-16                               2.000 ± 0%
+Enabled/memory/SetAttributes-16                          2.000 ± 0%            2.000 ± 0%        ~ (p=1.000 n=10) ¹
+geomean                                                  4.457                 3.464        -7.42%                ²
+¹ all samples are equal
+² benchmark set differs from baseline; geomeans may not be comparable

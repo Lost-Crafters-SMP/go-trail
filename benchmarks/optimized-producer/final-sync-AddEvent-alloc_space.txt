@@ -1,0 +1,27 @@
+File: final-sync-AddEvent.test.exe
+Build ID: <temp>/go-build1193482421/b001/trail.test.exe2026-10-05 22:33:45.6154507 +0100 BST
+Type: alloc_space
+Time: 2026-10-05 22:33:45 BST
+Showing nodes accounting for 11065.77kB, 98.46% of 11238.80kB total
+Dropped 335 nodes (cum <= 56.19kB)
+      flat  flat%   sum%        cum   cum%
+10937.61kB 97.32% 97.32% 10937.61kB 97.32%  go.lostcrafters.com/trail.(*providerState).processFreshEvent <repo>/async_provider.go:28
+     128kB  1.14% 98.46%      128kB  1.14%  regexp.(*bitState).reset <cache>/toolchains/go/1.27.1/src/regexp/backtrack.go:91
+    0.14kB 0.0013% 98.46%   121.91kB  1.08%  go.lostcrafters.com/trail_test.BenchmarkEnabled.func1 <repo>/enabled_bench_test.go:24
+    0.02kB 0.00021% 98.46%    62.95kB  0.56%  testing.(*M).Run <cache>/toolchains/go/1.27.1/src/testing/testing.go:2616
+         0     0% 98.46% 10937.61kB 97.32%  go.lostcrafters.com/trail.(*spanState).addEvent <repo>/span.go:233
+         0     0% 98.46% 10937.61kB 97.32%  go.lostcrafters.com/trail.Span.AddEvent <repo>/span.go:78
+         0     0% 98.46% 10937.61kB 97.32%  go.lostcrafters.com/trail_test.BenchmarkEnabled.func1.1 <repo>/enabled_bench_test.go:55
+         0     0% 98.46%    70.94kB  0.63%  main.main _testmain.go:298
+         0     0% 98.46%   165.52kB  1.47%  regexp.(*Regexp).MatchString <cache>/toolchains/go/1.27.1/src/regexp/regexp.go:506 (inline)
+         0     0% 98.46%      144kB  1.28%  regexp.(*Regexp).backtrack <cache>/toolchains/go/1.27.1/src/regexp/backtrack.go:317
+         0     0% 98.46%   165.52kB  1.47%  regexp.(*Regexp).doMatch <cache>/toolchains/go/1.27.1/src/regexp/exec.go:514 (inline)
+         0     0% 98.46%   153.73kB  1.37%  regexp.(*Regexp).find <cache>/toolchains/go/1.27.1/src/regexp/exec.go:535
+         0     0% 98.46%    72.69kB  0.65%  runtime.main <cache>/toolchains/go/1.27.1/src/runtime/proc.go:302
+         0     0% 98.46%   162.34kB  1.44%  testing.(*B).Run <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:817
+         0     0% 98.46% 10938.84kB 97.33%  testing.(*B).launch <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:347
+         0     0% 98.46%   177.98kB  1.58%  testing.(*B).run1.func1 <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:245
+         0     0% 98.46% 11117.36kB 98.92%  testing.(*B).runN <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:219
+         0     0% 98.46%   167.67kB  1.49%  testing.(*matcher).fullName <cache>/toolchains/go/1.27.1/src/testing/match.go:101
+         0     0% 98.46%   167.67kB  1.49%  testing.simpleMatch.matches <cache>/toolchains/go/1.27.1/src/testing/match.go:130
+         0     0% 98.46%   165.52kB  1.47%  testing/internal/testdeps.TestDeps.MatchString <cache>/toolchains/go/1.27.1/src/testing/internal/testdeps/deps.go:47

@@ -1,0 +1,36 @@
+File: final-async-AddEvent.test.exe
+Build ID: <temp>/go-build1240878606/b001/trail.test.exe2026-10-05 22:33:52.8425365 +0100 BST
+Type: alloc_space
+Time: 2026-10-05 22:33:53 BST
+Showing nodes accounting for 12756.30kB, 97.76% of 13048.73kB total
+Dropped 345 nodes (cum <= 65.24kB)
+      flat  flat%   sum%        cum   cum%
+10937.61kB 83.82% 83.82% 12500.12kB 95.80%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }] <repo>/owned_record.go:19
+ 1562.55kB 11.97% 95.80%  1562.55kB 11.97%  internal/stringslite.Clone <cache>/toolchains/go/1.27.1/src/internal/stringslite/strings.go:119 (inline)
+     128kB  0.98% 96.78%      128kB  0.98%  go.lostcrafters.com/trail.NewAsyncProcessor <repo>/async_processor.go:110
+     128kB  0.98% 97.76%      128kB  0.98%  regexp.(*bitState).reset <cache>/toolchains/go/1.27.1/src/regexp/backtrack.go:91
+    0.14kB 0.0011% 97.76%   124.92kB  0.96%  go.lostcrafters.com/trail_test.BenchmarkAsyncEnabled.func1 <repo>/async_bench_test.go:20
+         0     0% 97.76%   105.88kB  0.81%  go.lostcrafters.com/trail.(*Provider).Flush <repo>/provider.go:140 (inline)
+         0     0% 97.76%   105.88kB  0.81%  go.lostcrafters.com/trail.(*providerState).flush <repo>/provider.go:163
+         0     0% 97.76%   104.12kB   0.8%  go.lostcrafters.com/trail.(*providerState).flushAsync <repo>/async_provider.go:58
+         0     0% 97.76% 12500.12kB 95.80%  go.lostcrafters.com/trail.(*providerState).processFreshEvent <repo>/async_provider.go:26
+         0     0% 97.76% 12500.12kB 95.80%  go.lostcrafters.com/trail.(*spanState).addEvent <repo>/span.go:233
+         0     0% 97.76% 12500.12kB 95.80%  go.lostcrafters.com/trail.Span.AddEvent <repo>/span.go:78
+         0     0% 97.76%  1562.52kB 11.97%  go.lostcrafters.com/trail.ownFreshEvent <repo>/owned_record.go:39
+         0     0% 97.76%   129.28kB  0.99%  go.lostcrafters.com/trail_test.BenchmarkAsyncEnabled.func1.1 <repo>/async_bench_test.go:29
+         0     0% 97.76% 12500.12kB 95.80%  go.lostcrafters.com/trail_test.BenchmarkAsyncEnabled.func1.1 <repo>/async_bench_test.go:60
+         0     0% 97.76%   105.88kB  0.81%  go.lostcrafters.com/trail_test.BenchmarkAsyncEnabled.func1.1 <repo>/async_bench_test.go:67
+         0     0% 97.76%    77.37kB  0.59%  main.main _testmain.go:298
+         0     0% 97.76%   165.41kB  1.27%  regexp.(*Regexp).MatchString <cache>/toolchains/go/1.27.1/src/regexp/regexp.go:506 (inline)
+         0     0% 97.76%      144kB  1.10%  regexp.(*Regexp).backtrack <cache>/toolchains/go/1.27.1/src/regexp/backtrack.go:317
+         0     0% 97.76%   165.41kB  1.27%  regexp.(*Regexp).doMatch <cache>/toolchains/go/1.27.1/src/regexp/exec.go:514 (inline)
+         0     0% 97.76%   153.75kB  1.18%  regexp.(*Regexp).find <cache>/toolchains/go/1.27.1/src/regexp/exec.go:535
+         0     0% 97.76%    79.12kB  0.61%  runtime.main <cache>/toolchains/go/1.27.1/src/runtime/proc.go:302
+         0     0% 97.76%  1562.55kB 11.97%  strings.Clone <cache>/toolchains/go/1.27.1/src/strings/clone.go:22 (inline)
+         0     0% 97.76%   166.12kB  1.27%  testing.(*B).Run <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:817
+         0     0% 97.76% 12671.94kB 97.11%  testing.(*B).launch <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:347
+         0     0% 97.76%   247.37kB  1.90%  testing.(*B).run1.func1 <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:245
+         0     0% 97.76% 12919.84kB 99.01%  testing.(*B).runN <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:219
+         0     0% 97.76%   172.34kB  1.32%  testing.(*matcher).fullName <cache>/toolchains/go/1.27.1/src/testing/match.go:101
+         0     0% 97.76%   172.34kB  1.32%  testing.simpleMatch.matches <cache>/toolchains/go/1.27.1/src/testing/match.go:130
+         0     0% 97.76%   165.41kB  1.27%  testing/internal/testdeps.TestDeps.MatchString <cache>/toolchains/go/1.27.1/src/testing/internal/testdeps/deps.go:47

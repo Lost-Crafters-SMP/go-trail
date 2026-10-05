@@ -1,0 +1,27 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+                                     │ benchmarks/optimized-producer/candidate-b-control-a.txt │ benchmarks/optimized-producer/candidate-b.txt │
+                                     │                         sec/op                          │         sec/op          vs base               │
+AsyncEnabled/memory/SetAttributes-16                                               698.1n ± 2%              638.9n ± 3%  -8.49% (p=0.001 n=10)
+Enabled/memory/SetAttributes-16                                                    279.9n ± 5%              276.9n ± 3%       ~ (p=0.436 n=10)
+geomean                                                                            442.0n                   420.6n       -4.85%
+
+                                     │ benchmarks/optimized-producer/candidate-b-control-a.txt │ benchmarks/optimized-producer/candidate-b.txt │
+                                     │                      drain-sec/op                       │     drain-sec/op       vs base                │
+AsyncEnabled/memory/SetAttributes-16                                              15.40n ± 16%            18.22n ± 16%  +18.34% (p=0.050 n=10)
+
+                                     │ benchmarks/optimized-producer/candidate-b-control-a.txt │ benchmarks/optimized-producer/candidate-b.txt │
+                                     │                          B/op                           │        B/op          vs base                  │
+AsyncEnabled/memory/SetAttributes-16                                                624.0 ± 0%            432.0 ± 0%  -30.77% (p=0.000 n=10)
+Enabled/memory/SetAttributes-16                                                     304.0 ± 0%            304.0 ± 0%        ~ (p=1.000 n=10) ¹
+geomean                                                                             435.5                 362.4       -16.79%
+¹ all samples are equal
+
+                                     │ benchmarks/optimized-producer/candidate-b-control-a.txt │ benchmarks/optimized-producer/candidate-b.txt │
+                                     │                        allocs/op                        │      allocs/op       vs base                  │
+AsyncEnabled/memory/SetAttributes-16                                                7.000 ± 0%            6.000 ± 0%  -14.29% (p=0.000 n=10)
+Enabled/memory/SetAttributes-16                                                     2.000 ± 0%            2.000 ± 0%        ~ (p=1.000 n=10) ¹
+geomean                                                                             3.742                 3.464        -7.42%
+¹ all samples are equal
