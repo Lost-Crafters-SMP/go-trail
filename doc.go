@@ -8,10 +8,12 @@
 //   - A Tracer creates spans attributed to a named instrumentation scope.
 //   - A Span represents a single operation within a trace.
 //
+// Records flow from spans through a Processor to a Sink; SyncProcessor
+// delivers synchronously, and go.lostcrafters.com/trail/file writes the
+// versioned Trail JSONL journal.
+//
 // The zero values of Tracer and Span, and providers without initialized
 // state, are disabled, safe handles: recording methods become no-ops and
-// disabled span creation returns the caller's context unchanged.
-//
-// This package is in development; the local journal format and lifecycle
-// contracts are described in docs/design.md.
+// disabled span creation returns the caller's context unchanged. Lifecycle
+// and format contracts are specified in docs/design.md.
 package trail

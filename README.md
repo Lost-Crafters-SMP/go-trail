@@ -2,35 +2,38 @@
 
 **Lightweight local-first tracing for Go applications.**
 
-Trail is being designed as a small span-based tracing library for debugging and
-performance analysis: capture application-defined operations locally, then
-inspect or share the trace artifact later. No collector or server should be
-required. Short-lived tools are the first use case, not a restriction on the
-architecture; daemons, desktop applications, tests, build tools, and agents are
-also intended users.
+Trail is a small span-based tracing library for debugging and performance
+analysis: capture application-defined operations locally, then inspect or share
+the trace artifact later. No collector or server is required. Short-lived tools
+are the first use case, not a restriction on the architecture; daemons, desktop
+applications, tests, build tools, and agents are also intended users.
 
 Trail is not an OpenTelemetry implementation, logger, monitoring platform, or
 replacement for Go's runtime tracing and pprof.
 
 ## Status
 
-**Research/design only.** This repository contains tooling and an empty `trail`
-package, not a working tracing library. The API, file format, sinks, rotation,
-viewer, and remote export are not implemented.
+**v0.1 core implemented.** The explicit Provider -> Tracer -> Span API with
+context propagation, a no-op-safe global default provider, the
+Tracer -> Processor -> Sink pipeline with SyncProcessor, bounded typed
+attributes/events/status/RecordError, trace-completion bookkeeping, and the
+versioned Trail JSONL journal with an exclusive-create file sink
+(`go.lostcrafters.com/trail/file`) are implemented and tested, including
+race-detector runs and disabled-path allocation benchmarks.
 
-See [the design proposal](docs/design.md) for the researched API/lifecycle model,
-format comparison, dependency tradeoffs, and open questions. It recommends an
-OTel-familiar API and a versioned local JSONL journal, not an OTLP-compliance claim.
-The proposed pipeline is Tracer -> Processor -> Sink: SyncProcessor first, with
-bounded asynchronous processing as a future configuration option using the same
-span semantics and journal format.
+Not implemented: asynchronous processing, rotation, retention, compression,
+viewers, OTLP conversion, remote export, and distributed propagation. See
+[the design](docs/design.md) for contracts, the format comparison, and open
+questions. The native journal is a Trail format with OTel-aligned semantics,
+not an OTLP-compliance claim.
+
 Explicit providers remain primary: `p.Tracer("myapp")`. Optional global convenience
 is `SetDefaultProvider(p)` followed by `GetTracer("myapp")`, which resolves through
 the Provider registered at that call. The default Provider is initially no-op;
 existing tracers keep their Provider, and callers still own Flush/Shutdown.
-No package-level Start is proposed for v0.1.
+There is no package-level Start.
 
-Module: `go.lostcrafters.com/trail`. Configure the vanity domain's `go-import`
+Module: `go.lostcrafters.com/trail`. Configure the vanity domain's `go.import`
 metadata to point to the hosting repository before publishing.
 
 ## Development
@@ -57,5 +60,7 @@ Pre-commit formats staged Go files and runs golangci-lint; pre-push runs tests a
 checks module tidiness. Hooks resolve tools through mise and preserve unstaged
 changes while fixing staged files.
 
-There are no tests yet: scaffold checks do not validate the proposed tracing
-behavior. No tracing dependencies have been added.
+Tests cover identifiers, handles, globals, lifecycle and completion
+contracts, bounded attributes and events, the conformance suite, journal
+encoding, torn-tail recovery, and end-to-end pipeline behavior against a
+real file. Production code depends only on the Go standard library.

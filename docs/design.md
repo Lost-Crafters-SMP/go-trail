@@ -1295,7 +1295,7 @@ encoding rules, pinned reference schema/tested decoders, and recorded losses. It
 payload compatibility is separate from Trail's journal version; API familiarity
 does not make Trail an OTel API implementation.
 
-Recommended v0.1 acceptance slice:
+Recommended v0.1 acceptance slice, now implemented:
 
 1. Explicit provider/tracer and safe disabled handles; optional SetDefaultProvider
    registration and GetTracer(scope) lookup, with snapshot provider binding and
@@ -1307,28 +1307,30 @@ Recommended v0.1 acceptance slice:
    shared sink contract and exclusive-create JSONL file sink; multiple concurrent
    traces, early records, incomplete-span recovery semantics.
 4. Clear error reporting, Flush/Shutdown barriers, optional Sync-on-Flush, safe
-   resource cleanup, and explicit unended-span reporting.
-5. Manual/editor/generic JSON inspection instructions, a processor-parameterized
-   semantic conformance suite, concurrency/failure tests, race runs, and disabled
-   allocation benchmarks. No dedicated viewer required.
+   resource cleanup, and explicit unended-span reporting via IncompleteError.
+5. A processor-parameterized semantic conformance suite, concurrency/failure
+   tests, race runs, and disabled allocation benchmarks. Journals are readable
+   with generic JSON tooling; no dedicated viewer is required.
 
 Exclude rotation, retention, compression, resume-existing-file mode, async
 workers, remote export, distributed propagation, OTLP converter, automatic slog
 integration, sampling, metrics, and monitoring. The architecture documents their
-constraints. Processor is an explicit architectural boundary now; async queue,
+constraints. Processor is an explicit architectural boundary; async queue,
 worker, reservation machinery, and rotation capabilities are not implemented.
 
-For the existing scaffold, use `mise run fmt` then `mise run check`.
-The current checks only build a documented empty package and report no test
-files; they validate scaffolding, **not these API/lifecycle/performance proposals**.
+For the repository, use `mise run fmt` then `mise run check`; `mise run
+test:race` adds race-detector runs and `go test -bench` runs the disabled-path
+allocation benchmarks.
 
 ## 17. Open review questions and implementation gates
 
 1. **Journal schema freeze:** the clarified direction favors early crash-useful
-   records and semantic OTLP alignment, not completed-span-only storage. Settle
-   required fields, type tags, loss reporting, record bounds, and replay/version
-   rules before freezing the draft journal and public Record contract. Direct
-   OTLP JSONL remains a researched alternative, not the selected native format.
+   records and semantic OTLP alignment, not completed-span-only storage. The v1
+   header, record types, decimal-string numerics, typed attribute values, and
+   status objects are implemented as the design fixture specifies; loss-summary
+   records and a freeze review against real captures remain before calling the
+   schema stable. Direct OTLP JSONL remains a researched alternative, not the
+   selected native format.
 2. **Ended-parent boundary:** accept new-root behavior, or require OTel-like late
    parenting? The latter needs an explicit trace lease/close concept before
    promising both safe draining closure and indefinitely reusable contexts.
@@ -1345,8 +1347,9 @@ files; they validate scaffolding, **not these API/lifecycle/performance proposal
    or be callback/Flush/Shutdown-only? Both choices must be visible and tested.
 6. **Unsigned/duration conversion:** confirm whether future OTLP conversion
    should use the specified type-loss mapping or require explicit user policy.
-7. **Durability defaults:** recommend no per-record Sync and opt-in Sync-on-Flush;
-   verify expectations for shared bug-report artifacts and directory durability.
+7. **Durability defaults:** implemented as recommended: no per-record Sync and
+   opt-in Sync-on-Flush; verify expectations for shared bug-report artifacts
+   and directory durability with real workloads.
 8. **Minimum Go version:** scaffold pins Go 1.27.1 with go.mod 1.27.0; this design
    does not justify raising or lowering that minimum. Revisit intentionally for
    library consumers rather than changing toolchain config during research.
