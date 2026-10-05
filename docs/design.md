@@ -814,7 +814,10 @@ Propose `file.Open(path, ...Option) (*file.Sink, error)` in
 overwrite), restrictive permissions such as 0600 on Unix, and no automatic
 directory creation. Permissions on Windows require host ACL policy; Unix mode
 bits alone are not a cross-platform privacy guarantee. Report setup/header-write
-errors and close a newly opened descriptor on failed setup.
+errors and close a newly opened descriptor on failed setup. This opening
+behavior, the versioned header, unbuffered complete-line writes, stream stop
+after uncertain writes, `WithSyncOnFlush`, and the shutdown cleanup behavior
+are implemented in v0.1; resume/append mode remains deferred.
 
 The file is append-only **during this capture**. Resuming/appending to an existing
 capture is deferred; this is different from streaming append writes. Never
@@ -840,6 +843,14 @@ values as decimal strings to avoid JavaScript precision loss.
 The following is a **draft synthetic fixture**, not the finalized schema. The
 root ends while its child remains active; the trace completes only after the
 child. `span_update` may contain attributes, status, or both.
+
+Implementation status: the header line and the `capture_start`, `span_start`,
+`span_end`, and `trace_end` encodings are implemented as shown for version 1
+by `go.lostcrafters.com/trail/file`, including decimal-string numerics,
+hex identifiers, and absent `parentSpanId` for roots. `span_update` and
+`event` entries arrive with the attributes and events milestone. The
+`droppedAttributes`/`droppedEvents` fields are emitted as `"0"` until the
+bounded drop model fills them with real counts.
 
 ```jsonl
 {"format":"trail","version":1}
