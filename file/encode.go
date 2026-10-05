@@ -1,7 +1,7 @@
 // Package file writes Trail capture journals as versioned JSONL files.
 //
 // Open creates a new file exclusively; records are appended as complete
-// LF-terminated JSON lines with no user-space buffering, so successfully
+// LF-terminated JSON lines with no buffering between calls, so successfully
 // written records are visible through the ordinary write path and a crash
 // leaves at most a torn final line. The format is Trail's native journal,
 // not OTLP JSON; see docs/design.md for the replay contract.

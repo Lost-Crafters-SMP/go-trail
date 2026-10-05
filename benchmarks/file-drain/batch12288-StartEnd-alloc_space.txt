@@ -1,0 +1,26 @@
+File: batch12288-StartEnd.test.exe
+Build ID: <temp>/go-build1746586253/b001/trail.test.exe2026-10-05 23:38:08.0890294 +0100 BST
+Type: alloc_space
+Time: 2026-10-05 23:38:09 BST
+Showing nodes accounting for 50.35MB, 98.47% of 51.14MB total
+Dropped 498 nodes (cum <= 0.26MB)
+      flat  flat%   sum%        cum   cum%
+   12.21MB 23.87% 23.87%    12.21MB 23.87%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:408
+   10.68MB 20.89% 44.76%    10.68MB 20.89%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:133
+   10.68MB 20.89% 65.64%    12.21MB 23.87%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; ParentSpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Scope string; Name string }] <repo>/owned_record.go:19
+    6.10MB 11.94% 77.58%     6.10MB 11.94%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:155
+    4.58MB  8.95% 86.53%     4.58MB  8.95%  context.WithValue <cache>/toolchains/go/src/context/context.go:738
+    4.58MB  8.95% 95.48%     4.58MB  8.95%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:402
+    1.53MB  2.98% 98.47%     1.53MB  2.98%  internal/stringslite.Clone <cache>/toolchains/go/src/internal/stringslite/strings.go:119 (inline)
+         0     0% 98.47%    12.21MB 23.87%  go.lostcrafters.com/trail.(*providerState).processFreshStart <repo>/async_provider.go:12
+         0     0% 98.47%    12.21MB 23.87%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:394
+         0     0% 98.47%     4.58MB  8.95%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:444
+         0     0% 98.47%     4.58MB  8.95%  go.lostcrafters.com/trail.ContextWithSpan <repo>/context.go:15 (inline)
+         0     0% 98.47%    16.78MB 32.82%  go.lostcrafters.com/trail.Span.End <repo>/span.go:42 (inline)
+         0     0% 98.47%    33.57MB 65.65%  go.lostcrafters.com/trail.Tracer.Start <repo>/tracer.go:37
+         0     0% 98.47%     1.53MB  2.98%  go.lostcrafters.com/trail.ownFreshStart <repo>/owned_record.go:24
+         0     0% 98.47%    33.57MB 65.65%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:56
+         0     0% 98.47%    16.78MB 32.82%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:60
+         0     0% 98.47%     1.53MB  2.98%  strings.Clone <cache>/toolchains/go/src/strings/clone.go:22 (inline)
+         0     0% 98.47%    50.60MB 98.94%  testing.(*B).launch <cache>/toolchains/go/src/testing/benchmark.go:347
+         0     0% 98.47%    50.71MB 99.16%  testing.(*B).runN <cache>/toolchains/go/src/testing/benchmark.go:219

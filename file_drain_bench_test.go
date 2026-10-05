@@ -2,7 +2,9 @@ package trail_test
 
 import (
 	"context"
+	"os"
 	"path/filepath"
+	"strconv"
 	"testing"
 	"time"
 
@@ -19,7 +21,14 @@ func BenchmarkFileDrain(b *testing.B) {
 			if err != nil {
 				b.Fatal(err)
 			}
-			processor, err := trail.NewAsyncProcessor(sink, trail.WithMaxQueuedRecords(2048), trail.WithMaxQueuedBytes(4<<20))
+			batchBytes := 0
+			if value := os.Getenv("TRAIL_BENCH_BATCH_BYTES"); value != "" {
+				batchBytes, err = strconv.Atoi(value)
+				if err != nil {
+					b.Fatal(err)
+				}
+			}
+			processor, err := trail.NewAsyncProcessor(sink, trail.WithMaxQueuedRecords(2048), trail.WithMaxQueuedBytes(4<<20), trail.WithMaxBatchBytes(batchBytes))
 			if err != nil {
 				b.Fatal(err)
 			}

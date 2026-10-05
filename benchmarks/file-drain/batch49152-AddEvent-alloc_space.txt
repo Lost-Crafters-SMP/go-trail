@@ -1,0 +1,38 @@
+File: batch49152-AddEvent.test.exe
+Build ID: <temp>/go-build1312659766/b001/trail.test.exe2026-10-05 23:38:25.3054929 +0100 BST
+Type: alloc_space
+Time: 2026-10-05 23:38:25 BST
+Showing nodes accounting for 12980.27kB, 97.78% of 13275.37kB total
+Dropped 464 nodes (cum <= 66.38kB)
+Showing top 30 nodes out of 44
+      flat  flat%   sum%        cum   cum%
+10937.61kB 82.39% 82.39% 12500.12kB 94.16%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }] <repo>/owned_record.go:19
+ 1562.55kB 11.77% 94.16%  1562.55kB 11.77%  internal/stringslite.Clone <cache>/toolchains/go/src/internal/stringslite/strings.go:119 (inline)
+  128.05kB  0.96% 95.13%   128.05kB  0.96%  os.init.func1 <cache>/toolchains/go/src/os/dir_windows.go:44
+     128kB  0.96% 96.09%      128kB  0.96%  go.lostcrafters.com/trail.NewAsyncProcessor <repo>/async_processor.go:126
+     128kB  0.96% 97.05%      128kB  0.96%  go.lostcrafters.com/trail/file.(*Sink).WriteRecords <repo>/file/sink.go:148
+      96kB  0.72% 97.78%       96kB  0.72%  regexp.(*bitState).reset <cache>/toolchains/go/src/regexp/backtrack.go:91
+    0.07kB 0.00053% 97.78%   106.21kB   0.8%  go.lostcrafters.com/trail_test.BenchmarkFileDrain <repo>/file_drain_bench_test.go:19
+         0     0% 97.78%   138.83kB  1.05%  go.lostcrafters.com/trail.(*AsyncProcessor).run <repo>/async_processor.go:399
+         0     0% 97.78%   108.05kB  0.81%  go.lostcrafters.com/trail.(*Provider).Flush <repo>/provider.go:140 (inline)
+         0     0% 97.78%   108.05kB  0.81%  go.lostcrafters.com/trail.(*providerState).flush <repo>/provider.go:163
+         0     0% 97.78%   104.66kB  0.79%  go.lostcrafters.com/trail.(*providerState).flushAsync <repo>/async_provider.go:58
+         0     0% 97.78% 12500.23kB 94.16%  go.lostcrafters.com/trail.(*providerState).processFreshEvent <repo>/async_provider.go:26
+         0     0% 97.78% 12500.23kB 94.16%  go.lostcrafters.com/trail.(*spanState).addEvent <repo>/span.go:233
+         0     0% 97.78% 12500.23kB 94.16%  go.lostcrafters.com/trail.Span.AddEvent <repo>/span.go:78
+         0     0% 97.78%  1562.52kB 11.77%  go.lostcrafters.com/trail.ownFreshEvent <repo>/owned_record.go:39
+         0     0% 97.78%   129.33kB  0.97%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:31
+         0     0% 97.78% 12500.23kB 94.16%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:62
+         0     0% 97.78%   107.30kB  0.81%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:68
+         0     0% 97.78%    70.36kB  0.53%  main.main _testmain.go:308
+         0     0% 97.78%   133.06kB  1.00%  os.(*File).Readdirnames <cache>/toolchains/go/src/os/dir.go:73
+         0     0% 97.78%   132.59kB     1%  os.(*File).readdir <cache>/toolchains/go/src/os/dir_windows.go:115
+         0     0% 97.78%   135.87kB  1.02%  os.RemoveAll <cache>/toolchains/go/src/os/path.go:74
+         0     0% 97.78%   134.79kB  1.02%  os.removeAll <cache>/toolchains/go/src/os/removeall_at.go:56
+         0     0% 97.78%   133.06kB  1.00%  os.removeAllFrom <cache>/toolchains/go/src/os/removeall_at.go:111
+         0     0% 97.78%   124.66kB  0.94%  regexp.(*Regexp).MatchString <cache>/toolchains/go/src/regexp/regexp.go:506 (inline)
+         0     0% 97.78%      108kB  0.81%  regexp.(*Regexp).backtrack <cache>/toolchains/go/src/regexp/backtrack.go:317
+         0     0% 97.78%   124.66kB  0.94%  regexp.(*Regexp).doMatch <cache>/toolchains/go/src/regexp/exec.go:514 (inline)
+         0     0% 97.78%   115.36kB  0.87%  regexp.(*Regexp).find <cache>/toolchains/go/src/regexp/exec.go:535
+         0     0% 97.78%    72.11kB  0.54%  runtime.main <cache>/toolchains/go/src/runtime/proc.go:302
+         0     0% 97.78%  1562.55kB 11.77%  strings.Clone <cache>/toolchains/go/src/strings/clone.go:22 (inline)

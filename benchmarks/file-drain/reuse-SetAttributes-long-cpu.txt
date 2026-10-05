@@ -1,0 +1,89 @@
+File: reuse-SetAttributes.test.exe
+Build ID: <profile-dir>/reuse-SetAttributes.test.exe2026-10-05 23:30:53.8508052 +0100 BST
+Type: cpu
+Time: 2026-10-05 23:41:01 BST
+Duration: 3.53s, Total samples = 3.87s (109.63%)
+Showing nodes accounting for 3.68s, 95.09% of 3.87s total
+Dropped 58 nodes (cum <= 0.02s)
+Showing top 80 nodes out of 85
+      flat  flat%   sum%        cum   cum%
+     3.24s 83.72% 83.72%      3.25s 83.98%  runtime.cgocall
+     0.09s  2.33% 86.05%      0.09s  2.33%  runtime.semawakeup
+     0.04s  1.03% 87.08%      0.12s  3.10%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Attributes []go.lostcrafters.com/trail.Attribute; Status *go.lostcrafters.com/trail.SpanStatus }]
+     0.04s  1.03% 88.11%      0.04s  1.03%  internal/runtime/maps.(*Map).putSlotSmallFastStr
+     0.03s  0.78% 88.89%      0.04s  1.03%  go.lostcrafters.com/trail.cloneAsyncAttributes
+     0.03s  0.78% 89.66%      0.23s  5.94%  go.lostcrafters.com/trail.resolveSpanAttributes
+     0.03s  0.78% 90.44%      0.04s  1.03%  internal/runtime/maps.(*Map).getWithoutKeySmallFastStr
+     0.02s  0.52% 90.96%      0.02s  0.52%  go.lostcrafters.com/trail.boundAttribute
+     0.02s  0.52% 91.47%      0.06s  1.55%  runtime.mapassign_faststr
+     0.02s  0.52% 91.99%      0.02s  0.52%  runtime.procyieldAsm
+     0.02s  0.52% 92.51%      0.02s  0.52%  runtime.wbBufFlush1
+     0.01s  0.26% 92.76%      3.27s 84.50%  go.lostcrafters.com/trail.(*AsyncProcessor).run
+     0.01s  0.26% 93.02%      0.05s  1.29%  go.lostcrafters.com/trail.ownFreshUpdate
+     0.01s  0.26% 93.28%      0.38s  9.82%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1
+     0.01s  0.26% 93.54%      0.02s  0.52%  internal/chacha8rand.(*State).Refill
+     0.01s  0.26% 93.80%      0.05s  1.29%  runtime.findRunnable
+     0.01s  0.26% 94.06%      0.04s  1.03%  runtime.mallocgcSmallScanNoHeader
+     0.01s  0.26% 94.32%      0.03s  0.78%  runtime.rand
+     0.01s  0.26% 94.57%      0.10s  2.58%  runtime.schedule
+     0.01s  0.26% 94.83%      0.02s  0.52%  runtime.tryDeferToSpanScan
+     0.01s  0.26% 95.09%      0.02s  0.52%  slices.insertionSortCmpFunc[go.shape.struct { go.lostcrafters.com/trail.key string; go.lostcrafters.com/trail.kind go.lostcrafters.com/trail.AttributeKind; go.lostcrafters.com/trail.str string; go.lostcrafters.com/trail.boolean bool; go.lostcrafters.com/trail.int64v int64; go.lostcrafters.com/trail.uint64v uint64; go.lostcrafters.com/trail.float64v float64; go.lostcrafters.com/trail.strs []string }] (inline)
+         0     0% 95.09%      0.05s  1.29%  _.goready.func1
+         0     0% 95.09%      0.12s  3.10%  go.lostcrafters.com/trail.(*providerState).processFreshUpdate
+         0     0% 95.09%      0.37s  9.56%  go.lostcrafters.com/trail.(*spanState).setAttributes
+         0     0% 95.09%      0.37s  9.56%  go.lostcrafters.com/trail.Span.SetAttributes (inline)
+         0     0% 95.09%      3.25s 83.98%  go.lostcrafters.com/trail/file.(*Sink).WriteRecord
+         0     0% 95.09%      3.24s 83.72%  go.lostcrafters.com/trail/file.writeAll
+         0     0% 95.09%      3.24s 83.72%  internal/poll.(*FD).Write
+         0     0% 95.09%      3.23s 83.46%  internal/poll.(*FD).Write.func1
+         0     0% 95.09%      3.24s 83.72%  internal/poll.(*FD).execIO
+         0     0% 95.09%      0.03s  0.78%  internal/runtime/maps.NewMap
+         0     0% 95.09%      0.03s  0.78%  internal/runtime/maps.rand
+         0     0% 95.09%      0.02s  0.52%  internal/syscall/windows.Deleteat
+         0     0% 95.09%      3.24s 83.72%  os.(*File).Write
+         0     0% 95.09%      3.24s 83.72%  os.(*File).write (inline)
+         0     0% 95.09%      0.02s  0.52%  os.RemoveAll (inline)
+         0     0% 95.09%      0.02s  0.52%  os.removeAll
+         0     0% 95.09%      0.02s  0.52%  os.removeAllFrom
+         0     0% 95.09%      0.02s  0.52%  os.removefileat (inline)
+         0     0% 95.09%      0.02s  0.52%  runtime.(*mcache).nextFree
+         0     0% 95.09%      0.02s  0.52%  runtime.(*mcache).refill
+         0     0% 95.09%      0.02s  0.52%  runtime.(*wbBuf).get2 (inline)
+         0     0% 95.09%      0.02s  0.52%  runtime.bulkBarrierPreWrite
+         0     0% 95.09%      0.04s  1.03%  runtime.gcBgMarkWorker
+         0     0% 95.09%      0.05s  1.29%  runtime.gcBgMarkWorker.func2
+         0     0% 95.09%      0.05s  1.29%  runtime.gcDrain
+         0     0% 95.09%      0.04s  1.03%  runtime.gcDrainMarkWorkerDedicated (inline)
+         0     0% 95.09%      0.02s  0.52%  runtime.gopreempt_m (inline)
+         0     0% 95.09%      0.02s  0.52%  runtime.goschedImpl
+         0     0% 95.09%      0.02s  0.52%  runtime.lock (inline)
+         0     0% 95.09%      0.02s  0.52%  runtime.lock2
+         0     0% 95.09%      0.02s  0.52%  runtime.lockWithRank (inline)
+         0     0% 95.09%      0.03s  0.78%  runtime.makemap
+         0     0% 95.09%      0.03s  0.78%  runtime.makeslice
+         0     0% 95.09%      0.04s  1.03%  runtime.mallocgc
+         0     0% 95.09%      0.04s  1.03%  runtime.mapaccess2_faststr
+         0     0% 95.09%      0.08s  2.07%  runtime.mcall
+         0     0% 95.09%      0.02s  0.52%  runtime.morestack
+         0     0% 95.09%      0.02s  0.52%  runtime.newstack
+         0     0% 95.09%      0.09s  2.33%  runtime.notewakeup
+         0     0% 95.09%      0.08s  2.07%  runtime.park_m
+         0     0% 95.09%      0.02s  0.52%  runtime.procyield (inline)
+         0     0% 95.09%      0.05s  1.29%  runtime.ready
+         0     0% 95.09%      0.04s  1.03%  runtime.resetspinning
+         0     0% 95.09%      0.03s  0.78%  runtime.scanObject
+         0     0% 95.09%      0.08s  2.07%  runtime.startm
+         0     0% 95.09%      0.13s  3.36%  runtime.systemstack
+         0     0% 95.09%      0.09s  2.33%  runtime.wakep
+         0     0% 95.09%      0.02s  0.52%  runtime.wbBufFlush
+         0     0% 95.09%      0.02s  0.52%  runtime.wbBufFlush.func1
+         0     0% 95.09%      0.02s  0.52%  runtime.wbMove
+         0     0% 95.09%      0.02s  0.52%  slices.SortFunc[go.shape.[]go.lostcrafters.com/trail.Attribute,go.shape.struct { go.lostcrafters.com/trail.key string; go.lostcrafters.com/trail.kind go.lostcrafters.com/trail.AttributeKind; go.lostcrafters.com/trail.str string; go.lostcrafters.com/trail.boolean bool; go.lostcrafters.com/trail.int64v int64; go.lostcrafters.com/trail.uint64v uint64; go.lostcrafters.com/trail.float64v float64; go.lostcrafters.com/trail.strs []string }] (inline)
+         0     0% 95.09%      0.02s  0.52%  slices.pdqsortCmpFunc[go.shape.struct { go.lostcrafters.com/trail.key string; go.lostcrafters.com/trail.kind go.lostcrafters.com/trail.AttributeKind; go.lostcrafters.com/trail.str string; go.lostcrafters.com/trail.boolean bool; go.lostcrafters.com/trail.int64v int64; go.lostcrafters.com/trail.uint64v uint64; go.lostcrafters.com/trail.float64v float64; go.lostcrafters.com/trail.strs []string }]
+         0     0% 95.09%      0.02s  0.52%  syscall.CloseHandle
+         0     0% 95.09%      3.25s 83.98%  syscall.SyscallN
+         0     0% 95.09%      3.23s 83.46%  syscall.WriteFile (inline)
+         0     0% 95.09%      3.25s 83.98%  syscall.syscalln
+         0     0% 95.09%      3.23s 83.46%  syscall.writeFile
+         0     0% 95.09%      0.40s 10.34%  testing.(*B).launch
+         0     0% 95.09%      0.40s 10.34%  testing.(*B).runN

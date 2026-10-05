@@ -1,0 +1,72 @@
+=== RUN   TestObservedAsyncFileWrites
+    batch_test.go:194: target=0 operation=StartEnd records=49218 calls=49218 bytes=11521356 writes/record=1.000000 bytes/write=234.09 bytes/record=234.09
+    batch_test.go:194: target=0 operation=AddEvent records=16453 calls=16453 bytes=3576471 writes/record=1.000000 bytes/write=217.38 bytes/record=217.38
+    batch_test.go:194: target=0 operation=SetAttributes records=16453 calls=16453 bytes=5068530 writes/record=1.000000 bytes/write=308.06 bytes/record=308.06
+    batch_test.go:194: target=3072 operation=StartEnd records=49218 calls=4549 bytes=11495004 writes/record=0.092426 bytes/write=2526.93 bytes/record=233.55
+    batch_test.go:194: target=3072 operation=AddEvent records=16453 calls=1602 bytes=3567733 writes/record=0.097368 bytes/write=2227.05 bytes/record=216.84
+    batch_test.go:194: target=3072 operation=SetAttributes records=16453 calls=3394 bytes=5062452 writes/record=0.206285 bytes/write=1491.59 bytes/record=307.69
+    batch_test.go:194: target=12288 operation=StartEnd records=49218 calls=1248 bytes=11483640 writes/record=0.025357 bytes/write=9201.63 bytes/record=233.32
+    batch_test.go:194: target=12288 operation=AddEvent records=16453 calls=455 bytes=3560123 writes/record=0.027655 bytes/write=7824.45 bytes/record=216.38
+    batch_test.go:194: target=12288 operation=SetAttributes records=16453 calls=837 bytes=5058163 writes/record=0.050872 bytes/write=6043.21 bytes/record=307.43
+    batch_test.go:194: target=49152 operation=StartEnd records=49218 calls=1054 bytes=11470656 writes/record=0.021415 bytes/write=10882.98 bytes/record=233.06
+    batch_test.go:194: target=49152 operation=AddEvent records=16453 calls=260 bytes=3556788 writes/record=0.015803 bytes/write=13679.95 bytes/record=216.18
+    batch_test.go:194: target=49152 operation=SetAttributes records=16453 calls=616 bytes=5047735 writes/record=0.037440 bytes/write=8194.38 bytes/record=306.80
+--- PASS: TestObservedAsyncFileWrites (0.50s)
+=== RUN   TestObservedAsyncFileWrites
+    batch_test.go:194: target=0 operation=StartEnd records=49218 calls=49218 bytes=11519525 writes/record=1.000000 bytes/write=234.05 bytes/record=234.05
+    batch_test.go:194: target=0 operation=AddEvent records=16453 calls=16453 bytes=3576728 writes/record=1.000000 bytes/write=217.39 bytes/record=217.39
+    batch_test.go:194: target=0 operation=SetAttributes records=16453 calls=16453 bytes=5066728 writes/record=1.000000 bytes/write=307.95 bytes/record=307.95
+    batch_test.go:194: target=3072 operation=StartEnd records=49218 calls=4548 bytes=11488449 writes/record=0.092405 bytes/write=2526.04 bytes/record=233.42
+    batch_test.go:194: target=3072 operation=AddEvent records=16453 calls=1602 bytes=3562850 writes/record=0.097368 bytes/write=2224.00 bytes/record=216.55
+    batch_test.go:194: target=3072 operation=SetAttributes records=16453 calls=3394 bytes=5062954 writes/record=0.206285 bytes/write=1491.74 bytes/record=307.72
+    batch_test.go:194: target=12288 operation=StartEnd records=49218 calls=1263 bytes=11478780 writes/record=0.025661 bytes/write=9088.50 bytes/record=233.22
+    batch_test.go:194: target=12288 operation=AddEvent records=16453 calls=457 bytes=3563524 writes/record=0.027776 bytes/write=7797.65 bytes/record=216.59
+    batch_test.go:194: target=12288 operation=SetAttributes records=16453 calls=843 bytes=5052975 writes/record=0.051237 bytes/write=5994.04 bytes/record=307.12
+    batch_test.go:194: target=49152 operation=StartEnd records=49218 calls=1081 bytes=11478371 writes/record=0.021964 bytes/write=10618.29 bytes/record=233.21
+    batch_test.go:194: target=49152 operation=AddEvent records=16453 calls=267 bytes=3563519 writes/record=0.016228 bytes/write=13346.51 bytes/record=216.59
+    batch_test.go:194: target=49152 operation=SetAttributes records=16453 calls=611 bytes=5052894 writes/record=0.037136 bytes/write=8269.88 bytes/record=307.11
+--- PASS: TestObservedAsyncFileWrites (0.50s)
+=== RUN   TestObservedAsyncFileWrites
+    batch_test.go:194: target=0 operation=StartEnd records=49218 calls=49218 bytes=11519553 writes/record=1.000000 bytes/write=234.05 bytes/record=234.05
+    batch_test.go:194: target=0 operation=AddEvent records=16453 calls=16453 bytes=3577761 writes/record=1.000000 bytes/write=217.45 bytes/record=217.45
+    batch_test.go:194: target=0 operation=SetAttributes records=16453 calls=16453 bytes=5067158 writes/record=1.000000 bytes/write=307.98 bytes/record=307.98
+    batch_test.go:194: target=3072 operation=StartEnd records=49218 calls=4550 bytes=11489216 writes/record=0.092446 bytes/write=2525.10 bytes/record=233.44
+    batch_test.go:194: target=3072 operation=AddEvent records=16453 calls=1602 bytes=3564629 writes/record=0.097368 bytes/write=2225.11 bytes/record=216.66
+    batch_test.go:194: target=3072 operation=SetAttributes records=16453 calls=3394 bytes=5058163 writes/record=0.206285 bytes/write=1490.32 bytes/record=307.43
+    batch_test.go:194: target=12288 operation=StartEnd records=49218 calls=1252 bytes=11478901 writes/record=0.025438 bytes/write=9168.45 bytes/record=233.23
+    batch_test.go:194: target=12288 operation=AddEvent records=16453 calls=454 bytes=3556421 writes/record=0.027594 bytes/write=7833.53 bytes/record=216.16
+    batch_test.go:194: target=12288 operation=SetAttributes records=16453 calls=865 bytes=5057470 writes/record=0.052574 bytes/write=5846.79 bytes/record=307.39
+    batch_test.go:194: target=49152 operation=StartEnd records=49218 calls=919 bytes=11478724 writes/record=0.018672 bytes/write=12490.45 bytes/record=233.22
+    batch_test.go:194: target=49152 operation=AddEvent records=16453 calls=257 bytes=3556935 writes/record=0.015620 bytes/write=13840.21 bytes/record=216.19
+    batch_test.go:194: target=49152 operation=SetAttributes records=16453 calls=533 bytes=5054248 writes/record=0.032395 bytes/write=9482.64 bytes/record=307.19
+--- PASS: TestObservedAsyncFileWrites (0.50s)
+=== RUN   TestObservedAsyncFileWrites
+    batch_test.go:194: target=0 operation=StartEnd records=49218 calls=49218 bytes=11520142 writes/record=1.000000 bytes/write=234.06 bytes/record=234.06
+    batch_test.go:194: target=0 operation=AddEvent records=16453 calls=16453 bytes=3575957 writes/record=1.000000 bytes/write=217.34 bytes/record=217.34
+    batch_test.go:194: target=0 operation=SetAttributes records=16453 calls=16453 bytes=5067562 writes/record=1.000000 bytes/write=308.00 bytes/record=308.00
+    batch_test.go:194: target=3072 operation=StartEnd records=49218 calls=4550 bytes=11493943 writes/record=0.092446 bytes/write=2526.14 bytes/record=233.53
+    batch_test.go:194: target=3072 operation=AddEvent records=16453 calls=1602 bytes=3566469 writes/record=0.097368 bytes/write=2226.26 bytes/record=216.77
+    batch_test.go:194: target=3072 operation=SetAttributes records=16453 calls=3394 bytes=5061504 writes/record=0.206285 bytes/write=1491.31 bytes/record=307.63
+    batch_test.go:194: target=12288 operation=StartEnd records=49218 calls=1257 bytes=11483067 writes/record=0.025539 bytes/write=9135.30 bytes/record=233.31
+    batch_test.go:194: target=12288 operation=AddEvent records=16453 calls=450 bytes=3560711 writes/record=0.027351 bytes/write=7912.69 bytes/record=216.42
+    batch_test.go:194: target=12288 operation=SetAttributes records=16453 calls=840 bytes=5053801 writes/record=0.051055 bytes/write=6016.43 bytes/record=307.17
+    batch_test.go:194: target=49152 operation=StartEnd records=49218 calls=1013 bytes=11476816 writes/record=0.020582 bytes/write=11329.53 bytes/record=233.18
+    batch_test.go:194: target=49152 operation=AddEvent records=16453 calls=260 bytes=3562425 writes/record=0.015803 bytes/write=13701.63 bytes/record=216.52
+    batch_test.go:194: target=49152 operation=SetAttributes records=16453 calls=531 bytes=5052150 writes/record=0.032274 bytes/write=9514.41 bytes/record=307.07
+--- PASS: TestObservedAsyncFileWrites (0.50s)
+=== RUN   TestObservedAsyncFileWrites
+    batch_test.go:194: target=0 operation=StartEnd records=49218 calls=49218 bytes=11524086 writes/record=1.000000 bytes/write=234.14 bytes/record=234.14
+    batch_test.go:194: target=0 operation=AddEvent records=16453 calls=16453 bytes=3576214 writes/record=1.000000 bytes/write=217.36 bytes/record=217.36
+    batch_test.go:194: target=0 operation=SetAttributes records=16453 calls=16453 bytes=5067158 writes/record=1.000000 bytes/write=307.98 bytes/record=307.98
+    batch_test.go:194: target=3072 operation=StartEnd records=49218 calls=4553 bytes=11492152 writes/record=0.092507 bytes/write=2524.08 bytes/record=233.49
+    batch_test.go:194: target=3072 operation=AddEvent records=16453 calls=1604 bytes=3570303 writes/record=0.097490 bytes/write=2225.87 bytes/record=217.00
+    batch_test.go:194: target=3072 operation=SetAttributes records=16453 calls=3394 bytes=5062018 writes/record=0.206285 bytes/write=1491.46 bytes/record=307.67
+    batch_test.go:194: target=12288 operation=StartEnd records=49218 calls=1260 bytes=11480519 writes/record=0.025600 bytes/write=9111.52 bytes/record=233.26
+    batch_test.go:194: target=12288 operation=AddEvent records=16453 calls=454 bytes=3561304 writes/record=0.027594 bytes/write=7844.28 bytes/record=216.45
+    batch_test.go:194: target=12288 operation=SetAttributes records=16453 calls=841 bytes=5054352 writes/record=0.051115 bytes/write=6009.93 bytes/record=307.20
+    batch_test.go:194: target=49152 operation=StartEnd records=49218 calls=973 bytes=11472418 writes/record=0.019769 bytes/write=11790.77 bytes/record=233.09
+    batch_test.go:194: target=49152 operation=AddEvent records=16453 calls=258 bytes=3563522 writes/record=0.015681 bytes/write=13812.10 bytes/record=216.59
+    batch_test.go:194: target=49152 operation=SetAttributes records=16453 calls=578 bytes=5054337 writes/record=0.035130 bytes/write=8744.53 bytes/record=307.20
+--- PASS: TestObservedAsyncFileWrites (0.50s)
+PASS
+ok  	go.lostcrafters.com/trail/file	2.526s

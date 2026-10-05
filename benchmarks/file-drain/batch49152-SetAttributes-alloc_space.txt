@@ -1,0 +1,21 @@
+File: batch49152-SetAttributes.test.exe
+Build ID: <temp>/go-build2872493960/b001/trail.test.exe2026-10-05 23:38:28.1117553 +0100 BST
+Type: alloc_space
+Time: 2026-10-05 23:38:28 BST
+Showing nodes accounting for 30.52MB, 97.78% of 31.21MB total
+Dropped 504 nodes (cum <= 0.16MB)
+      flat  flat%   sum%        cum   cum%
+   18.31MB 58.67% 58.67%    18.31MB 58.67%  go.lostcrafters.com/trail.resolveSpanAttributes <repo>/attributes.go:226
+   10.68MB 34.22% 92.89%    12.21MB 39.11%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Attributes []go.lostcrafters.com/trail.Attribute; Status *go.lostcrafters.com/trail.SpanStatus }] <repo>/owned_record.go:19
+    1.53MB  4.89% 97.78%     1.53MB  4.89%  internal/stringslite.Clone <cache>/toolchains/go/src/internal/stringslite/strings.go:119 (inline)
+         0     0% 97.78%    12.21MB 39.11%  go.lostcrafters.com/trail.(*providerState).processFreshUpdate <repo>/async_provider.go:19
+         0     0% 97.78%    18.31MB 58.67%  go.lostcrafters.com/trail.(*spanState).setAttributes <repo>/span.go:180
+         0     0% 97.78%    12.21MB 39.11%  go.lostcrafters.com/trail.(*spanState).setAttributes <repo>/span.go:190
+         0     0% 97.78%    30.52MB 97.78%  go.lostcrafters.com/trail.Span.SetAttributes <repo>/span.go:66 (inline)
+         0     0% 97.78%     1.45MB  4.63%  go.lostcrafters.com/trail.cloneAsyncAttributes <repo>/async_processor.go:535
+         0     0% 97.78%     1.53MB  4.89%  go.lostcrafters.com/trail.ownFreshUpdate <repo>/owned_record.go:29
+         0     0% 97.78%    30.52MB 97.78%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:64
+         0     0% 97.78%     1.53MB  4.89%  strings.Clone <cache>/toolchains/go/src/strings/clone.go:22 (inline)
+         0     0% 97.78%    30.76MB 98.56%  testing.(*B).launch <cache>/toolchains/go/src/testing/benchmark.go:347
+         0     0% 97.78%     0.21MB  0.66%  testing.(*B).run1.func1 <cache>/toolchains/go/src/testing/benchmark.go:245
+         0     0% 97.78%    30.84MB 98.80%  testing.(*B).runN <cache>/toolchains/go/src/testing/benchmark.go:219

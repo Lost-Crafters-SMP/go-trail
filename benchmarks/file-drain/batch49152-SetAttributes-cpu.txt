@@ -1,0 +1,21 @@
+File: batch49152-SetAttributes.test.exe
+Build ID: <profile-dir>/batch49152-SetAttributes.test.exe2026-10-05 23:38:28.9019742 +0100 BST
+Type: cpu
+Time: 2026-10-05 23:38:30 BST
+Duration: 63.40ms, Total samples = 30ms (47.32%)
+Showing nodes accounting for 30ms, 100% of 30ms total
+      flat  flat%   sum%        cum   cum%
+      30ms   100%   100%       30ms   100%  runtime.cgocall
+         0     0%   100%       30ms   100%  go.lostcrafters.com/trail.(*AsyncProcessor).run
+         0     0%   100%       30ms   100%  go.lostcrafters.com/trail/file.(*Sink).WriteRecords
+         0     0%   100%       30ms   100%  go.lostcrafters.com/trail/file.(*Sink).writeLocked
+         0     0%   100%       30ms   100%  go.lostcrafters.com/trail/file.writeAll
+         0     0%   100%       30ms   100%  internal/poll.(*FD).Write
+         0     0%   100%       30ms   100%  internal/poll.(*FD).Write.func1
+         0     0%   100%       30ms   100%  internal/poll.(*FD).execIO
+         0     0%   100%       30ms   100%  os.(*File).Write
+         0     0%   100%       30ms   100%  os.(*File).write (inline)
+         0     0%   100%       30ms   100%  syscall.SyscallN
+         0     0%   100%       30ms   100%  syscall.WriteFile (inline)
+         0     0%   100%       30ms   100%  syscall.syscalln
+         0     0%   100%       30ms   100%  syscall.writeFile

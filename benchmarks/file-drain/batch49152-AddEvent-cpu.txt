@@ -1,0 +1,28 @@
+File: batch49152-AddEvent.test.exe
+Build ID: <profile-dir>/batch49152-AddEvent.test.exe2026-10-05 23:38:25.836155 +0100 BST
+Type: cpu
+Time: 2026-10-05 23:38:27 BST
+Duration: 40.79ms, Total samples = 40ms (98.07%)
+Showing nodes accounting for 40ms, 100% of 40ms total
+      flat  flat%   sum%        cum   cum%
+      10ms 25.00% 25.00%       10ms 25.00%  go.lostcrafters.com/trail.(*AsyncProcessor).enqueueLocked (inline)
+      10ms 25.00% 50.00%       10ms 25.00%  runtime.preemptM
+      10ms 25.00% 75.00%       10ms 25.00%  runtime.scanObjectsSmall
+      10ms 25.00%   100%       10ms 25.00%  runtime.scanblock
+         0     0%   100%       10ms 25.00%  go.lostcrafters.com/trail.(*providerState).processFreshEvent
+         0     0%   100%       10ms 25.00%  go.lostcrafters.com/trail.(*spanState).addEvent
+         0     0%   100%       10ms 25.00%  go.lostcrafters.com/trail.Span.AddEvent
+         0     0%   100%       10ms 25.00%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }]
+         0     0%   100%       10ms 25.00%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1
+         0     0%   100%       10ms 25.00%  runtime.(*gcControllerState).enlistWorker
+         0     0%   100%       20ms 50.00%  runtime.gcBgMarkWorker
+         0     0%   100%       30ms 75.00%  runtime.gcBgMarkWorker.func2
+         0     0%   100%       30ms 75.00%  runtime.gcDrain
+         0     0%   100%       30ms 75.00%  runtime.gcDrainMarkWorkerDedicated (inline)
+         0     0%   100%       10ms 25.00%  runtime.markroot
+         0     0%   100%       10ms 25.00%  runtime.markrootBlock
+         0     0%   100%       10ms 25.00%  runtime.preemptone
+         0     0%   100%       10ms 25.00%  runtime.scanSpan
+         0     0%   100%       30ms 75.00%  runtime.systemstack
+         0     0%   100%       10ms 25.00%  testing.(*B).launch
+         0     0%   100%       10ms 25.00%  testing.(*B).runN

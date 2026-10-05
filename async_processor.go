@@ -18,8 +18,9 @@ var ErrQueueFull = errors.New("trail: async queue capacity exhausted")
 type AsyncOption func(*asyncConfig)
 
 type asyncConfig struct {
-	records int
-	bytes   int
+	records    int
+	bytes      int
+	batchBytes int
 }
 
 // WithMaxQueuedRecords sets the total entry/obligation budget, including two
@@ -33,6 +34,16 @@ func WithMaxQueuedRecords(n int) AsyncOption {
 // the record limit. The minimum is 2048; see docs/async-processor.md.
 func WithMaxQueuedBytes(n int) AsyncOption {
 	return func(c *asyncConfig) { c.bytes = n }
+}
+
+// WithMaxBatchBytes enables FIFO grouping for a BatchSink. n bounds conservative
+// charged payload bytes in each group; oversized individual records are delivered
+// alone. Zero disables batching (the default); positive limits are 256..65536.
+// Only already available entries are grouped; no timer/capacity wait is added.
+// Credits stay occupied until the complete sink call returns. A sink without
+// BatchSink support retains the ordinary single-record path.
+func WithMaxBatchBytes(n int) AsyncOption {
+	return func(c *asyncConfig) { c.batchBytes = n }
 }
 
 const asyncRecordCharge = 256
@@ -81,6 +92,8 @@ type AsyncProcessor struct {
 	err         error
 	termErr     error
 	provider    *providerState
+	batchSink   BatchSink
+	batchBytes  int
 }
 
 // NewAsyncProcessor constructs an explicit async pipeline. Defaults are 16384
@@ -106,11 +119,18 @@ func NewAsyncProcessor(sink Sink, opts ...AsyncOption) (*AsyncProcessor, error) 
 	if cfg.records < 6 || cfg.bytes < 2048 {
 		return nil, errors.New("trail: async limits require at least 6 records and 2048 bytes")
 	}
+	if cfg.batchBytes != 0 && (cfg.batchBytes < asyncRecordCharge || cfg.batchBytes > 64<<10) {
+		return nil, errors.New("trail: batch bytes require zero or 256..65536")
+	}
 	p := &AsyncProcessor{
 		sink: sink, queue: make([]asyncEntry, cfg.records),
 		recordLimit: cfg.records - 2, byteLimit: cfg.bytes - 2*asyncRecordCharge,
 		ends: make(map[asyncSpanKey]struct{}), traces: make(map[TraceID]struct{}),
 		wake: make(chan struct{}, 1), control: make(chan struct{}, 1), done: make(chan struct{}),
+	}
+	if cfg.batchBytes > 0 {
+		p.batchSink, _ = sink.(BatchSink)
+		p.batchBytes = cfg.batchBytes
 	}
 	p.control <- struct{}{}
 	go p.run()
@@ -340,6 +360,10 @@ func (p *AsyncProcessor) latchLocked(err error) {
 
 func (p *AsyncProcessor) run() {
 	defer close(p.done)
+	var records []Record
+	if p.batchSink != nil {
+		records = make([]Record, 0, min(p.recordLimit, p.batchBytes/asyncRecordCharge))
+	}
 	for {
 		p.mu.Lock()
 		if p.count == 0 {
@@ -352,18 +376,42 @@ func (p *AsyncProcessor) run() {
 		p.head = (p.head + 1) % len(p.queue)
 		p.count--
 		sticky := p.err
+		consumed, bytes := 1, e.bytes
+		if p.batchSink != nil && sticky == nil && e.barrier == nil {
+			records = append(records, e.record)
+			for p.count > 0 {
+				next := p.queue[p.head]
+				if next.barrier != nil || next.bytes > p.batchBytes-bytes {
+					break
+				}
+				records = append(records, next.record)
+				bytes += next.bytes
+				consumed++
+				p.queue[p.head] = asyncEntry{}
+				p.head = (p.head + 1) % len(p.queue)
+				p.count--
+			}
+		}
 		p.mu.Unlock()
 		if e.record != nil && sticky == nil {
-			if err := p.sink.WriteRecord(e.record); err != nil {
+			var err error
+			if len(records) > 1 {
+				err = p.batchSink.WriteRecords(records)
+			} else {
+				err = p.sink.WriteRecord(e.record)
+			}
+			if err != nil {
 				p.mu.Lock()
 				p.latchLocked(fmt.Errorf("trail: write record: %w", err))
 				p.mu.Unlock()
 			}
 		}
+		clear(records)
+		records = records[:0]
 		if e.barrier == nil {
 			p.mu.Lock()
-			p.usedRecords--
-			p.usedBytes -= e.bytes
+			p.usedRecords -= consumed
+			p.usedBytes -= bytes
 			p.mu.Unlock()
 			continue
 		}

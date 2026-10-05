@@ -1,9 +1,11 @@
-param([Parameter(Mandatory)][string]$Stage, [Parameter(Mandatory)][string]$Local, [string]$Benchstat = 'benchstat', [switch]$ProfilesOnly)
+param([Parameter(Mandatory)][string]$Stage, [Parameter(Mandatory)][string]$Local, [string]$Benchstat = 'benchstat', [switch]$ProfilesOnly, [int]$BatchBytes = 0)
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 New-Item -ItemType Directory -Force $Local | Out-Null
 $repo = (Get-Location).Path
 $goroot = (mise exec -- go env GOROOT).Trim()
+$previousBatchBytes = $env:TRAIL_BENCH_BATCH_BYTES
+$env:TRAIL_BENCH_BATCH_BYTES = "$BatchBytes"
 function Normalize-Report {
     process {
         $line = $_
@@ -14,13 +16,17 @@ function Normalize-Report {
         $text.Replace('\', '/')
     }
 }
-if (!$ProfilesOnly) { foreach ($kind in @('drain', 'producer')) {
+$kinds = if ($BatchBytes -gt 0) { @('drain') } else { @('drain', 'producer') }
+if (!$ProfilesOnly) { foreach ($kind in $kinds) {
     $bench = if ($kind -eq 'drain') { '^BenchmarkFileDrain/' } else { '^BenchmarkAsyncEnabled/file/(StartEnd|AddEvent|SetAttributes)$' }
     mise exec -- go test . -run '^$' -bench $bench -benchmem -benchtime=100000x -count=10 2>&1 | Tee-Object -FilePath "benchmarks/file-drain/$Stage-$kind.txt"
     if ($LASTEXITCODE -ne 0) { throw "Benchmark failed: $Stage/$kind" }
     if ($Stage -ne 'control') {
         & $Benchstat "benchmarks/file-drain/control-$kind.txt" "benchmarks/file-drain/$Stage-$kind.txt" | Set-Content "benchmarks/file-drain/$Stage-$kind-benchstat.txt"
         if ($LASTEXITCODE -ne 0) { throw 'benchstat failed' }
+    }
+    if ($BatchBytes -gt 0) {
+        & $Benchstat "benchmarks/file-drain/reuse-$kind.txt" "benchmarks/file-drain/$Stage-$kind.txt" | Set-Content "benchmarks/file-drain/$Stage-vs-reuse-benchstat.txt"
     }
 } }
 foreach ($operation in @('StartEnd', 'AddEvent', 'SetAttributes')) {
@@ -37,3 +43,4 @@ foreach ($operation in @('StartEnd', 'AddEvent', 'SetAttributes')) {
     if ($LASTEXITCODE -ne 0) { throw 'CPU capture failed' }
     mise exec -- go tool pprof -top -nodecount=80 $binary $cpu 2>&1 | Normalize-Report | Set-Content "benchmarks/file-drain/$name-cpu.txt"
 }
+$env:TRAIL_BENCH_BATCH_BYTES = $previousBatchBytes

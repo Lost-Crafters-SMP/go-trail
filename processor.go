@@ -26,3 +26,14 @@ type Sink interface {
 	Flush(ctx context.Context) error
 	Shutdown(ctx context.Context) error
 }
+
+// BatchSink optionally delivers a FIFO group with fewer output calls. A call
+// borrows records until return, completes output before successful return, and
+// must preserve record boundaries/order. An error may mean an uncertain prefix
+// was delivered: processors must never retry the group or write later records.
+// Implementations must bound encoded output buffering independently of input
+// record count. Async batching is opt-in; generic and sync sinks are unchanged.
+type BatchSink interface {
+	Sink
+	WriteRecords(records []Record) error
+}

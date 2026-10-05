@@ -1,0 +1,24 @@
+File: batch3072-AddEvent.test.exe
+Build ID: <profile-dir>/batch3072-AddEvent.test.exe2026-10-05 23:37:59.0793849 +0100 BST
+Type: cpu
+Time: 2026-10-05 23:38:00 BST
+Duration: 103.46ms, Total samples = 90ms (86.99%)
+Showing nodes accounting for 90ms, 100% of 90ms total
+      flat  flat%   sum%        cum   cum%
+      80ms 88.89% 88.89%       80ms 88.89%  runtime.cgocall
+      10ms 11.11%   100%       10ms 11.11%  go.lostcrafters.com/trail/file.appendIDString (inline)
+         0     0%   100%       90ms   100%  go.lostcrafters.com/trail.(*AsyncProcessor).run
+         0     0%   100%       90ms   100%  go.lostcrafters.com/trail/file.(*Sink).WriteRecords
+         0     0%   100%       10ms 11.11%  go.lostcrafters.com/trail/file.(*Sink).encodeLocked
+         0     0%   100%       80ms 88.89%  go.lostcrafters.com/trail/file.(*Sink).writeLocked
+         0     0%   100%       10ms 11.11%  go.lostcrafters.com/trail/file.encodeRecordInto
+         0     0%   100%       80ms 88.89%  go.lostcrafters.com/trail/file.writeAll
+         0     0%   100%       80ms 88.89%  internal/poll.(*FD).Write
+         0     0%   100%       80ms 88.89%  internal/poll.(*FD).Write.func1
+         0     0%   100%       80ms 88.89%  internal/poll.(*FD).execIO
+         0     0%   100%       80ms 88.89%  os.(*File).Write
+         0     0%   100%       80ms 88.89%  os.(*File).write (inline)
+         0     0%   100%       80ms 88.89%  syscall.SyscallN
+         0     0%   100%       80ms 88.89%  syscall.WriteFile (inline)
+         0     0%   100%       80ms 88.89%  syscall.syscalln
+         0     0%   100%       80ms 88.89%  syscall.writeFile

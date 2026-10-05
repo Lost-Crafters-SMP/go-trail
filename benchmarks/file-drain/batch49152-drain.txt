@@ -1,0 +1,36 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+BenchmarkFileDrain/StartEnd-16         	  100000	      1009 ns/op	       164.6 drain-ns/op	     42088 flush-ns/window	   1514400 shutdown-ns	     530 B/op	       8 allocs/op
+BenchmarkFileDrain/StartEnd-16         	  100000	      1001 ns/op	       165.9 drain-ns/op	     42432 flush-ns/window	         0 shutdown-ns	     530 B/op	       8 allocs/op
+BenchmarkFileDrain/StartEnd-16         	  100000	       984.9 ns/op	       157.7 drain-ns/op	     40331 flush-ns/window	         0 shutdown-ns	     530 B/op	       8 allocs/op
+BenchmarkFileDrain/StartEnd-16         	  100000	      1492 ns/op	       682.4 drain-ns/op	    174527 flush-ns/window	    509000 shutdown-ns	     530 B/op	       8 allocs/op
+BenchmarkFileDrain/StartEnd-16         	  100000	      1020 ns/op	       193.5 drain-ns/op	     49501 flush-ns/window	         0 shutdown-ns	     530 B/op	       8 allocs/op
+BenchmarkFileDrain/StartEnd-16         	  100000	      1082 ns/op	       242.1 drain-ns/op	     61919 flush-ns/window	         0 shutdown-ns	     530 B/op	       8 allocs/op
+BenchmarkFileDrain/StartEnd-16         	  100000	      1031 ns/op	       196.5 drain-ns/op	     50257 flush-ns/window	         0 shutdown-ns	     530 B/op	       8 allocs/op
+BenchmarkFileDrain/StartEnd-16         	  100000	      1065 ns/op	       185.9 drain-ns/op	     47534 flush-ns/window	         0 shutdown-ns	     530 B/op	       8 allocs/op
+BenchmarkFileDrain/StartEnd-16         	  100000	      1031 ns/op	       151.5 drain-ns/op	     38754 flush-ns/window	    999900 shutdown-ns	     530 B/op	       8 allocs/op
+BenchmarkFileDrain/StartEnd-16         	  100000	      1021 ns/op	       197.0 drain-ns/op	     50384 flush-ns/window	         0 shutdown-ns	     530 B/op	       8 allocs/op
+BenchmarkFileDrain/AddEvent-16         	  100000	       327.1 ns/op	       192.2 drain-ns/op	     49147 flush-ns/window	         0 shutdown-ns	     129 B/op	       2 allocs/op
+BenchmarkFileDrain/AddEvent-16         	  100000	       331.8 ns/op	       175.8 drain-ns/op	     44964 flush-ns/window	         0 shutdown-ns	     129 B/op	       2 allocs/op
+BenchmarkFileDrain/AddEvent-16         	  100000	       327.1 ns/op	       202.4 drain-ns/op	     51777 flush-ns/window	         0 shutdown-ns	     129 B/op	       2 allocs/op
+BenchmarkFileDrain/AddEvent-16         	  100000	       340.4 ns/op	       298.1 drain-ns/op	     76252 flush-ns/window	   1005300 shutdown-ns	     129 B/op	       2 allocs/op
+BenchmarkFileDrain/AddEvent-16         	  100000	       328.9 ns/op	       126.0 drain-ns/op	     32238 flush-ns/window	    545100 shutdown-ns	     129 B/op	       2 allocs/op
+BenchmarkFileDrain/AddEvent-16         	  100000	       318.1 ns/op	       185.8 drain-ns/op	     47514 flush-ns/window	   1505700 shutdown-ns	     129 B/op	       2 allocs/op
+BenchmarkFileDrain/AddEvent-16         	  100000	       321.2 ns/op	       141.5 drain-ns/op	     36193 flush-ns/window	         0 shutdown-ns	     129 B/op	       2 allocs/op
+BenchmarkFileDrain/AddEvent-16         	  100000	       323.5 ns/op	       181.2 drain-ns/op	     46340 flush-ns/window	         0 shutdown-ns	     129 B/op	       2 allocs/op
+BenchmarkFileDrain/AddEvent-16         	  100000	       336.3 ns/op	       167.4 drain-ns/op	     42814 flush-ns/window	         0 shutdown-ns	     129 B/op	       2 allocs/op
+BenchmarkFileDrain/AddEvent-16         	  100000	       345.5 ns/op	       202.0 drain-ns/op	     51655 flush-ns/window	         0 shutdown-ns	     129 B/op	       2 allocs/op
+BenchmarkFileDrain/SetAttributes-16    	  100000	       573.5 ns/op	       178.2 drain-ns/op	     45584 flush-ns/window	         0 shutdown-ns	     321 B/op	       5 allocs/op
+BenchmarkFileDrain/SetAttributes-16    	  100000	       527.1 ns/op	       185.8 drain-ns/op	     47527 flush-ns/window	         0 shutdown-ns	     321 B/op	       5 allocs/op
+BenchmarkFileDrain/SetAttributes-16    	  100000	       533.2 ns/op	       102.4 drain-ns/op	     26194 flush-ns/window	         0 shutdown-ns	     321 B/op	       5 allocs/op
+BenchmarkFileDrain/SetAttributes-16    	  100000	       522.3 ns/op	       207.5 drain-ns/op	     53060 flush-ns/window	         0 shutdown-ns	     321 B/op	       5 allocs/op
+BenchmarkFileDrain/SetAttributes-16    	  100000	       529.3 ns/op	       216.2 drain-ns/op	     55299 flush-ns/window	         0 shutdown-ns	     321 B/op	       5 allocs/op
+BenchmarkFileDrain/SetAttributes-16    	  100000	       651.4 ns/op	       167.3 drain-ns/op	     42777 flush-ns/window	         0 shutdown-ns	     321 B/op	       5 allocs/op
+BenchmarkFileDrain/SetAttributes-16    	  100000	       529.8 ns/op	       206.1 drain-ns/op	     52710 flush-ns/window	         0 shutdown-ns	     321 B/op	       5 allocs/op
+BenchmarkFileDrain/SetAttributes-16    	  100000	       513.7 ns/op	       136.9 drain-ns/op	     35017 flush-ns/window	         0 shutdown-ns	     321 B/op	       5 allocs/op
+BenchmarkFileDrain/SetAttributes-16    	  100000	       537.9 ns/op	       193.0 drain-ns/op	     49349 flush-ns/window	         0 shutdown-ns	     321 B/op	       5 allocs/op
+BenchmarkFileDrain/SetAttributes-16    	  100000	       525.9 ns/op	       203.8 drain-ns/op	     52116 flush-ns/window	   1004200 shutdown-ns	     321 B/op	       5 allocs/op
+PASS
+ok  	go.lostcrafters.com/trail	2.146s

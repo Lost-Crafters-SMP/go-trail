@@ -1,0 +1,48 @@
+File: batch49152-SetAttributes.test.exe
+Build ID: <profile-dir>/batch49152-SetAttributes.test.exe2026-10-05 23:38:30.2653928 +0100 BST
+Type: cpu
+Time: 2026-10-05 23:41:08 BST
+Duration: 602.48ms, Total samples = 710ms (117.85%)
+Showing nodes accounting for 420ms, 59.15% of 710ms total
+Showing top 40 nodes out of 120
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      370ms 52.11%  go.lostcrafters.com/trail.(*AsyncProcessor).run
+         0     0%     0%      350ms 49.30%  go.lostcrafters.com/trail/file.(*Sink).WriteRecords
+     310ms 43.66% 43.66%      320ms 45.07%  runtime.cgocall
+         0     0% 43.66%      320ms 45.07%  syscall.SyscallN
+         0     0% 43.66%      320ms 45.07%  syscall.syscalln
+         0     0% 43.66%      310ms 43.66%  go.lostcrafters.com/trail/file.(*Sink).writeLocked
+         0     0% 43.66%      310ms 43.66%  go.lostcrafters.com/trail/file.writeAll
+         0     0% 43.66%      310ms 43.66%  internal/poll.(*FD).Write
+         0     0% 43.66%      310ms 43.66%  internal/poll.(*FD).Write.func1
+         0     0% 43.66%      310ms 43.66%  internal/poll.(*FD).execIO
+         0     0% 43.66%      310ms 43.66%  os.(*File).Write
+         0     0% 43.66%      310ms 43.66%  os.(*File).write (inline)
+         0     0% 43.66%      310ms 43.66%  syscall.WriteFile (inline)
+         0     0% 43.66%      310ms 43.66%  syscall.writeFile
+         0     0% 43.66%      270ms 38.03%  testing.(*B).launch
+         0     0% 43.66%      270ms 38.03%  testing.(*B).runN
+         0     0% 43.66%      260ms 36.62%  go.lostcrafters.com/trail.(*spanState).setAttributes
+         0     0% 43.66%      260ms 36.62%  go.lostcrafters.com/trail.Span.SetAttributes (inline)
+         0     0% 43.66%      260ms 36.62%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1
+         0     0% 43.66%      160ms 22.54%  go.lostcrafters.com/trail.resolveSpanAttributes
+         0     0% 43.66%       80ms 11.27%  go.lostcrafters.com/trail.(*providerState).processFreshUpdate
+         0     0% 43.66%       80ms 11.27%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Attributes []go.lostcrafters.com/trail.Attribute; Status *go.lostcrafters.com/trail.SpanStatus }]
+         0     0% 43.66%       70ms  9.86%  runtime.systemstack
+         0     0% 43.66%       60ms  8.45%  go.lostcrafters.com/trail/file.(*Sink).encodeLocked
+         0     0% 43.66%       60ms  8.45%  go.lostcrafters.com/trail/file.encodeRecordInto
+      20ms  2.82% 46.48%       60ms  8.45%  runtime.mallocgc
+      10ms  1.41% 47.89%       40ms  5.63%  go.lostcrafters.com/trail.cloneAsyncAttributes
+         0     0% 47.89%       40ms  5.63%  go.lostcrafters.com/trail.ownFreshUpdate
+      10ms  1.41% 49.30%       40ms  5.63%  go.lostcrafters.com/trail/file.appendAttributes
+      10ms  1.41% 50.70%       40ms  5.63%  runtime.mallocgcSmallScanNoHeader
+         0     0% 50.70%       30ms  4.23%  internal/runtime/maps.NewMap
+      10ms  1.41% 52.11%       30ms  4.23%  internal/runtime/maps.rand
+         0     0% 52.11%       30ms  4.23%  runtime.gcBgMarkWorker.func2
+         0     0% 52.11%       30ms  4.23%  runtime.gcDrain
+         0     0% 52.11%       30ms  4.23%  runtime.gcDrainMarkWorkerDedicated (inline)
+         0     0% 52.11%       30ms  4.23%  runtime.makemap
+      10ms  1.41% 53.52%       30ms  4.23%  runtime.makeslice
+      10ms  1.41% 54.93%       30ms  4.23%  runtime.mapaccess2_faststr
+      10ms  1.41% 56.34%       30ms  4.23%  runtime.mapassign_faststr
+      20ms  2.82% 59.15%       20ms  2.82%  go.lostcrafters.com/trail.(*spanState).addDrops (inline)

@@ -105,8 +105,17 @@ func TestScratchStandaloneConcurrent(t *testing.T) {
 	var wg sync.WaitGroup
 	for range 8 {
 		wg.Go(func() {
-			for range 100 {
-				if err := s.WriteRecord(trail.CaptureStart{Seq: 1}); err != nil {
+			for i := range 100 {
+				var err error
+				if i%2 == 0 {
+					err = s.WriteRecords([]trail.Record{trail.CaptureStart{Seq: 1}, trail.CaptureStart{Seq: 2}})
+				} else {
+					err = s.WriteRecord(trail.CaptureStart{Seq: 1})
+				}
+				if err != nil {
+					t.Error(err)
+				}
+				if err := s.Flush(context.Background()); err != nil {
 					t.Error(err)
 				}
 			}
@@ -114,7 +123,7 @@ func TestScratchStandaloneConcurrent(t *testing.T) {
 	}
 	wg.Wait()
 	lines := bytes.Split(bytes.TrimSpace(f.Bytes()), []byte{'\n'})
-	if len(lines) != 800 {
+	if len(lines) != 1200 {
 		t.Fatalf("lines=%d", len(lines))
 	}
 	for _, line := range lines {

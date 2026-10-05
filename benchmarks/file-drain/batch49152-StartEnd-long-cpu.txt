@@ -1,0 +1,88 @@
+File: batch49152-StartEnd.test.exe
+Build ID: <profile-dir>/batch49152-StartEnd.test.exe2026-10-05 23:38:24.3584096 +0100 BST
+Type: cpu
+Time: 2026-10-05 23:41:05 BST
+Duration: 1.16s, Total samples = 1.74s (150.22%)
+Showing nodes accounting for 1.74s, 100% of 1.74s total
+Showing top 80 nodes out of 203
+      flat  flat%   sum%        cum   cum%
+     0.56s 32.18% 32.18%      0.60s 34.48%  runtime.cgocall
+     0.07s  4.02% 36.21%      0.07s  4.02%  runtime.memmove
+     0.07s  4.02% 40.23%      0.07s  4.02%  runtime.semasleep
+     0.05s  2.87% 43.10%      0.05s  2.87%  internal/runtime/maps.memHashAES
+     0.04s  2.30% 45.40%      0.17s  9.77%  go.lostcrafters.com/trail.(*AsyncProcessor).admitLocked
+     0.04s  2.30% 47.70%      0.05s  2.87%  runtime.mallocgcTinySC2
+     0.04s  2.30% 50.00%      0.05s  2.87%  runtime.preemptM
+     0.03s  1.72% 51.72%      0.51s 29.31%  go.lostcrafters.com/trail.(*providerState).start
+     0.03s  1.72% 53.45%      0.03s  1.72%  go.lostcrafters.com/trail/file.appendJSONString
+     0.03s  1.72% 55.17%      0.03s  1.72%  internal/strconv.formatBase10
+     0.03s  1.72% 56.90%      0.04s  2.30%  runtime.mallocgcSmallScanNoHeaderSC5
+     0.03s  1.72% 58.62%      0.03s  1.72%  runtime.memclrNoHeapPointers
+     0.03s  1.72% 60.34%      0.03s  1.72%  runtime.osyield.func1
+     0.02s  1.15% 61.49%      0.04s  2.30%  go.lostcrafters.com/trail.(*AsyncProcessor).enqueueLocked (inline)
+     0.02s  1.15% 62.64%      0.31s 17.82%  go.lostcrafters.com/trail.(*spanState).end
+     0.02s  1.15% 63.79%      0.02s  1.15%  go.lostcrafters.com/trail/file.appendIDString (inline)
+     0.02s  1.15% 64.94%      0.09s  5.17%  internal/runtime/maps.(*Map).Delete
+     0.02s  1.15% 66.09%      0.02s  1.15%  internal/runtime/maps.(*Map).Used (inline)
+     0.02s  1.15% 67.24%      0.02s  1.15%  internal/runtime/maps.bitset.first (inline)
+     0.02s  1.15% 68.39%      0.08s  4.60%  internal/strconv.AppendUint
+     0.02s  1.15% 69.54%      0.03s  1.72%  internal/sync.(*Mutex).lockSlow
+     0.02s  1.15% 70.69%      0.02s  1.15%  runtime.exitsyscall
+     0.02s  1.15% 71.84%      0.14s  8.05%  runtime.mallocgc
+     0.02s  1.15% 72.99%      0.06s  3.45%  runtime.memhash128
+     0.02s  1.15% 74.14%      0.02s  1.15%  runtime.procyieldAsm
+     0.02s  1.15% 75.29%      0.04s  2.30%  runtime.scanObject
+     0.01s  0.57% 75.86%      0.06s  3.45%  context.WithValue
+     0.01s  0.57% 76.44%      0.01s  0.57%  crypto/internal/fips140/drbg.IsDefaultReader (inline)
+     0.01s  0.57% 77.01%      0.16s  9.20%  crypto/internal/sysrand.Read
+     0.01s  0.57% 77.59%      0.19s 10.92%  go.lostcrafters.com/trail.(*AsyncProcessor).Process
+     0.01s  0.57% 78.16%      0.63s 36.21%  go.lostcrafters.com/trail.(*AsyncProcessor).run
+     0.01s  0.57% 78.74%      0.11s  6.32%  go.lostcrafters.com/trail.(*randomIDGenerator).newTraceID
+     0.01s  0.57% 79.31%      0.01s  0.57%  go.lostcrafters.com/trail.SpanFromContext (inline)
+     0.01s  0.57% 79.89%      0.01s  0.57%  go.lostcrafters.com/trail.TraceID.IsValid (inline)
+     0.01s  0.57% 80.46%      0.09s  5.17%  go.lostcrafters.com/trail.ownFreshStart
+     0.01s  0.57% 81.03%      0.59s 33.91%  go.lostcrafters.com/trail/file.(*Sink).WriteRecords
+     0.01s  0.57% 81.61%      0.42s 24.14%  go.lostcrafters.com/trail/file.(*Sink).writeLocked
+     0.01s  0.57% 82.18%      0.03s  1.72%  go.lostcrafters.com/trail/file.appendUintString (inline)
+     0.01s  0.57% 82.76%      0.16s  9.20%  go.lostcrafters.com/trail/file.encodeRecordInto
+     0.01s  0.57% 83.33%      0.83s 47.70%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1
+     0.01s  0.57% 83.91%      0.01s  0.57%  internal/reflectlite.toType (inline)
+     0.01s  0.57% 84.48%      0.01s  0.57%  internal/runtime/atomic.(*Uint8).Load (inline)
+     0.01s  0.57% 85.06%      0.03s  1.72%  internal/runtime/maps.(*Map).deleteSmall
+     0.01s  0.57% 85.63%      0.01s  0.57%  internal/runtime/maps.h2 (inline)
+     0.01s  0.57% 86.21%      0.01s  0.57%  internal/strconv.numDigits (inline)
+     0.01s  0.57% 86.78%      0.08s  4.60%  internal/stringslite.Clone (inline)
+     0.01s  0.57% 87.36%      0.01s  0.57%  runtime.(*mheap).freeSpan
+     0.01s  0.57% 87.93%      0.01s  0.57%  runtime.(*mspan).markBitsForIndex (inline)
+     0.01s  0.57% 88.51%      0.01s  0.57%  runtime.(*mspan).writeHeapBitsSmall
+     0.01s  0.57% 89.08%      0.01s  0.57%  runtime.chansend.func1
+     0.01s  0.57% 89.66%      0.02s  1.15%  runtime.freeDeadSpanSPMCs
+     0.01s  0.57% 90.23%      0.01s  0.57%  runtime.gcmarknewobject
+     0.01s  0.57% 90.80%      0.01s  0.57%  runtime.getMCache (inline)
+     0.01s  0.57% 91.38%      0.01s  0.57%  runtime.getcallerfp
+     0.01s  0.57% 91.95%      0.01s  0.57%  runtime.getempty
+     0.01s  0.57% 92.53%      0.02s  1.15%  runtime.mallocgcSmallNoScanSC5
+     0.01s  0.57% 93.10%      0.06s  3.45%  runtime.mallocgcSmallScanNoHeader
+     0.01s  0.57% 93.68%      0.01s  0.57%  runtime.mallocgcSmallScanNoHeaderSC6
+     0.01s  0.57% 94.25%      0.04s  2.30%  runtime.mapassign
+     0.01s  0.57% 94.83%      0.06s  3.45%  runtime.memhash (inline)
+     0.01s  0.57% 95.40%      0.01s  0.57%  runtime.nextFreeFast (inline)
+     0.01s  0.57% 95.98%      0.02s  1.15%  runtime.selectnbsend
+     0.01s  0.57% 96.55%      0.01s  0.57%  runtime.semawakeup
+     0.01s  0.57% 97.13%      0.01s  0.57%  runtime.sysUnusedOS
+     0.01s  0.57% 97.70%      0.01s  0.57%  runtime.typePointers.next
+     0.01s  0.57% 98.28%      0.01s  0.57%  runtime.typePointers.nextFast (inline)
+     0.01s  0.57% 98.85%      0.01s  0.57%  runtime.unlock2
+     0.01s  0.57% 99.43%      0.01s  0.57%  sync.(*Mutex).Unlock
+     0.01s  0.57%   100%      0.01s  0.57%  time.Now
+         0     0%   100%      0.01s  0.57%  _.goready.func1
+         0     0%   100%      0.16s  9.20%  crypto/internal/fips140/drbg.Read
+         0     0%   100%      0.01s  0.57%  crypto/internal/rand.IsDefaultReader (inline)
+         0     0%   100%      0.15s  8.62%  crypto/internal/sysrand.read (inline)
+         0     0%   100%      0.17s  9.77%  crypto/rand.Read
+         0     0%   100%      0.16s  9.20%  go.lostcrafters.com/trail.(*providerState).processFreshStart
+         0     0%   100%      0.07s  4.02%  go.lostcrafters.com/trail.(*randomIDGenerator).newSpanID
+         0     0%   100%      0.01s  0.57%  go.lostcrafters.com/trail.(*realClock).now
+         0     0%   100%      0.06s  3.45%  go.lostcrafters.com/trail.ContextWithSpan (inline)
+         0     0%   100%      0.31s 17.82%  go.lostcrafters.com/trail.Span.End (inline)
+         0     0%   100%      0.51s 29.31%  go.lostcrafters.com/trail.Tracer.Start

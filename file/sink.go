@@ -44,6 +44,7 @@ type Sink struct {
 	termErr     error
 	closed      bool
 	scratch     []byte
+	batch       []byte
 }
 
 // sinkFile is the file owner's narrow boundary, also allowing precise write
@@ -86,12 +87,20 @@ func Open(path string, opts ...Option) (*Sink, error) {
 func (s *Sink) WriteRecord(record trail.Record) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	line, err := s.encodeLocked(record)
+	if err != nil {
+		return err
+	}
+	return s.writeLocked(line)
+}
+
+func (s *Sink) encodeLocked(record trail.Record) ([]byte, error) {
 	if s.scratch == nil {
 		s.scratch = make([]byte, 0, initialScratchBytes)
 	}
 	line, err := encodeRecordInto(s.scratch[:0], record)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	line = append(line, '\n')
 	if cap(line) <= maxRetainedScratchBytes {
@@ -102,14 +111,66 @@ func (s *Sink) WriteRecord(record trail.Record) error {
 		s.scratch = nil
 	}
 	if s.closed {
+		return nil, ErrSinkShutdown
+	}
+	if s.err != nil {
+		return nil, s.err
+	}
+	return line, nil
+}
+
+func (s *Sink) writeLocked(line []byte) error {
+	if _, err := writeAll(s.f, line); err != nil {
+		s.err = fmt.Errorf("trail/file: write %s: %w", s.path, err)
+		return s.err
+	}
+	return nil
+}
+
+// WriteRecords implements trail.BatchSink. It writes complete FIFO lines in
+// chunks of at most 64 KiB; a larger individual encoded record is written alone.
+// All bytes are delivered before success, with no buffering across calls. An
+// error can leave an uncertain complete-record prefix and a torn final line;
+// there is no retry after failure. A malformed record never emits its own bytes.
+func (s *Sink) WriteRecords(records []trail.Record) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.closed {
 		return ErrSinkShutdown
 	}
 	if s.err != nil {
 		return s.err
 	}
-	if _, err := writeAll(s.f, line); err != nil {
-		s.err = fmt.Errorf("trail/file: write %s: %w", s.path, err)
-		return s.err
+	if len(records) == 0 {
+		return nil
+	}
+	if s.batch == nil {
+		s.batch = make([]byte, 0, maxRetainedScratchBytes)
+	}
+	defer func() { s.batch = s.batch[:0] }()
+	for _, record := range records {
+		line, err := s.encodeLocked(record)
+		if err != nil {
+			return err
+		}
+		if len(line) > cap(s.batch)-len(s.batch) {
+			if len(s.batch) > 0 {
+				if err := s.writeLocked(s.batch); err != nil {
+					return err
+				}
+				s.batch = s.batch[:0]
+			}
+		}
+		if len(line) > cap(s.batch) {
+			if err := s.writeLocked(line); err != nil {
+				return err
+			}
+			continue
+		}
+		s.batch = append(s.batch, line...)
+	}
+	if len(s.batch) > 0 {
+		return s.writeLocked(s.batch)
 	}
 	return nil
 }
@@ -169,6 +230,7 @@ func (s *Sink) Shutdown(ctx context.Context) error {
 	}
 	s.closed = true
 	s.scratch = nil
+	s.batch = nil
 	s.termErr = errors.Join(errs...)
 	return s.termErr
 }

@@ -1,0 +1,59 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+                           │ benchmarks/file-drain/reuse-drain.txt │ benchmarks/file-drain/batch12288-drain.txt │
+                           │                sec/op                 │       sec/op        vs base                │
+FileDrain/StartEnd-16                                 10.556µ ± 9%          1.334µ ± 4%  -87.36% (p=0.000 n=10)
+FileDrain/AddEvent-16                                 3273.0n ± 2%          426.0n ± 1%  -86.98% (p=0.000 n=10)
+FileDrain/SetAttributes-16                            3510.0n ± 2%          691.8n ± 4%  -80.29% (p=0.000 n=10)
+geomean                                                4.950µ               732.6n       -85.20%
+
+                           │ benchmarks/file-drain/reuse-drain.txt │ benchmarks/file-drain/batch12288-drain.txt │
+                           │             drain-sec/op              │    drain-sec/op     vs base                │
+FileDrain/StartEnd-16                                 9381.0n ± 9%         525.5n ± 17%  -94.40% (p=0.000 n=10)
+FileDrain/AddEvent-16                                 3164.5n ± 2%         302.6n ± 13%  -90.44% (p=0.000 n=10)
+FileDrain/SetAttributes-16                            3108.0n ± 6%         337.4n ± 17%  -89.14% (p=0.000 n=10)
+geomean                                                4.519µ              377.2n        -91.65%
+
+                           │ benchmarks/file-drain/reuse-drain.txt │ benchmarks/file-drain/batch12288-drain.txt │
+                           │           flush-sec/window            │  flush-sec/window   vs base                │
+FileDrain/StartEnd-16                                 2399.3µ ± 9%         134.4µ ± 17%  -94.40% (p=0.000 n=10)
+FileDrain/AddEvent-16                                 809.43µ ± 2%         77.40µ ± 13%  -90.44% (p=0.000 n=10)
+FileDrain/SetAttributes-16                            794.90µ ± 6%         86.30µ ± 17%  -89.14% (p=0.000 n=10)
+geomean                                                1.156m              96.47µ        -91.65%
+
+                           │ benchmarks/file-drain/reuse-drain.txt │ benchmarks/file-drain/batch12288-drain.txt │
+                           │              shutdown-ns              │   shutdown-ns    vs base                   │
+FileDrain/StartEnd-16                                 0.000 ± 0%          0.000 ± 0%       ~ (p=1.000 n=10+9) ¹
+FileDrain/AddEvent-16                                 0.000 ± 0%          0.000 ± 0%       ~ (p=1.000 n=8+10) ¹
+FileDrain/SetAttributes-16                            0.000 ± 0%          0.000 ± 0%       ~ (p=1.000 n=7+10) ¹
+geomean                                                          ²                    +0.00%                  ²
+¹ all samples are equal
+² summaries must be >0 to compute geomean
+
+                           │ benchmarks/file-drain/reuse-drain.txt │ benchmarks/file-drain/batch12288-drain.txt │
+                           │                 B/op                  │       B/op         vs base                 │
+FileDrain/StartEnd-16                                   529.0 ± 0%          530.0 ± 0%  +0.19% (p=0.000 n=10)
+FileDrain/AddEvent-16                                   129.0 ± 0%          129.0 ± 0%       ~ (p=1.000 n=10) ¹
+FileDrain/SetAttributes-16                              321.0 ± 0%          321.0 ± 0%       ~ (p=1.000 n=10) ¹
+geomean                                                 279.8               280.0       +0.06%
+¹ all samples are equal
+
+                           │ benchmarks/file-drain/reuse-drain.txt │ benchmarks/file-drain/batch12288-drain.txt │
+                           │               allocs/op               │     allocs/op      vs base                 │
+FileDrain/StartEnd-16                                   8.000 ± 0%          8.000 ± 0%       ~ (p=1.000 n=10) ¹
+FileDrain/AddEvent-16                                   2.000 ± 0%          2.000 ± 0%       ~ (p=1.000 n=10) ¹
+FileDrain/SetAttributes-16                              5.000 ± 0%          5.000 ± 0%       ~ (p=1.000 n=10) ¹
+geomean                                                 4.309               4.309       +0.00%
+¹ all samples are equal
+
+                           │ benchmarks/file-drain/reuse-drain.txt │ benchmarks/file-drain/batch12288-drain.txt │
+                           │             shutdown-sec              │            shutdown-sec              vs base   │
+FileDrain/StartEnd-16                                                                       997.6µ ± ∞ ¹
+FileDrain/AddEvent-16                                 778.4µ ± ∞ ¹
+FileDrain/SetAttributes-16                            1.005m ± ∞ ¹
+geomean                                               884.4µ                                997.6µ        ? ² ³
+¹ need >= 6 samples for confidence interval at level 0.95
+² benchmark set differs from baseline; geomeans may not be comparable
+³ ratios must be >0 to compute geomean

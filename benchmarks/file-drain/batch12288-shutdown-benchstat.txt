@@ -1,0 +1,15 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+                     │ benchmarks/file-drain/reuse-shutdown.txt │ benchmarks/file-drain/batch12288-shutdown.txt │
+                     │                  sec/op                  │        sec/op          vs base                │
+FileDrainShutdown-16                               1131.5µ ± 4%            379.4µ ± 11%  -66.47% (p=0.000 n=10)
+
+                     │ benchmarks/file-drain/reuse-shutdown.txt │ benchmarks/file-drain/batch12288-shutdown.txt │
+                     │                   B/op                   │        B/op          vs base                  │
+FileDrainShutdown-16                               1.338Ki ± 0%         65.386Ki ± 0%  +4787.23% (p=0.000 n=10)
+
+                     │ benchmarks/file-drain/reuse-shutdown.txt │ benchmarks/file-drain/batch12288-shutdown.txt │
+                     │                allocs/op                 │       allocs/op        vs base                │
+FileDrainShutdown-16                                 4.000 ± 0%              5.000 ± 0%  +25.00% (p=0.000 n=10)

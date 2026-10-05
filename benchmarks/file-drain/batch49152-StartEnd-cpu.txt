@@ -1,0 +1,88 @@
+File: batch49152-StartEnd.test.exe
+Build ID: <profile-dir>/batch49152-StartEnd.test.exe2026-10-05 23:38:22.9596633 +0100 BST
+Type: cpu
+Time: 2026-10-05 23:38:24 BST
+Duration: 111.14ms, Total samples = 150ms (134.97%)
+Showing nodes accounting for 150ms, 100% of 150ms total
+Showing top 80 nodes out of 87
+      flat  flat%   sum%        cum   cum%
+      30ms 20.00% 20.00%       40ms 26.67%  runtime.cgocall
+      20ms 13.33% 33.33%       20ms 13.33%  runtime.semasleep
+      10ms  6.67% 40.00%       20ms 13.33%  go.lostcrafters.com/trail.(*AsyncProcessor).admitLocked
+      10ms  6.67% 46.67%       10ms  6.67%  go.lostcrafters.com/trail.asyncRecordSize
+      10ms  6.67% 53.33%       20ms 13.33%  go.lostcrafters.com/trail/file.appendUintString (inline)
+      10ms  6.67% 60.00%       60ms 40.00%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1
+      10ms  6.67% 66.67%       10ms  6.67%  internal/runtime/maps.MemHash
+      10ms  6.67% 73.33%       10ms  6.67%  runtime.findfunc
+      10ms  6.67% 80.00%       10ms  6.67%  runtime.memmove
+      10ms  6.67% 86.67%       10ms  6.67%  runtime.newobject
+      10ms  6.67% 93.33%       10ms  6.67%  runtime.osPreemptExtEnter
+      10ms  6.67%   100%       10ms  6.67%  runtime.sysUnusedOS
+         0     0%   100%       10ms  6.67%  crypto/internal/fips140/drbg.Read
+         0     0%   100%       10ms  6.67%  crypto/internal/sysrand.Read
+         0     0%   100%       10ms  6.67%  crypto/internal/sysrand.read (inline)
+         0     0%   100%       10ms  6.67%  crypto/rand.Read
+         0     0%   100%       10ms  6.67%  go.lostcrafters.com/trail.(*AsyncProcessor).Process
+         0     0%   100%       50ms 33.33%  go.lostcrafters.com/trail.(*AsyncProcessor).run
+         0     0%   100%       20ms 13.33%  go.lostcrafters.com/trail.(*providerState).processFreshStart
+         0     0%   100%       30ms 20.00%  go.lostcrafters.com/trail.(*providerState).start
+         0     0%   100%       10ms  6.67%  go.lostcrafters.com/trail.(*randomIDGenerator).newTraceID
+         0     0%   100%       20ms 13.33%  go.lostcrafters.com/trail.(*spanState).end
+         0     0%   100%       20ms 13.33%  go.lostcrafters.com/trail.Span.End (inline)
+         0     0%   100%       30ms 20.00%  go.lostcrafters.com/trail.Tracer.Start
+         0     0%   100%       20ms 13.33%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; ParentSpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Scope string; Name string }]
+         0     0%   100%       10ms  6.67%  go.lostcrafters.com/trail/file.(*Sink).WriteRecord
+         0     0%   100%       30ms 20.00%  go.lostcrafters.com/trail/file.(*Sink).WriteRecords
+         0     0%   100%       20ms 13.33%  go.lostcrafters.com/trail/file.(*Sink).encodeLocked
+         0     0%   100%       20ms 13.33%  go.lostcrafters.com/trail/file.(*Sink).writeLocked
+         0     0%   100%       20ms 13.33%  go.lostcrafters.com/trail/file.encodeRecordInto
+         0     0%   100%       20ms 13.33%  go.lostcrafters.com/trail/file.writeAll
+         0     0%   100%       20ms 13.33%  internal/poll.(*FD).Write
+         0     0%   100%       20ms 13.33%  internal/poll.(*FD).Write.func1
+         0     0%   100%       20ms 13.33%  internal/poll.(*FD).execIO
+         0     0%   100%       10ms  6.67%  internal/strconv.AppendUint
+         0     0%   100%       10ms  6.67%  internal/syscall/windows.Deleteat
+         0     0%   100%       10ms  6.67%  internal/syscall/windows.ProcessPrng
+         0     0%   100%       20ms 13.33%  os.(*File).Write
+         0     0%   100%       20ms 13.33%  os.(*File).write (inline)
+         0     0%   100%       10ms  6.67%  os.RemoveAll
+         0     0%   100%       10ms  6.67%  os.removeAll
+         0     0%   100%       10ms  6.67%  os.removeAllFrom
+         0     0%   100%       10ms  6.67%  os.removefileat (inline)
+         0     0%   100%       10ms  6.67%  runtime.(*pageAlloc).scavenge.func1
+         0     0%   100%       10ms  6.67%  runtime.(*pageAlloc).scavengeOne
+         0     0%   100%       10ms  6.67%  runtime.(*unwinder).next
+         0     0%   100%       10ms  6.67%  runtime.acquireSudog
+         0     0%   100%       10ms  6.67%  runtime.callers
+         0     0%   100%       10ms  6.67%  runtime.callers.func1
+         0     0%   100%       10ms  6.67%  runtime.chanrecv
+         0     0%   100%       10ms  6.67%  runtime.chanrecv1
+         0     0%   100%       10ms  6.67%  runtime.convT
+         0     0%   100%       10ms  6.67%  runtime.findRunnable
+         0     0%   100%       10ms  6.67%  runtime.gopreempt_m (inline)
+         0     0%   100%       10ms  6.67%  runtime.goschedImpl
+         0     0%   100%       20ms 13.33%  runtime.lock (inline)
+         0     0%   100%       20ms 13.33%  runtime.lock2
+         0     0%   100%       20ms 13.33%  runtime.lockWithRank (inline)
+         0     0%   100%       10ms  6.67%  runtime.mProf_Malloc
+         0     0%   100%       10ms  6.67%  runtime.mallocgc
+         0     0%   100%       10ms  6.67%  runtime.mallocgcSmallScanNoHeader
+         0     0%   100%       10ms  6.67%  runtime.mapassign
+         0     0%   100%       10ms  6.67%  runtime.mcall
+         0     0%   100%       10ms  6.67%  runtime.memhash (inline)
+         0     0%   100%       10ms  6.67%  runtime.memhash128
+         0     0%   100%       10ms  6.67%  runtime.morestack
+         0     0%   100%       10ms  6.67%  runtime.newstack
+         0     0%   100%       10ms  6.67%  runtime.park_m
+         0     0%   100%       10ms  6.67%  runtime.profilealloc
+         0     0%   100%       10ms  6.67%  runtime.runSafePointFn
+         0     0%   100%       10ms  6.67%  runtime.schedule
+         0     0%   100%       10ms  6.67%  runtime.sysUnused (inline)
+         0     0%   100%       20ms 13.33%  runtime.systemstack
+         0     0%   100%       10ms  6.67%  runtime.tracebackPCs
+         0     0%   100%       10ms  6.67%  strconv.AppendUint (inline)
+         0     0%   100%       10ms  6.67%  syscall.CloseHandle
+         0     0%   100%       40ms 26.67%  syscall.SyscallN
+         0     0%   100%       20ms 13.33%  syscall.WriteFile (inline)
+         0     0%   100%       40ms 26.67%  syscall.syscalln
+         0     0%   100%       20ms 13.33%  syscall.writeFile
