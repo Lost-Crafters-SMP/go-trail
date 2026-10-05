@@ -1,0 +1,39 @@
+File: sync-file-StartEnd.test.exe
+Build ID: <profile-dir>/sync-file-StartEnd.test.exe2026-10-05 21:52:08.4365679 +0100 BST
+Type: cpu
+Time: 2026-10-05 21:52:10 BST
+Duration: 4.33s, Total samples = 4.59s (105.94%)
+Showing nodes accounting for 4.26s, 92.81% of 4.59s total
+Dropped 110 nodes (cum <= 0.02s)
+Showing top 30 nodes out of 71
+      flat  flat%   sum%        cum   cum%
+     3.91s 85.19% 85.19%      3.94s 85.84%  runtime.cgocall
+     0.06s  1.31% 86.49%      0.06s  1.31%  runtime.sysUnusedOS
+     0.05s  1.09% 87.58%      0.06s  1.31%  runtime.typePointers.next
+     0.04s  0.87% 88.45%      0.05s  1.09%  runtime.preemptM
+     0.04s  0.87% 89.32%      0.04s  0.87%  runtime.semasleep
+     0.04s  0.87% 90.20%      0.04s  0.87%  runtime.semawakeup
+     0.03s  0.65% 90.85%      0.12s  2.61%  runtime.scanObject
+     0.02s  0.44% 91.29%      0.08s  1.74%  runtime.growslice
+     0.02s  0.44% 91.72%      0.03s  0.65%  runtime.mallocgcSmallScanNoHeaderSC4
+     0.02s  0.44% 92.16%      0.07s  1.53%  runtime.schedule
+     0.01s  0.22% 92.37%      4.04s 88.02%  go.lostcrafters.com/trail/file.(*Sink).WriteRecord
+     0.01s  0.22% 92.59%      0.10s  2.18%  go.lostcrafters.com/trail/file.encodeRecord
+     0.01s  0.22% 92.81%      0.03s  0.65%  runtime.(*spanSet).pop
+         0     0% 92.81%      4.04s 88.02%  go.lostcrafters.com/trail.(*SyncProcessor).Process
+         0     0% 92.81%      1.51s 32.90%  go.lostcrafters.com/trail.(*providerState).start
+         0     0% 92.81%      2.59s 56.43%  go.lostcrafters.com/trail.(*spanState).end
+         0     0% 92.81%      2.59s 56.43%  go.lostcrafters.com/trail.Span.End (inline)
+         0     0% 92.81%      1.51s 32.90%  go.lostcrafters.com/trail.Tracer.Start
+         0     0% 92.81%      0.03s  0.65%  go.lostcrafters.com/trail/file.appendIntString (inline)
+         0     0% 92.81%      3.93s 85.62%  go.lostcrafters.com/trail/file.writeAll
+         0     0% 92.81%      4.10s 89.32%  go.lostcrafters.com/trail_test.BenchmarkEnabled.func1.1
+         0     0% 92.81%      3.93s 85.62%  internal/poll.(*FD).Write
+         0     0% 92.81%      3.92s 85.40%  internal/poll.(*FD).Write.func1
+         0     0% 92.81%      3.92s 85.40%  internal/poll.(*FD).execIO
+         0     0% 92.81%      0.03s  0.65%  internal/strconv.AppendInt
+         0     0% 92.81%      0.03s  0.65%  internal/strconv.AppendUint
+         0     0% 92.81%      3.93s 85.62%  os.(*File).Write
+         0     0% 92.81%      3.93s 85.62%  os.(*File).write (inline)
+         0     0% 92.81%      0.04s  0.87%  runtime.(*gcControllerState).enlistWorker
+         0     0% 92.81%      0.06s  1.31%  runtime.(*mcache).nextFree

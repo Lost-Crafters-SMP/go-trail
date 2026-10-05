@@ -1,0 +1,27 @@
+File: async-StartEnd.test.exe
+Build ID: <temp>/go-build1188528942/b001/trail.test.exe2026-10-05 21:51:46.3979692 +0100 BST
+Type: alloc_objects
+Time: 2026-10-05 21:51:48 BST
+Showing nodes accounting for 900021, 99.76% of 902213 total
+Dropped 361 nodes (cum <= 4511)
+      flat  flat%   sum%        cum   cum%
+    100013 11.09% 11.09%     100013 11.09%  internal/stringslite.Clone <cache>/toolchains/go/1.27.1/src/internal/stringslite/strings.go:119 (inline)
+    100001 11.08% 22.17%     100001 11.08%  context.WithValue <cache>/toolchains/go/1.27.1/src/context/context.go:738
+    100001 11.08% 33.25%     100001 11.08%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:310
+    100001 11.08% 44.34%     300019 33.25%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:396
+    100001 11.08% 55.42%     100001 11.08%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:404
+    100001 11.08% 66.51%     100001 11.08%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:410
+    100001 11.08% 77.59%     100002 11.08%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:135
+    100001 11.08% 88.67%     100001 11.08%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:157
+    100001 11.08% 99.76%     100001 11.08%  go.lostcrafters.com/trail.cloneAsyncRecord <repo>/async_processor.go:490
+         0     0% 99.76%     200014 22.17%  go.lostcrafters.com/trail.(*AsyncProcessor).Process <repo>/async_processor.go:182
+         0     0% 99.76%     100001 11.08%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:446
+         0     0% 99.76%     100001 11.08%  go.lostcrafters.com/trail.ContextWithSpan <repo>/context.go:15 (inline)
+         0     0% 99.76%     200003 22.17%  go.lostcrafters.com/trail.Span.End <repo>/span.go:42 (inline)
+         0     0% 99.76%     700032 77.59%  go.lostcrafters.com/trail.Tracer.Start <repo>/tracer.go:37
+         0     0% 99.76%     100013 11.09%  go.lostcrafters.com/trail.cloneAsyncRecord <repo>/async_processor.go:489
+         0     0% 99.76%     700032 77.59%  go.lostcrafters.com/trail_test.BenchmarkAsyncEnabled.func1.1 <repo>/async_bench_test.go:54
+         0     0% 99.76%     200003 22.17%  go.lostcrafters.com/trail_test.BenchmarkAsyncEnabled.func1.1 <repo>/async_bench_test.go:58
+         0     0% 99.76%     100013 11.09%  strings.Clone <cache>/toolchains/go/1.27.1/src/strings/clone.go:22 (inline)
+         0     0% 99.76%     901234 99.89%  testing.(*B).launch <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:347
+         0     0% 99.76%     901733 99.95%  testing.(*B).runN <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:219

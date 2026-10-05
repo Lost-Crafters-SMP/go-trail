@@ -1,0 +1,39 @@
+File: async-file-StartEnd.test.exe
+Build ID: <profile-dir>/async-file-StartEnd.test.exe2026-10-05 21:52:24.3829833 +0100 BST
+Type: cpu
+Time: 2026-10-05 21:52:26 BST
+Duration: 42.78s, Total samples = 48.45s (113.25%)
+Showing nodes accounting for 43.19s, 89.14% of 48.45s total
+Dropped 324 nodes (cum <= 0.24s)
+Showing top 30 nodes out of 98
+      flat  flat%   sum%        cum   cum%
+    38.80s 80.08% 80.08%     39.12s 80.74%  runtime.cgocall
+     0.96s  1.98% 82.06%      0.96s  1.98%  runtime.semasleep
+     0.52s  1.07% 83.14%      0.53s  1.09%  runtime.preemptM
+     0.50s  1.03% 84.17%      0.50s  1.03%  runtime.semawakeup
+     0.37s  0.76% 84.93%      0.50s  1.03%  runtime.typePointers.next
+     0.30s  0.62% 85.55%      0.30s  0.62%  runtime.sysUnusedOS
+     0.25s  0.52% 86.07%      1.46s  3.01%  go.lostcrafters.com/trail.(*AsyncProcessor).Process
+     0.16s  0.33% 86.40%      0.27s  0.56%  runtime.scanObjectsSmall
+     0.14s  0.29% 86.69%      2.83s  5.84%  go.lostcrafters.com/trail.(*providerState).start
+     0.13s  0.27% 86.96%      0.72s  1.49%  runtime.scanObject
+     0.11s  0.23% 87.18%      0.35s  0.72%  go.lostcrafters.com/trail/file.appendIDString (inline)
+     0.09s  0.19% 87.37%      1.09s  2.25%  go.lostcrafters.com/trail.(*spanState).end
+     0.08s  0.17% 87.53%      1.06s  2.19%  go.lostcrafters.com/trail/file.encodeRecord
+     0.08s  0.17% 87.70%      1.26s  2.60%  runtime.mallocgc
+     0.07s  0.14% 87.84%      0.37s  0.76%  go.lostcrafters.com/trail.cloneAsyncRecord
+     0.06s  0.12% 87.97%      0.40s  0.83%  internal/runtime/maps.(*Map).Delete
+     0.06s  0.12% 88.09%      1.06s  2.19%  runtime.lock2
+     0.06s  0.12% 88.21%      0.40s  0.83%  runtime.mallocgcSmallNoscan
+     0.06s  0.12% 88.34%      0.26s  0.54%  runtime.mapassign
+     0.05s   0.1% 88.44%     38.18s 78.80%  internal/poll.(*FD).execIO
+     0.05s   0.1% 88.54%      0.55s  1.14%  runtime.convT
+     0.05s   0.1% 88.65%      0.43s  0.89%  runtime.mallocgcSmallScanNoHeader
+     0.05s   0.1% 88.75%      0.30s  0.62%  runtime.sweepone
+     0.03s 0.062% 88.81%      0.59s  1.22%  go.lostcrafters.com/trail.(*randomIDGenerator).newSpanID
+     0.03s 0.062% 88.88%      0.25s  0.52%  runtime.entersyscall
+     0.03s 0.062% 88.94%      0.75s  1.55%  runtime.growslice
+     0.03s 0.062% 89.00%      0.55s  1.14%  runtime.schedule
+     0.03s 0.062% 89.06%     38.04s 78.51%  syscall.writeFile
+     0.02s 0.041% 89.10%      2.85s  5.88%  go.lostcrafters.com/trail.Tracer.Start
+     0.02s 0.041% 89.14%      4.19s  8.65%  go.lostcrafters.com/trail_test.BenchmarkAsyncEnabled.func1.1

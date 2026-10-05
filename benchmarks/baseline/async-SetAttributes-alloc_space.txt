@@ -1,0 +1,21 @@
+File: async-SetAttributes.test.exe
+Build ID: <temp>/go-build4021108163/b001/trail.test.exe2026-10-05 21:51:54.2447305 +0100 BST
+Type: alloc_space
+Time: 2026-10-05 21:51:55 BST
+Showing nodes accounting for 59.51MB, 99.17% of 60.01MB total
+Dropped 364 nodes (cum <= 0.30MB)
+      flat  flat%   sum%        cum   cum%
+   18.31MB 30.51% 30.51%    18.31MB 30.51%  go.lostcrafters.com/trail.cloneAsyncAttributes <repo>/async_processor.go:470
+   18.31MB 30.51% 61.03%    18.31MB 30.51%  go.lostcrafters.com/trail.resolveSpanAttributes <repo>/attributes.go:226
+   10.68MB 17.80% 78.82%    41.20MB 68.65%  go.lostcrafters.com/trail.(*spanState).setAttributes <repo>/span.go:192
+   10.68MB 17.80% 96.62%    10.68MB 17.80%  go.lostcrafters.com/trail.cloneAsyncRecord <repo>/async_processor.go:498
+    1.53MB  2.54% 99.17%     1.53MB  2.54%  internal/stringslite.Clone <cache>/toolchains/go/1.27.1/src/internal/stringslite/strings.go:119 (inline)
+         0     0% 99.17%    30.52MB 50.86%  go.lostcrafters.com/trail.(*AsyncProcessor).Process <repo>/async_processor.go:182
+         0     0% 99.17%    18.31MB 30.51%  go.lostcrafters.com/trail.(*spanState).setAttributes <repo>/span.go:182
+         0     0% 99.17%    59.51MB 99.17%  go.lostcrafters.com/trail.Span.SetAttributes <repo>/span.go:66 (inline)
+         0     0% 99.17%     1.53MB  2.54%  go.lostcrafters.com/trail.cloneAsyncAttributes <repo>/async_processor.go:472
+         0     0% 99.17%    19.84MB 33.06%  go.lostcrafters.com/trail.cloneAsyncRecord <repo>/async_processor.go:492
+         0     0% 99.17%    59.51MB 99.17%  go.lostcrafters.com/trail_test.BenchmarkAsyncEnabled.func1.1 <repo>/async_bench_test.go:62
+         0     0% 99.17%     1.53MB  2.54%  strings.Clone <cache>/toolchains/go/1.27.1/src/strings/clone.go:22 (inline)
+         0     0% 99.17%    59.68MB 99.45%  testing.(*B).launch <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:347
+         0     0% 99.17%    59.88MB 99.79%  testing.(*B).runN <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:219

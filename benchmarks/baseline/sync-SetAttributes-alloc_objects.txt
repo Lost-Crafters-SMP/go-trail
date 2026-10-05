@@ -1,0 +1,14 @@
+File: sync-SetAttributes.test.exe
+Build ID: <temp>/go-build4287250984/b001/trail.test.exe2026-10-05 21:51:43.7804781 +0100 BST
+Type: alloc_objects
+Time: 2026-10-05 21:51:44 BST
+Showing nodes accounting for 200002, 99.54% of 200930 total
+Dropped 346 nodes (cum <= 1004)
+      flat  flat%   sum%        cum   cum%
+    100001 49.77% 49.77%     100001 49.77%  go.lostcrafters.com/trail.(*spanState).setAttributes <repo>/span.go:192
+    100001 49.77% 99.54%     100001 49.77%  go.lostcrafters.com/trail.resolveSpanAttributes <repo>/attributes.go:226
+         0     0% 99.54%     100005 49.77%  go.lostcrafters.com/trail.(*spanState).setAttributes <repo>/span.go:182
+         0     0% 99.54%     200006 99.54%  go.lostcrafters.com/trail.Span.SetAttributes <repo>/span.go:66 (inline)
+         0     0% 99.54%     200006 99.54%  go.lostcrafters.com/trail_test.BenchmarkEnabled.func1.1 <repo>/enabled_bench_test.go:57
+         0     0% 99.54%     200021 99.55%  testing.(*B).launch <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:347
+         0     0% 99.54%     200475 99.77%  testing.(*B).runN <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:219

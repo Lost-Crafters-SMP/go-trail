@@ -1,0 +1,21 @@
+File: async-SetAttributes.test.exe
+Build ID: <temp>/go-build4021108163/b001/trail.test.exe2026-10-05 21:51:54.2447305 +0100 BST
+Type: alloc_objects
+Time: 2026-10-05 21:51:55 BST
+Showing nodes accounting for 500014, 99.56% of 502222 total
+Dropped 364 nodes (cum <= 2511)
+      flat  flat%   sum%        cum   cum%
+    100010 19.91% 19.91%     100010 19.91%  internal/stringslite.Clone <cache>/toolchains/go/1.27.1/src/internal/stringslite/strings.go:119 (inline)
+    100001 19.91% 39.83%     400011 79.65%  go.lostcrafters.com/trail.(*spanState).setAttributes <repo>/span.go:192
+    100001 19.91% 59.74%     100001 19.91%  go.lostcrafters.com/trail.cloneAsyncAttributes <repo>/async_processor.go:470
+    100001 19.91% 79.65%     100001 19.91%  go.lostcrafters.com/trail.cloneAsyncRecord <repo>/async_processor.go:498
+    100001 19.91% 99.56%     100001 19.91%  go.lostcrafters.com/trail.resolveSpanAttributes <repo>/attributes.go:226
+         0     0% 99.56%     300014 59.74%  go.lostcrafters.com/trail.(*AsyncProcessor).Process <repo>/async_processor.go:182
+         0     0% 99.56%     100005 19.91%  go.lostcrafters.com/trail.(*spanState).setAttributes <repo>/span.go:182
+         0     0% 99.56%     500016 99.56%  go.lostcrafters.com/trail.Span.SetAttributes <repo>/span.go:66 (inline)
+         0     0% 99.56%     100007 19.91%  go.lostcrafters.com/trail.cloneAsyncAttributes <repo>/async_processor.go:472
+         0     0% 99.56%     200009 39.82%  go.lostcrafters.com/trail.cloneAsyncRecord <repo>/async_processor.go:492
+         0     0% 99.56%     500016 99.56%  go.lostcrafters.com/trail_test.BenchmarkAsyncEnabled.func1.1 <repo>/async_bench_test.go:62
+         0     0% 99.56%     100010 19.91%  strings.Clone <cache>/toolchains/go/1.27.1/src/strings/clone.go:22 (inline)
+         0     0% 99.56%     501231 99.80%  testing.(*B).launch <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:347
+         0     0% 99.56%     501741 99.90%  testing.(*B).runN <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:219

@@ -1,0 +1,22 @@
+File: sync-StartEnd.test.exe
+Build ID: <temp>/go-build374653672/b001/trail.test.exe2026-10-05 21:51:35.1328163 +0100 BST
+Type: alloc_space
+Time: 2026-10-05 21:51:36 BST
+Showing nodes accounting for 51.88MB, 99.45% of 52.17MB total
+Dropped 332 nodes (cum <= 0.26MB)
+      flat  flat%   sum%        cum   cum%
+   12.21MB 23.40% 23.40%    12.21MB 23.40%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:410
+   10.68MB 20.48% 43.88%    10.68MB 20.48%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:396
+   10.68MB 20.48% 64.35%    10.68MB 20.48%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:135
+    6.10MB 11.70% 76.05%     6.10MB 11.70%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:157
+    4.58MB  8.78% 84.83%     4.58MB  8.78%  context.WithValue <cache>/toolchains/go/1.27.1/src/context/context.go:738
+    4.58MB  8.78% 93.60%     4.58MB  8.78%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:404
+    3.05MB  5.85% 99.45%     3.05MB  5.85%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:310
+         0     0% 99.45%     4.58MB  8.78%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:446
+         0     0% 99.45%     4.58MB  8.78%  go.lostcrafters.com/trail.ContextWithSpan <repo>/context.go:15 (inline)
+         0     0% 99.45%    16.78MB 32.18%  go.lostcrafters.com/trail.Span.End <repo>/span.go:42 (inline)
+         0     0% 99.45%    35.10MB 67.28%  go.lostcrafters.com/trail.Tracer.Start <repo>/tracer.go:37
+         0     0% 99.45%    35.10MB 67.28%  go.lostcrafters.com/trail_test.BenchmarkEnabled.func1.1 <repo>/enabled_bench_test.go:52
+         0     0% 99.45%    16.78MB 32.18%  go.lostcrafters.com/trail_test.BenchmarkEnabled.func1.1 <repo>/enabled_bench_test.go:53
+         0     0% 99.45%    51.88MB 99.45%  testing.(*B).launch <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:347
+         0     0% 99.45%    52.06MB 99.78%  testing.(*B).runN <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:219

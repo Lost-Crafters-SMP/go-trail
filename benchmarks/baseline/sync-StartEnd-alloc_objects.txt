@@ -1,0 +1,22 @@
+File: sync-StartEnd.test.exe
+Build ID: <temp>/go-build374653672/b001/trail.test.exe2026-10-05 21:51:35.1328163 +0100 BST
+Type: alloc_objects
+Time: 2026-10-05 21:51:36 BST
+Showing nodes accounting for 700007, 99.87% of 700919 total
+Dropped 332 nodes (cum <= 3504)
+      flat  flat%   sum%        cum   cum%
+    100001 14.27% 14.27%     100001 14.27%  context.WithValue <cache>/toolchains/go/1.27.1/src/context/context.go:738
+    100001 14.27% 28.53%     100001 14.27%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:310
+    100001 14.27% 42.80%     100001 14.27%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:396
+    100001 14.27% 57.07%     100001 14.27%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:404
+    100001 14.27% 71.34%     100001 14.27%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:410
+    100001 14.27% 85.60%     100001 14.27%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:135
+    100001 14.27% 99.87%     100001 14.27%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:157
+         0     0% 99.87%     100001 14.27%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:446
+         0     0% 99.87%     100001 14.27%  go.lostcrafters.com/trail.ContextWithSpan <repo>/context.go:15 (inline)
+         0     0% 99.87%     200002 28.53%  go.lostcrafters.com/trail.Span.End <repo>/span.go:42 (inline)
+         0     0% 99.87%     500013 71.34%  go.lostcrafters.com/trail.Tracer.Start <repo>/tracer.go:37
+         0     0% 99.87%     500013 71.34%  go.lostcrafters.com/trail_test.BenchmarkEnabled.func1.1 <repo>/enabled_bench_test.go:52
+         0     0% 99.87%     200002 28.53%  go.lostcrafters.com/trail_test.BenchmarkEnabled.func1.1 <repo>/enabled_bench_test.go:53
+         0     0% 99.87%     700013 99.87%  testing.(*B).launch <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:347
+         0     0% 99.87%     700464 99.94%  testing.(*B).runN <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:219

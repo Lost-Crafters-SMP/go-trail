@@ -1,0 +1,217 @@
+./async_processor.go:466:6: cannot inline cloneAsyncAttributes: function too complex: cost 163 exceeds budget 80
+./async_processor.go:486:6: cannot inline cloneAsyncRecord: function too complex: cost 311 exceeds budget 80
+./async_processor.go:132:6: cannot inline (*AsyncProcessor).Process: unhandled op DEFER
+./async_processor.go:138:2: can inline (*AsyncProcessor).Process.deferwrap1 with cost 76 as: func() { (*sync.Mutex).Unlock(.autotmp_7) }
+./attributes.go:251:25: can inline resolveSpanAttributes.func1 with cost 74 as: func(Attribute, Attribute) int { return strings.Compare(a.key, b.key) }
+./attributes.go:225:6: cannot inline resolveSpanAttributes: function too complex: cost 357 exceeds budget 80
+./attributes.go:283:25: can inline resolveEventAttributes.func1 with cost 74 as: func(Attribute, Attribute) int { return strings.Compare(a.key, b.key) }
+./attributes.go:261:6: cannot inline resolveEventAttributes: function too complex: cost 332 exceeds budget 80
+./context.go:14:6: can inline ContextWithSpan with cost 65 as: func(context.Context, Span) context.Context { return context.WithValue(ctx, spanKey, span) }
+./context.go:21:6: can inline SpanFromContext with cost 70 as: func(context.Context) Span { span, _ := Span(.autotmp_3), .autotmp_4; return span }
+./span.go:53:6: can inline Span.SpanContext with cost 24 as: method(Span) func() SpanContext { if s.state == nil { return SpanContext{} }; return (*spanState).spanContext(s.state) }
+./context.go:28:6: cannot inline SpanContextFromContext: function too complex: cost 99 exceeds budget 80
+./provider.go:309:6: cannot inline (*providerState).start: unhandled op DEFER
+./provider.go:326:2: can inline (*providerState).start.deferwrap1 with cost 59 as: func() { (*providerState).unlockAndReport(.autotmp_10) }
+./span.go:116:6: cannot inline (*spanState).end: unhandled op DEFER
+./span.go:125:2: can inline (*spanState).end.deferwrap1 with cost 59 as: func() { (*providerState).unlockAndReport(.autotmp_4) }
+./span.go:40:6: can inline Span.End with cost 65 as: method(Span) func() { if s.state != nil { (*spanState).end(s.state) } }
+./span.go:47:6: can inline Span.IsRecording with cost 21 as: method(Span) func() bool { return s.state != nil && (*spanState).isRecording(s.state) }
+./span.go:173:6: cannot inline (*spanState).setAttributes: unhandled op DEFER
+./span.go:178:2: can inline (*spanState).setAttributes.deferwrap1 with cost 59 as: func() { (*providerState).unlockAndReport(.autotmp_4) }
+./span.go:64:6: can inline Span.SetAttributes with cost 66 as: method(Span) func(...Attribute) { if s.state != nil { (*spanState).setAttributes(s.state, attrs) } }
+./span.go:211:6: cannot inline (*spanState).addEvent: unhandled op DEFER
+./span.go:224:2: can inline (*spanState).addEvent.deferwrap1 with cost 59 as: func() { (*providerState).unlockAndReport(.autotmp_6) }
+./span.go:72:6: cannot inline Span.AddEvent: function too complex: cost 144 exceeds budget 80
+./async_processor.go:466:27: parameter attrs leaks to {heap} for cloneAsyncAttributes with derefs=1:
+./async_processor.go:475:18: make([]string, len(a.strs)) escapes to heap in cloneAsyncAttributes:
+./async_processor.go:477:30: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncAttributes:
+./async_processor.go:472:24: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncAttributes:
+./async_processor.go:473:24: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncAttributes:
+./async_processor.go:470:15: make([]Attribute, len(attrs)) escapes to heap in cloneAsyncAttributes:
+./async_processor.go:466:27: leaking param content: attrs
+./async_processor.go:470:15: make([]Attribute, len(attrs)) escapes to heap
+./async_processor.go:472:24: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:473:24: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:475:18: make([]string, len(a.strs)) escapes to heap
+./async_processor.go:477:30: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:486:23: parameter record leaks to {heap} for cloneAsyncRecord with derefs=2:
+./async_processor.go:495:38: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncRecord:
+./async_processor.go:490:10: r escapes to heap in cloneAsyncRecord:
+./async_processor.go:498:10: r escapes to heap in cloneAsyncRecord:
+./async_processor.go:502:10: r escapes to heap in cloneAsyncRecord:
+./async_processor.go:486:23: parameter record leaks to ~r0 for cloneAsyncRecord with derefs=0:
+./async_processor.go:486:23: parameter record leaks to {storage for r} for cloneAsyncRecord with derefs=1:
+./async_processor.go:500:25: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncRecord:
+./async_processor.go:494:4: status escapes to heap in cloneAsyncRecord:
+./async_processor.go:486:23: parameter record leaks to {storage for r} for cloneAsyncRecord with derefs=1:
+./async_processor.go:486:23: parameter record leaks to status for cloneAsyncRecord with derefs=2:
+./async_processor.go:486:23: parameter record leaks to {storage for r} for cloneAsyncRecord with derefs=1:
+./async_processor.go:489:34: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncRecord:
+./async_processor.go:489:57: make([]byte, len(stringslite.s)) escapes to heap in cloneAsyncRecord:
+./async_processor.go:486:23: leaking param content: record
+./async_processor.go:486:23: leaking param: record to result ~r0 level=0
+./async_processor.go:489:34: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:489:57: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:490:10: r escapes to heap
+./async_processor.go:495:38: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:498:10: r escapes to heap
+./async_processor.go:500:25: make([]byte, len(stringslite.s)) escapes to heap
+./async_processor.go:502:10: r escapes to heap
+./async_processor.go:132:34: parameter record leaks to {heap} for (*AsyncProcessor).Process with derefs=1:
+./async_processor.go:132:7: parameter p leaks to {heap} for (*AsyncProcessor).Process with derefs=0:
+./async_processor.go:132:34: parameter record leaks to {heap} for (*AsyncProcessor).Process with derefs=0:
+./async_processor.go:132:7: parameter p leaks to ~r0 for (*AsyncProcessor).Process with derefs=1:
+./async_processor.go:154:21: &errors.errorString{...} escapes to heap in (*AsyncProcessor).Process:
+./async_processor.go:160:22: &errors.errorString{...} escapes to heap in (*AsyncProcessor).Process:
+./async_processor.go:165:21: &errors.errorString{...} escapes to heap in (*AsyncProcessor).Process:
+./async_processor.go:170:21: &errors.errorString{...} escapes to heap in (*AsyncProcessor).Process:
+./async_processor.go:175:21: &errors.errorString{...} escapes to heap in (*AsyncProcessor).Process:
+./async_processor.go:132:7: leaking param: p
+./async_processor.go:132:34: leaking param: record
+./async_processor.go:154:21: &errors.errorString{...} escapes to heap
+./async_processor.go:160:22: &errors.errorString{...} escapes to heap
+./async_processor.go:165:21: &errors.errorString{...} escapes to heap
+./async_processor.go:170:21: &errors.errorString{...} escapes to heap
+./async_processor.go:175:21: &errors.errorString{...} escapes to heap
+./attributes.go:251:30: parameter a leaks to {heap} for resolveSpanAttributes.func1 with derefs=0:
+./attributes.go:251:33: parameter b leaks to {heap} for resolveSpanAttributes.func1 with derefs=0:
+./attributes.go:251:30: leaking param: a
+./attributes.go:251:33: leaking param: b
+./attributes.go:225:54: parameter attrs leaks to {heap} for resolveSpanAttributes with derefs=1:
+./attributes.go:230:26: make([]byte, len(stringslite.s)) escapes to heap in resolveSpanAttributes:
+./attributes.go:226:15: make([]Attribute, 0, min(len(attrs), 64)) escapes to heap in resolveSpanAttributes:
+./attributes.go:249:17: append(batch, attr) escapes to heap in resolveSpanAttributes:
+./attributes.go:225:28: parameter keys leaks to ~r0 for resolveSpanAttributes with derefs=0:
+./attributes.go:245:15: make(map[string]struct {}) escapes to heap in resolveSpanAttributes:
+./attributes.go:225:28: leaking param: keys to result ~r0 level=0
+./attributes.go:225:54: leaking param content: attrs
+./attributes.go:226:15: make([]Attribute, 0, min(len(attrs), 64)) escapes to heap
+./attributes.go:227:15: make(map[string]int, len(attrs)) does not escape
+./attributes.go:230:26: make([]byte, len(stringslite.s)) escapes to heap
+./attributes.go:245:15: make(map[string]struct {}) escapes to heap
+./attributes.go:249:17: append escapes to heap
+./attributes.go:251:25: func literal does not escape
+./attributes.go:283:30: parameter a leaks to {heap} for resolveEventAttributes.func1 with derefs=0:
+./attributes.go:283:33: parameter b leaks to {heap} for resolveEventAttributes.func1 with derefs=0:
+./attributes.go:283:30: leaking param: a
+./attributes.go:283:33: leaking param: b
+./attributes.go:261:29: parameter attrs leaks to {heap} for resolveEventAttributes with derefs=1:
+./attributes.go:266:26: make([]byte, len(stringslite.s)) escapes to heap in resolveEventAttributes:
+./attributes.go:262:15: make([]Attribute, 0, min(len(attrs), 32)) escapes to heap in resolveEventAttributes:
+./attributes.go:281:17: append(batch, attr) escapes to heap in resolveEventAttributes:
+./attributes.go:261:29: leaking param content: attrs
+./attributes.go:262:15: make([]Attribute, 0, min(len(attrs), 32)) escapes to heap
+./attributes.go:263:15: make(map[string]int, len(attrs)) does not escape
+./attributes.go:266:26: make([]byte, len(stringslite.s)) escapes to heap
+./attributes.go:281:17: append escapes to heap
+./attributes.go:283:25: func literal does not escape
+./context.go:15:32: spanKey escapes to heap in ContextWithSpan:
+./context.go:14:22: parameter ctx leaks to {heap} for ContextWithSpan with derefs=0:
+./context.go:14:43: parameter span leaks to {heap} for ContextWithSpan with derefs=0:
+./context.go:14:22: leaking param: ctx
+./context.go:14:43: leaking param: span
+./context.go:15:32: spanKey escapes to heap
+./context.go:22:23: spanKey escapes to heap in SpanFromContext:
+./context.go:21:22: parameter ctx leaks to {heap} for SpanFromContext with derefs=0:
+./context.go:21:22: leaking param: ctx
+./context.go:22:23: spanKey escapes to heap
+./context.go:29:24: spanKey escapes to heap in SpanContextFromContext:
+./context.go:28:29: parameter ctx leaks to {heap} for SpanContextFromContext with derefs=0:
+./context.go:28:29: leaking param: ctx
+./context.go:29:24: spanKey escapes to heap
+./provider.go:310:6: cfg escapes to heap in (*providerState).start:
+./provider.go:342:16: append(ps.pendingErrors, err) escapes to heap in (*providerState).start:
+./provider.go:350:34: spanKey escapes to heap in (*providerState).start:
+./provider.go:375:18: append(ps.pendingErrors, err) escapes to heap in (*providerState).start:
+./provider.go:396:33: record escapes to heap in (*providerState).start:
+./provider.go:399:17: append(ps.pendingErrors, err) escapes to heap in (*providerState).start:
+./provider.go:429:45: SpanUpdate{...} escapes to heap in (*providerState).start:
+./provider.go:441:19: append(ps.pendingErrors, err) escapes to heap in (*providerState).start:
+./provider.go:446:24: spanKey escapes to heap in (*providerState).start:
+./provider.go:309:7: parameter ps leaks to {heap} for (*providerState).start with derefs=1:
+./provider.go:309:7: parameter ps leaks to {heap} for (*providerState).start with derefs=0:
+./provider.go:309:32: parameter ctx leaks to {heap} for (*providerState).start with derefs=0:
+./provider.go:404:8: &traceState{...} escapes to heap in (*providerState).start:
+./provider.go:410:8: &spanState{...} escapes to heap in (*providerState).start:
+./provider.go:342:27: &errors.errorString{...} escapes to heap in (*providerState).start:
+./provider.go:375:29: &errors.errorString{...} escapes to heap in (*providerState).start:
+./provider.go:309:7: parameter ps leaks to {storage for &spanState{...}} for (*providerState).start with derefs=0:
+./provider.go:309:53: parameter tracer leaks to {storage for record} for (*providerState).start with derefs=0:
+./provider.go:309:68: parameter name leaks to {storage for record} for (*providerState).start with derefs=0:
+./provider.go:319:21: make([]byte, len(stringslite.s)) escapes to heap in (*providerState).start:
+./provider.go:309:32: parameter ctx leaks to ~r0 for (*providerState).start with derefs=0:
+./provider.go:309:7: leaking param: ps
+./provider.go:309:32: leaking param: ctx
+./provider.go:309:53: leaking param: tracer
+./provider.go:309:68: leaking param: name
+./provider.go:309:81: opts does not escape
+./provider.go:319:21: make([]byte, len(stringslite.s)) escapes to heap
+./provider.go:342:27: ... argument does not escape
+./provider.go:342:27: &errors.errorString{...} escapes to heap
+./provider.go:342:16: append escapes to heap
+./provider.go:350:34: spanKey escapes to heap
+./provider.go:375:29: ... argument does not escape
+./provider.go:375:29: &errors.errorString{...} escapes to heap
+./provider.go:375:18: append escapes to heap
+./provider.go:396:33: record escapes to heap
+./provider.go:399:17: append escapes to heap
+./provider.go:404:8: &traceState{...} escapes to heap
+./provider.go:410:8: &spanState{...} escapes to heap
+./provider.go:429:45: SpanUpdate{...} escapes to heap
+./provider.go:441:19: append escapes to heap
+./provider.go:446:24: spanKey escapes to heap
+./span.go:135:40: SpanEnd{...} escapes to heap in (*spanState).end:
+./span.go:147:16: append(ps.pendingErrors, err) escapes to heap in (*spanState).end:
+./span.go:157:42: TraceEnd{...} escapes to heap in (*spanState).end:
+./span.go:164:17: append(ps.pendingErrors, err) escapes to heap in (*spanState).end:
+./span.go:116:7: parameter s leaks to {heap} for (*spanState).end with derefs=2:
+./span.go:116:7: parameter s leaks to {heap} for (*spanState).end with derefs=1:
+./span.go:116:7: leaking param content: s
+./span.go:135:40: SpanEnd{...} escapes to heap
+./span.go:147:16: append escapes to heap
+./span.go:157:42: TraceEnd{...} escapes to heap
+./span.go:164:17: append escapes to heap
+./span.go:40:7: parameter s leaks to {heap} for Span.End with derefs=1:
+./span.go:40:7: leaking param content: s
+./span.go:47:7: s does not escape
+./span.go:53:7: s does not escape
+./span.go:192:43: SpanUpdate{...} escapes to heap in (*spanState).setAttributes:
+./span.go:204:17: append(ps.pendingErrors, err) escapes to heap in (*spanState).setAttributes:
+./span.go:173:35: parameter attrs leaks to {heap} for (*spanState).setAttributes with derefs=1:
+./span.go:173:7: parameter s leaks to {heap} for (*spanState).setAttributes with derefs=2:
+./span.go:173:7: parameter s leaks to {heap} for (*spanState).setAttributes with derefs=1:
+./span.go:173:7: leaking param content: s
+./span.go:173:35: leaking param content: attrs
+./span.go:192:43: SpanUpdate{...} escapes to heap
+./span.go:204:17: append escapes to heap
+./span.go:64:29: parameter attrs leaks to {heap} for Span.SetAttributes with derefs=1:
+./span.go:64:7: parameter s leaks to {heap} for Span.SetAttributes with derefs=1:
+./span.go:64:7: leaking param content: s
+./span.go:64:29: leaking param content: attrs
+./span.go:235:38: Event{...} escapes to heap in (*spanState).addEvent:
+./span.go:248:17: append(ps.pendingErrors, err) escapes to heap in (*spanState).addEvent:
+./span.go:211:62: parameter err leaks to {heap} for (*spanState).addEvent with derefs=0:
+./span.go:211:43: parameter attrs leaks to {heap} for (*spanState).addEvent with derefs=1:
+./span.go:211:7: parameter s leaks to {heap} for (*spanState).addEvent with derefs=2:
+./span.go:211:7: parameter s leaks to {heap} for (*spanState).addEvent with derefs=1:
+./span.go:211:30: parameter name leaks to {storage for Event{...}} for (*spanState).addEvent with derefs=0:
+./span.go:228:21: make([]byte, len(stringslite.s)) escapes to heap in (*spanState).addEvent:
+./span.go:211:7: leaking param content: s
+./span.go:211:30: leaking param: name
+./span.go:211:43: leaking param content: attrs
+./span.go:211:62: leaking param: err
+./span.go:216:17: append does not escape
+./span.go:228:21: make([]byte, len(stringslite.s)) escapes to heap
+./span.go:235:38: Event{...} escapes to heap
+./span.go:248:17: append escapes to heap
+./span.go:74:7: cfg escapes to heap in Span.AddEvent:
+./span.go:72:24: parameter name leaks to {heap} for Span.AddEvent with derefs=0:
+./span.go:72:7: parameter s leaks to {heap} for Span.AddEvent with derefs=1:
+./span.go:72:7: leaking param content: s
+./span.go:72:24: leaking param: name
+./span.go:72:37: opts does not escape
+./span.go:72:24: parameter name leaks to {heap} for (*Span).AddEvent with derefs=0:
+./span.go:72:7: parameter s leaks to {heap} for (*Span).AddEvent with derefs=2:
+./span.go:40:7: parameter s leaks to {heap} for (*Span).End with derefs=2:
+./span.go:64:29: parameter attrs leaks to {heap} for (*Span).SetAttributes with derefs=1:
+./span.go:64:7: parameter s leaks to {heap} for (*Span).SetAttributes with derefs=2:

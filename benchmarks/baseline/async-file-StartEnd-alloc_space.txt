@@ -1,0 +1,38 @@
+File: async-file-StartEnd.test.exe
+Build ID: <temp>/go-build367322952/b001/trail.test.exe2026-10-05 21:52:15.8213201 +0100 BST
+Type: alloc_space
+Time: 2026-10-05 21:52:24 BST
+Showing nodes accounting for 249.98MB, 99.40% of 251.49MB total
+Dropped 511 nodes (cum <= 1.26MB)
+Showing top 30 nodes out of 44
+      flat  flat%   sum%        cum   cum%
+   73.24MB 29.12% 29.12%    73.24MB 29.12%  go.lostcrafters.com/trail/file.appendIDString <repo>/file/encode.go:390 (inline)
+   48.71MB 19.37% 48.49%    48.71MB 19.37%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:124
+   46.67MB 18.56% 67.04%    46.67MB 18.56%  internal/strconv.AppendUint <cache>/toolchains/go/1.27.1/src/internal/strconv/itoa.go:77
+   12.21MB  4.85% 71.90%    12.21MB  4.85%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:410
+   10.68MB  4.25% 76.15%    22.89MB  9.10%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:396
+   10.68MB  4.25% 80.39%    10.68MB  4.25%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:135
+   10.68MB  4.25% 84.64%    10.68MB  4.25%  go.lostcrafters.com/trail.cloneAsyncRecord <repo>/async_processor.go:490
+    6.10MB  2.43% 87.07%     6.10MB  2.43%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:157
+    6.10MB  2.42% 89.49%     6.10MB  2.42%  go.lostcrafters.com/trail/file.appendUintString <repo>/file/encode.go:330 (inline)
+    4.58MB  1.82% 91.31%     4.58MB  1.82%  context.WithValue <cache>/toolchains/go/1.27.1/src/context/context.go:738
+    4.58MB  1.82% 93.13%     4.58MB  1.82%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:404
+    3.05MB  1.21% 94.34%     3.05MB  1.21%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:310
+    3.05MB  1.21% 95.56%     3.05MB  1.21%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:108
+    3.05MB  1.21% 96.77%     3.05MB  1.21%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:196
+    3.05MB  1.21% 97.99%     3.05MB  1.21%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:79
+    2.03MB  0.81% 98.79%     2.03MB  0.81%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:110
+    1.53MB  0.61% 99.40%     1.53MB  0.61%  internal/stringslite.Clone <cache>/toolchains/go/1.27.1/src/internal/stringslite/strings.go:119 (inline)
+         0     0% 99.40%    12.21MB  4.85%  go.lostcrafters.com/trail.(*AsyncProcessor).Process <repo>/async_processor.go:182
+         0     0% 99.40%   186.72MB 74.25%  go.lostcrafters.com/trail.(*AsyncProcessor).run <repo>/async_processor.go:348
+         0     0% 99.40%     4.58MB  1.82%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:446
+         0     0% 99.40%     4.58MB  1.82%  go.lostcrafters.com/trail.ContextWithSpan <repo>/context.go:15 (inline)
+         0     0% 99.40%    16.78MB  6.67%  go.lostcrafters.com/trail.Span.End <repo>/span.go:42
+         0     0% 99.40%    47.30MB 18.81%  go.lostcrafters.com/trail.Tracer.Start <repo>/tracer.go:37
+         0     0% 99.40%     1.53MB  0.61%  go.lostcrafters.com/trail.cloneAsyncRecord <repo>/async_processor.go:489
+         0     0% 99.40%   186.53MB 74.17%  go.lostcrafters.com/trail/file.(*Sink).WriteRecord <repo>/file/sink.go:74
+         0     0% 99.40%    36.67MB 14.58%  go.lostcrafters.com/trail/file.appendIntString <repo>/file/encode.go:336 (inline)
+         0     0% 99.40%       10MB  3.98%  go.lostcrafters.com/trail/file.appendUintString <repo>/file/encode.go:329 (inline)
+         0     0% 99.40%     4.07MB  1.62%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:109
+         0     0% 99.40%    12.21MB  4.85%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:111
+         0     0% 99.40%    24.41MB  9.71%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:115

@@ -1,0 +1,18 @@
+File: async-AddEvent.test.exe
+Build ID: <temp>/go-build658001248/b001/trail.test.exe2026-10-05 21:51:50.9541824 +0100 BST
+Type: alloc_objects
+Time: 2026-10-05 21:51:51 BST
+Showing nodes accounting for 400006, 99.45% of 402206 total
+Dropped 369 nodes (cum <= 2011)
+      flat  flat%   sum%        cum   cum%
+    100003 24.86% 24.86%     100003 24.86%  internal/stringslite.Clone <cache>/toolchains/go/1.27.1/src/internal/stringslite/strings.go:119 (inline)
+    100001 24.86% 49.73%     300003 74.59%  go.lostcrafters.com/trail.(*spanState).addEvent <repo>/span.go:235
+    100001 24.86% 74.59%     100001 24.86%  go.lostcrafters.com/trail.Span.AddEvent <repo>/span.go:74
+    100001 24.86% 99.45%     100001 24.86%  go.lostcrafters.com/trail.cloneAsyncRecord <repo>/async_processor.go:502
+         0     0% 99.45%     200006 49.73%  go.lostcrafters.com/trail.(*AsyncProcessor).Process <repo>/async_processor.go:182
+         0     0% 99.45%     300003 74.59%  go.lostcrafters.com/trail.Span.AddEvent <repo>/span.go:80
+         0     0% 99.45%     100001 24.86%  go.lostcrafters.com/trail.cloneAsyncRecord <repo>/async_processor.go:500
+         0     0% 99.45%     400004 99.45%  go.lostcrafters.com/trail_test.BenchmarkAsyncEnabled.func1.1 <repo>/async_bench_test.go:60
+         0     0% 99.45%     100003 24.86%  strings.Clone <cache>/toolchains/go/1.27.1/src/strings/clone.go:22 (inline)
+         0     0% 99.45%     401221 99.76%  testing.(*B).launch <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:347
+         0     0% 99.45%     401726 99.88%  testing.(*B).runN <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:219

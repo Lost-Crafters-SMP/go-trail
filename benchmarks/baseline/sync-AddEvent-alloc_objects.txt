@@ -1,0 +1,13 @@
+File: sync-AddEvent.test.exe
+Build ID: <temp>/go-build1034200811/b001/trail.test.exe2026-10-05 21:51:41.3134481 +0100 BST
+Type: alloc_objects
+Time: 2026-10-05 21:51:41 BST
+Showing nodes accounting for 200002, 99.54% of 200930 total
+Dropped 349 nodes (cum <= 1004)
+      flat  flat%   sum%        cum   cum%
+    100001 49.77% 49.77%     100001 49.77%  go.lostcrafters.com/trail.(*spanState).addEvent <repo>/span.go:235
+    100001 49.77% 99.54%     100001 49.77%  go.lostcrafters.com/trail.Span.AddEvent <repo>/span.go:74
+         0     0% 99.54%     100001 49.77%  go.lostcrafters.com/trail.Span.AddEvent <repo>/span.go:80
+         0     0% 99.54%     200002 99.54%  go.lostcrafters.com/trail_test.BenchmarkEnabled.func1.1 <repo>/enabled_bench_test.go:55
+         0     0% 99.54%     200019 99.55%  testing.(*B).launch <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:347
+         0     0% 99.54%     200469 99.77%  testing.(*B).runN <cache>/toolchains/go/1.27.1/src/testing/benchmark.go:219

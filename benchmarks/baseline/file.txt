@@ -1,0 +1,66 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+BenchmarkAsyncEnabled/file/StartEnd-16         	 1346228	       899.6 ns/op	      9707 drain-ns/op	     795 B/op	      10 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	 1373864	       888.4 ns/op	      9661 drain-ns/op	     796 B/op	      10 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	 1347646	       874.8 ns/op	      9616 drain-ns/op	     794 B/op	      10 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	 1248718	      1475 ns/op	     10495 drain-ns/op	     823 B/op	      11 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	  741843	      1461 ns/op	     10620 drain-ns/op	     824 B/op	      11 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	  826770	      1457 ns/op	     10545 drain-ns/op	     823 B/op	      11 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	 1308870	      1258 ns/op	     10571 drain-ns/op	     813 B/op	      10 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	 1334112	       904.4 ns/op	      9797 drain-ns/op	     796 B/op	      10 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	 1332742	       882.3 ns/op	      9654 drain-ns/op	     795 B/op	      10 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	 1355870	       887.5 ns/op	      9651 drain-ns/op	     795 B/op	      10 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	 6928518	       173.5 ns/op	      3400 drain-ns/op	     290 B/op	       4 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	 6859647	       173.4 ns/op	      3401 drain-ns/op	     290 B/op	       4 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	 6960471	       174.7 ns/op	      3421 drain-ns/op	     290 B/op	       4 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	 6904285	       205.2 ns/op	      3483 drain-ns/op	     293 B/op	       4 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	 4240040	       291.1 ns/op	      3763 drain-ns/op	     301 B/op	       4 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	 4086037	       291.3 ns/op	      3604 drain-ns/op	     302 B/op	       4 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	 4080267	       291.8 ns/op	      3606 drain-ns/op	     302 B/op	       4 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	 7098151	       247.6 ns/op	      3587 drain-ns/op	     297 B/op	       4 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	 6036724	       169.5 ns/op	      3400 drain-ns/op	     290 B/op	       4 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	 6973941	       252.6 ns/op	      3606 drain-ns/op	     298 B/op	       4 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	 1784772	       674.5 ns/op	      3690 drain-ns/op	     715 B/op	       7 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	 1804184	       672.6 ns/op	      3733 drain-ns/op	     715 B/op	       7 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	 1790319	       741.6 ns/op	      4480 drain-ns/op	     713 B/op	       7 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	 1794415	       669.8 ns/op	      3732 drain-ns/op	     715 B/op	       7 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	 1777042	       668.5 ns/op	      3663 drain-ns/op	     715 B/op	       7 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	 1793148	       669.4 ns/op	      3669 drain-ns/op	     716 B/op	       7 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	 1772714	       666.6 ns/op	      3789 drain-ns/op	     714 B/op	       7 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	 1764884	       679.9 ns/op	      4324 drain-ns/op	     712 B/op	       7 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	 2936841	       409.3 ns/op	      3558 drain-ns/op	     695 B/op	       7 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	 2938948	       409.8 ns/op	      3489 drain-ns/op	     695 B/op	       7 allocs/op
+BenchmarkEnabled/file/StartEnd-16              	  109754	     10697 ns/op	    2497 B/op	      20 allocs/op
+BenchmarkEnabled/file/StartEnd-16              	  116697	     10253 ns/op	    2497 B/op	      20 allocs/op
+BenchmarkEnabled/file/StartEnd-16              	  118651	     10830 ns/op	    2497 B/op	      20 allocs/op
+BenchmarkEnabled/file/StartEnd-16              	  114427	     10789 ns/op	    2497 B/op	      20 allocs/op
+BenchmarkEnabled/file/StartEnd-16              	  111352	     10649 ns/op	    2497 B/op	      20 allocs/op
+BenchmarkEnabled/file/StartEnd-16              	  117061	     10667 ns/op	    2497 B/op	      20 allocs/op
+BenchmarkEnabled/file/StartEnd-16              	  119133	     10811 ns/op	    2497 B/op	      20 allocs/op
+BenchmarkEnabled/file/StartEnd-16              	  113686	     10812 ns/op	    2497 B/op	      20 allocs/op
+BenchmarkEnabled/file/StartEnd-16              	  113492	     10736 ns/op	    2497 B/op	      20 allocs/op
+BenchmarkEnabled/file/StartEnd-16              	  112465	     10672 ns/op	    2497 B/op	      20 allocs/op
+BenchmarkEnabled/file/AddEvent-16              	  352822	      3749 ns/op	     888 B/op	       7 allocs/op
+BenchmarkEnabled/file/AddEvent-16              	  331260	      4088 ns/op	     888 B/op	       7 allocs/op
+BenchmarkEnabled/file/AddEvent-16              	  307478	      3870 ns/op	     888 B/op	       7 allocs/op
+BenchmarkEnabled/file/AddEvent-16              	  311355	      3829 ns/op	     888 B/op	       7 allocs/op
+BenchmarkEnabled/file/AddEvent-16              	  321164	      3904 ns/op	     888 B/op	       7 allocs/op
+BenchmarkEnabled/file/AddEvent-16              	  318644	      3976 ns/op	     888 B/op	       7 allocs/op
+BenchmarkEnabled/file/AddEvent-16              	  310713	      3835 ns/op	     888 B/op	       7 allocs/op
+BenchmarkEnabled/file/AddEvent-16              	  326582	      3902 ns/op	     888 B/op	       7 allocs/op
+BenchmarkEnabled/file/AddEvent-16              	  306324	      3828 ns/op	     888 B/op	       7 allocs/op
+BenchmarkEnabled/file/AddEvent-16              	  307167	      4061 ns/op	     888 B/op	       7 allocs/op
+BenchmarkEnabled/file/SetAttributes-16         	  303193	      4255 ns/op	    1296 B/op	       7 allocs/op
+BenchmarkEnabled/file/SetAttributes-16         	  274496	      4430 ns/op	    1296 B/op	       7 allocs/op
+BenchmarkEnabled/file/SetAttributes-16         	  285792	      4501 ns/op	    1296 B/op	       7 allocs/op
+BenchmarkEnabled/file/SetAttributes-16         	  235789	      4320 ns/op	    1296 B/op	       7 allocs/op
+BenchmarkEnabled/file/SetAttributes-16         	  287389	      4497 ns/op	    1296 B/op	       7 allocs/op
+BenchmarkEnabled/file/SetAttributes-16         	  303618	      4386 ns/op	    1296 B/op	       7 allocs/op
+BenchmarkEnabled/file/SetAttributes-16         	  297754	      4244 ns/op	    1296 B/op	       7 allocs/op
+BenchmarkEnabled/file/SetAttributes-16         	  308392	      4495 ns/op	    1296 B/op	       7 allocs/op
+BenchmarkEnabled/file/SetAttributes-16         	  277726	      4409 ns/op	    1296 B/op	       7 allocs/op
+BenchmarkEnabled/file/SetAttributes-16         	  288169	      4883 ns/op	    1296 B/op	       7 allocs/op
+PASS
+ok  	go.lostcrafters.com/trail	768.355s

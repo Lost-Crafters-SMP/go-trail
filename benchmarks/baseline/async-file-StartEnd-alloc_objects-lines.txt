@@ -1,0 +1,185 @@
+Total: 2204810
+ROUTINE ======================== go.lostcrafters.com/trail/file.encodeRecord in <repo>/file/encode.go
+    437904    1301989 (flat, cum) 59.05% of Total
+         .          .     27:func encodeRecord(record trail.Record) ([]byte, error) {
+         .          .     28:	var b []byte
+         .          .     29:	switch r := record.(type) {
+         .          .     30:	case trail.CaptureStart:
+         .          .     31:		if err := validateCaptureStart(r); err != nil {
+         .          .     32:			return nil, err
+         .          .     33:		}
+         2          2     34:		b = append(b, `{"type":"capture_start","seq":`...)
+         .          2     35:		b = appendUintString(b, r.Seq)
+         .          .     36:		b = append(b, `,"timeUnixNano":`...)
+         .          2     37:		b = appendIntString(b, r.Wall.UnixNano())
+         .          .     38:		b = append(b, `,"elapsedNano":"0"}`...)
+         .          .     39:
+         .          .     40:	case trail.LossSummary:
+         .          .     41:		if r.Seq == 0 {
+         .          .     42:			return nil, errField("loss_summary", "seq")
+         .          .     43:		}
+         .          .     44:		if r.UnendedDroppedAttributes > r.DroppedAttributes || r.UnendedDroppedEvents > r.DroppedEvents || r.UnendedDroppedStatusUpdates > r.DroppedStatusUpdates ||
+         .          .     45:			(r.UnendedSpans == 0 && (r.UnendedDroppedAttributes != 0 || r.UnendedDroppedEvents != 0 || r.UnendedDroppedStatusUpdates != 0)) {
+         .          .     46:			return nil, errField("loss_summary", "unended drop subtotals")
+         .          .     47:		}
+       394        394     48:		b = append(b, `{"type":"loss_summary","seq":`...)
+         .        392     49:		b = appendUintString(b, r.Seq)
+         2          2     50:		b = append(b, `,"timeUnixNano":`...)
+         .        394     51:		b = appendIntString(b, r.Wall.UnixNano())
+         .          .     52:		b = append(b, `,"elapsedNano":`...)
+         .          .     53:		b = appendDurationString(b, r.Elapsed)
+         .          .     54:		b = append(b, `,"rejectedStarts":`...)
+         .          .     55:		b = appendUintString(b, r.RejectedStarts)
+       394        394     56:		b = append(b, `,"droppedAttributes":`...)
+         .          .     57:		b = appendUintString(b, r.DroppedAttributes)
+         .          .     58:		b = append(b, `,"droppedEvents":`...)
+         .          .     59:		b = appendUintString(b, r.DroppedEvents)
+         .          .     60:		b = append(b, `,"droppedStatusUpdates":`...)
+         .          .     61:		b = appendUintString(b, r.DroppedStatusUpdates)
+         .          .     62:		b = append(b, `,"unendedSpans":`...)
+         .          .     63:		b = appendUintString(b, r.UnendedSpans)
+         .          .     64:		b = append(b, `,"unendedDroppedAttributes":`...)
+         .          .     65:		b = appendUintString(b, r.UnendedDroppedAttributes)
+       393        393     66:		b = append(b, `,"unendedDroppedEvents":`...)
+         .          .     67:		b = appendUintString(b, r.UnendedDroppedEvents)
+         1          1     68:		b = append(b, `,"unendedDroppedStatusUpdates":`...)
+         .          .     69:		b = appendUintString(b, r.UnendedDroppedStatusUpdates)
+         .          .     70:		b = append(b, '}')
+         .          .     71:
+         .          .     72:	case trail.SpanStart:
+         .          .     73:		if err := validateSpanIDs("span_start", r.TraceID, r.SpanID, r.RootSpanID); err != nil {
+         .          .     74:			return nil, err
+         .          .     75:		}
+         .          .     76:		if r.Seq == 0 {
+         .          .     77:			return nil, errField("span_start", "seq")
+         .          .     78:		}
+    100001     100001     79:		b = append(b, `{"type":"span_start","seq":`...)
+         .      99667     80:		b = appendUintString(b, r.Seq)
+       334        334     81:		b = append(b, `,"timeUnixNano":`...)
+         .     100001     82:		b = appendIntString(b, r.Wall.UnixNano())
+         .          .     83:		b = append(b, `,"elapsedNano":`...)
+         .          .     84:		b = appendDurationString(b, r.Elapsed)
+         .          .     85:		b = append(b, `,"traceId":`...)
+         .     100001     86:		b = appendIDString(b, r.TraceID[:])
+         .          .     87:		b = append(b, `,"spanId":`...)
+         .          .     88:		b = appendIDString(b, r.SpanID[:])
+         .          .     89:		b = append(b, `,"rootSpanId":`...)
+         .          .     90:		b = appendIDString(b, r.RootSpanID[:])
+         .          .     91:		if r.ParentSpanID.IsValid() {
+         .          .     92:			b = append(b, `,"parentSpanId":`...)
+         .          .     93:			b = appendIDString(b, r.ParentSpanID[:])
+         .          .     94:		}
+         .          .     95:		b = append(b, `,"scope":`...)
+         .          .     96:		b = appendJSONString(b, r.Scope)
+         .          .     97:		b = append(b, `,"name":`...)
+         .          .     98:		b = appendJSONString(b, r.Name)
+         .          .     99:		b = append(b, '}')
+         .          .    100:
+         .          .    101:	case trail.SpanEnd:
+         .          .    102:		if err := validateSpanIDs("span_end", r.TraceID, r.SpanID, r.RootSpanID); err != nil {
+         .          .    103:			return nil, err
+         .          .    104:		}
+         .          .    105:		if r.Seq == 0 {
+         .          .    106:			return nil, errField("span_end", "seq")
+         .          .    107:		}
+    100001     100001    108:		b = append(b, `{"type":"span_end","seq":`...)
+         .      66711    109:		b = appendUintString(b, r.Seq)
+     33290      33290    110:		b = append(b, `,"timeUnixNano":`...)
+         .     100001    111:		b = appendIntString(b, r.Wall.UnixNano())
+         .          .    112:		b = append(b, `,"elapsedNano":`...)
+         .          .    113:		b = appendDurationString(b, r.Elapsed)
+         .          .    114:		b = append(b, `,"traceId":`...)
+         .      99997    115:		b = appendIDString(b, r.TraceID[:])
+         4          4    116:		b = append(b, `,"spanId":`...)
+         .          .    117:		b = appendIDString(b, r.SpanID[:])
+         .          .    118:		b = append(b, `,"rootSpanId":`...)
+         .          .    119:		b = appendIDString(b, r.RootSpanID[:])
+         .          .    120:		b = append(b, `,"durationNano":`...)
+         .          .    121:		b = appendDurationString(b, r.Duration)
+         .          .    122:		b = append(b, `,"droppedAttributes":`...)
+         .          .    123:		b = appendUintString(b, r.DroppedAttributes)
+     99751      99751    124:		b = append(b, `,"droppedEvents":`...)
+         .        243    125:		b = appendUintString(b, r.DroppedEvents)
+         7          7    126:		b = append(b, `,"droppedStatusUpdates":`...)
+         .          .    127:		b = appendUintString(b, r.DroppedStatusUpdates)
+         .          .    128:		b = append(b, '}')
+         .          .    129:
+         .          .    130:	case trail.SpanUpdate:
+         .          .    131:		if err := validateSpanIDs("span_update", r.TraceID, r.SpanID, r.RootSpanID); err != nil {
+         .          .    132:			return nil, err
+         .          .    133:		}
+         .          .    134:		if r.Seq == 0 {
+         .          .    135:			return nil, errField("span_update", "seq")
+         .          .    136:		}
+         .          .    137:		if len(r.Attributes) == 0 && r.Status == nil {
+         .          .    138:			return nil, errField("span_update", "attributes or status")
+         .          .    139:		}
+         .          .    140:		b = append(b, `{"type":"span_update","seq":`...)
+         .          .    141:		b = appendUintString(b, r.Seq)
+         .          .    142:		b = append(b, `,"timeUnixNano":`...)
+         .          .    143:		b = appendIntString(b, r.Wall.UnixNano())
+         .          .    144:		b = append(b, `,"elapsedNano":`...)
+         .          .    145:		b = appendDurationString(b, r.Elapsed)
+         .          .    146:		b = append(b, `,"traceId":`...)
+         .          .    147:		b = appendIDString(b, r.TraceID[:])
+         .          .    148:		b = append(b, `,"spanId":`...)
+         .          .    149:		b = appendIDString(b, r.SpanID[:])
+         .          .    150:		b = append(b, `,"rootSpanId":`...)
+         .          .    151:		b = appendIDString(b, r.RootSpanID[:])
+         .          .    152:		if len(r.Attributes) > 0 {
+         .          .    153:			b = appendAttributes(b, r.Attributes)
+         .          .    154:		}
+         .          .    155:		if r.Status != nil {
+         .          .    156:			b = appendStatus(b, r.Status)
+         .          .    157:		}
+         .          .    158:		b = append(b, '}')
+         .          .    159:
+         .          .    160:	case trail.Event:
+         .          .    161:		if err := validateSpanIDs("event", r.TraceID, r.SpanID, r.RootSpanID); err != nil {
+         .          .    162:			return nil, err
+         .          .    163:		}
+         .          .    164:		if r.Seq == 0 {
+         .          .    165:			return nil, errField("event", "seq")
+         .          .    166:		}
+         .          .    167:		if r.Name == "" {
+         .          .    168:			return nil, errField("event", "name")
+         .          .    169:		}
+         .          .    170:		b = append(b, `{"type":"event","seq":`...)
+         .          .    171:		b = appendUintString(b, r.Seq)
+         .          .    172:		b = append(b, `,"timeUnixNano":`...)
+         .          .    173:		b = appendIntString(b, r.Wall.UnixNano())
+         .          .    174:		b = append(b, `,"elapsedNano":`...)
+         .          .    175:		b = appendDurationString(b, r.Elapsed)
+         .          .    176:		b = append(b, `,"traceId":`...)
+         .          .    177:		b = appendIDString(b, r.TraceID[:])
+         .          .    178:		b = append(b, `,"spanId":`...)
+         .          .    179:		b = appendIDString(b, r.SpanID[:])
+         .          .    180:		b = append(b, `,"rootSpanId":`...)
+         .          .    181:		b = appendIDString(b, r.RootSpanID[:])
+         .          .    182:		b = append(b, `,"name":`...)
+         .          .    183:		b = appendJSONString(b, r.Name)
+         .          .    184:		if len(r.Attributes) > 0 {
+         .          .    185:			b = appendAttributes(b, r.Attributes)
+         .          .    186:		}
+         .          .    187:		b = append(b, '}')
+         .          .    188:
+         .          .    189:	case trail.TraceEnd:
+         .          .    190:		if err := validateSpanIDs("trace_end", r.TraceID, r.RootSpanID, r.RootSpanID); err != nil {
+         .          .    191:			return nil, err
+         .          .    192:		}
+         .          .    193:		if r.Seq == 0 {
+         .          .    194:			return nil, errField("trace_end", "seq")
+         .          .    195:		}
+    100001     100001    196:		b = append(b, `{"type":"trace_end","seq":`...)
+         .      96672    197:		b = appendUintString(b, r.Seq)
+      3329       3329    198:		b = append(b, `,"timeUnixNano":`...)
+         .     100001    199:		b = appendIntString(b, r.Wall.UnixNano())
+         .          .    200:		b = append(b, `,"elapsedNano":`...)
+         .          .    201:		b = appendDurationString(b, r.Elapsed)
+         .          .    202:		b = append(b, `,"traceId":`...)
+         .     100001    203:		b = appendIDString(b, r.TraceID[:])
+         .          .    204:		b = append(b, `,"rootSpanId":`...)
+         .          .    205:		b = appendIDString(b, r.RootSpanID[:])
+         .          .    206:		b = append(b, '}')
+         .          .    207:
+         .          .    208:	default:

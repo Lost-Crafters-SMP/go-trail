@@ -1,0 +1,243 @@
+Total: 14.03MB
+ROUTINE ======================== go.lostcrafters.com/trail.(*providerState).start in <repo>/provider.go
+    1.03kB     1.37kB (flat, cum) 0.0095% of Total
+         .          .    309:func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, opts []StartOption) (context.Context, Span) {
+       64B        64B    310:	var cfg startConfig
+         .          .    311:	for _, opt := range opts {
+         .          .    312:		if opt != nil {
+         .          .    313:			opt(&cfg)
+         .          .    314:		}
+         .          .    315:	}
+         .          .    316:	if name == "" {
+         .          .    317:		name = unnamedSpanName
+         .          .    318:	}
+         .          .    319:	name = truncateUTF8(name, maxNameBytes)
+         .          .    320:
+         .          .    321:	// Sample times in the calling goroutine before waiting for admission so
+         .          .    322:	// gate contention never extends measured durations.
+         .          .    323:	reading := ps.clock.now()
+         .          .    324:
+         .          .    325:	ps.mu.Lock()
+         .          .    326:	defer ps.unlockAndReport()
+         .          .    327:
+         .          .    328:	if !ps.admitting() {
+         .          .    329:		return ctx, Span{}
+         .          .    330:	}
+         .          .    331:	// Active-span capacity bounds provider-owned bookkeeping; a full
+         .          .    332:	// provider rejects admission without recording. The loss is counted for
+         .          .    333:	// Flush and Shutdown reporting.
+         .          .    334:	if ps.liveSpans >= maxActiveSpans {
+         .          .    335:		ps.rejectedStarts++
+         .          .    336:		return ctx, Span{}
+         .          .    337:	}
+         .          .    338:	// Injected ID sources and the failure latch are serialized by admission.
+         .       248B    339:	spanID, err := ps.ids.newSpanID()
+         .          .    340:	if err != nil {
+         .          .    341:		ps.rejectedStarts++
+         .          .    342:		ps.latchError(fmt.Errorf("trail: generate span ID: %w", err))
+         .          .    343:		return ctx, Span{}
+         .          .    344:	}
+         .          .    345:
+         .          .    346:	// The parent must be an active span of this provider: ended or foreign
+         .          .    347:	// spans start new roots instead of joining.
+         .          .    348:	var parent *spanState
+         .          .    349:	if !cfg.newRoot {
+         .          .    350:		if candidate := SpanFromContext(ctx); candidate.state != nil &&
+         .          .    351:			candidate.state.provider == ps && !candidate.state.ended.Load() {
+         .          .    352:			parent = candidate.state
+         .          .    353:		}
+         .          .    354:	}
+         .          .    355:
+         .          .    356:	var traceID TraceID
+         .          .    357:	var parentSpanID SpanID
+         .          .    358:	var rootSpanID SpanID
+         .          .    359:	var ts *traceState
+         .          .    360:	if parent != nil {
+         .          .    361:		traceID = parent.traceID
+         .          .    362:		parentSpanID = parent.spanID
+         .          .    363:		rootSpanID = parent.rootSpanID
+         .          .    364:		if ts = ps.traces[traceID]; ts == nil {
+         .          .    365:			// Unreachable while the parent is live; defend anyway.
+         .          .    366:			parent = nil
+         .          .    367:			parentSpanID = SpanID{}
+         .          .    368:		}
+         .          .    369:	}
+         .          .    370:	if parent == nil {
+         .          .    371:		for {
+         .          .    372:			traceID, err = ps.ids.newTraceID()
+         .          .    373:			if err != nil {
+         .          .    374:				ps.rejectedStarts++
+         .          .    375:				ps.latchError(fmt.Errorf("trail: generate trace ID: %w", err))
+         .          .    376:				return ctx, Span{}
+         .          .    377:			}
+         .          .    378:			if _, exists := ps.traces[traceID]; !exists {
+         .          .    379:				break
+         .          .    380:			}
+         .          .    381:		}
+         .          .    382:		rootSpanID = spanID
+         .          .    383:	}
+         .          .    384:
+         .          .    385:	record := SpanStart{
+         .          .    386:		Seq:          ps.nextSeq(),
+         .          .    387:		Wall:         reading.wall,
+         .          .    388:		Elapsed:      reading.tick,
+         .          .    389:		TraceID:      traceID,
+         .          .    390:		SpanID:       spanID,
+         .          .    391:		ParentSpanID: parentSpanID,
+         .          .    392:		RootSpanID:   rootSpanID,
+         .          .    393:		Scope:        tracer.scope,
+         .          .    394:		Name:         name,
+         .          .    395:	}
+      224B       224B    396:	if err := ps.processor.Process(record); err != nil {
+         .          .    397:		ps.rejectedStarts++
+         .          .    398:		if !errors.Is(err, ErrQueueFull) {
+         .          .    399:			ps.latchError(err)
+         .          .    400:		}
+         .          .    401:		return ctx, Span{}
+         .          .    402:	}
+         .          .    403:	if ts == nil {
+       96B        96B    404:		ts = &traceState{traceID: traceID, rootSpanID: rootSpanID, live: 1}
+      416B       416B    405:		ps.traces[traceID] = ts
+         .          .    406:	} else {
+         .          .    407:		ts.live++
+         .          .    408:	}
+         .          .    409:	ps.liveSpans++
+      256B       256B    410:	st := &spanState{
+         .          .    411:		provider:   ps,
+         .          .    412:		traceID:    traceID,
+         .          .    413:		spanID:     spanID,
+         .          .    414:		rootSpanID: rootSpanID,
+         .          .    415:		start:      reading,
+         .          .    416:		trace:      ts,
+         .          .    417:	}
+         .          .    418:	// Initial attributes are emitted as a bounded update following
+         .          .    419:	// span_start; oversized or invalid entries are dropped with counters.
+         .          .    420:	if len(cfg.attributes) > 0 {
+         .          .    421:		newKeys, resolved, dropped := resolveSpanAttributes(st.keys, cfg.attributes)
+         .          .    422:		st.keys = newKeys
+         .          .    423:		st.addDrops(uint64(dropped), 0)
+         .          .    424:		switch {
+         .          .    425:		case len(resolved) == 0:
+         .          .    426:		case oversizedRecord("", resolved):
+         .          .    427:			st.addDrops(uint64(len(resolved)), 0)
+         .          .    428:		default:
+         .          .    429:			if err := ps.processor.Process(SpanUpdate{
+         .          .    430:				Seq:        ps.nextSeq(),
+         .          .    431:				Wall:       reading.wall,
+         .          .    432:				Elapsed:    reading.tick,
+         .          .    433:				TraceID:    traceID,
+         .          .    434:				SpanID:     spanID,
+         .          .    435:				RootSpanID: rootSpanID,
+         .          .    436:				Attributes: resolved,
+         .          .    437:			}); err != nil {
+         .          .    438:				if errors.Is(err, ErrQueueFull) {
+         .          .    439:					st.addDrops(uint64(len(resolved)), 0)
+         .          .    440:				} else {
+         .          .    441:					ps.latchError(err)
+         .          .    442:				}
+         .          .    443:			}
+         .          .    444:		}
+         .          .    445:	}
+         .        96B    446:	return ContextWithSpan(ctx, Span{state: st}), Span{state: st}
+         .          .    447:}
+         .          .    448:
+         .          .    449:// nextSeq returns the next capture-wide sequence number. Sequence numbers
+         .          .    450:// are assigned under the admission gate; a failed submission consumes its
+         .          .    451:// number, so gaps in a journal signal possible loss.
+ROUTINE ======================== go.lostcrafters.com/trail.(*spanState).addEvent in <repo>/span.go
+   10.68MB    10.68MB (flat, cum) 76.12% of Total
+         .          .    211:func (s *spanState) addEvent(name string, attrs []Attribute, err error) {
+         .          .    212:	ps := s.provider
+         .          .    213:	// User formatting happens before the gate: no error/string code runs
+         .          .    214:	// while internal locks are held.
+         .          .    215:	if err != nil {
+         .          .    216:		attrs = append(attrs, String("error.message", err.Error()))
+         .          .    217:	}
+         .          .    218:	if name == "" {
+         .          .    219:		name = unnamedSpanName
+         .          .    220:	}
+         .          .    221:	reading := ps.clock.now()
+         .          .    222:
+         .          .    223:	ps.mu.Lock()
+         .          .    224:	defer ps.unlockAndReport()
+         .          .    225:	if s.ended.Load() || !ps.admitting() {
+         .          .    226:		return // already ended, or the provider stopped admitting
+         .          .    227:	}
+         .          .    228:	name = truncateUTF8(name, maxNameBytes)
+         .          .    229:	resolved, dropped := resolveEventAttributes(attrs)
+         .          .    230:	s.addDrops(uint64(dropped), 0)
+         .          .    231:	if oversizedRecord(name, resolved) {
+         .          .    232:		s.addDrops(0, 1)
+         .          .    233:		return
+         .          .    234:	}
+   10.68MB    10.68MB    235:	if err := ps.processor.Process(Event{
+         .          .    236:		Seq:        ps.nextSeq(),
+         .          .    237:		Wall:       reading.wall,
+         .          .    238:		Elapsed:    reading.tick,
+         .          .    239:		TraceID:    s.traceID,
+         .          .    240:		SpanID:     s.spanID,
+ROUTINE ======================== go.lostcrafters.com/trail.(*spanState).end in <repo>/span.go
+      352B       352B (flat, cum) 0.0024% of Total
+         .          .    116:func (s *spanState) end() {
+         .          .    117:	if s.ended.Load() {
+         .          .    118:		return
+         .          .    119:	}
+         .          .    120:	ps := s.provider
+         .          .    121:	reading := ps.clock.now()
+         .          .    122:	duration := reading.tick - s.start.tick
+         .          .    123:
+         .          .    124:	ps.mu.Lock()
+         .          .    125:	defer ps.unlockAndReport()
+         .          .    126:
+         .          .    127:	if s.ended.Load() || !ps.admitting() {
+         .          .    128:		return // a concurrent End won the gate, or the provider stopped admitting
+         .          .    129:	}
+         .          .    130:	s.ended.Store(true)
+         .          .    131:	ps.liveDroppedAttrs -= s.droppedAttrs
+         .          .    132:	ps.liveDroppedEvts -= s.droppedEvts
+         .          .    133:	ps.liveDroppedStatuses -= s.droppedStatuses
+         .          .    134:
+      224B       224B    135:	if err := ps.processor.Process(SpanEnd{
+         .          .    136:		Seq:                  ps.nextSeq(),
+         .          .    137:		Wall:                 reading.wall,
+         .          .    138:		Elapsed:              reading.tick,
+         .          .    139:		TraceID:              s.traceID,
+         .          .    140:		SpanID:               s.spanID,
+         .          .    141:		RootSpanID:           s.rootSpanID,
+         .          .    142:		Duration:             duration,
+         .          .    143:		DroppedAttributes:    s.droppedAttrs,
+         .          .    144:		DroppedEvents:        s.droppedEvts,
+         .          .    145:		DroppedStatusUpdates: s.droppedStatuses,
+         .          .    146:	}); err != nil {
+         .          .    147:		ps.latchError(err)
+         .          .    148:	}
+         .          .    149:
+         .          .    150:	ts := s.trace
+         .          .    151:	ts.live--
+         .          .    152:	ps.liveSpans--
+         .          .    153:	if s.spanID == ts.rootSpanID {
+         .          .    154:		ts.rootEnded = true
+         .          .    155:	}
+         .          .    156:	if ts.rootEnded && ts.live == 0 {
+      128B       128B    157:		if err := ps.processor.Process(TraceEnd{
+         .          .    158:			Seq:        ps.nextSeq(),
+         .          .    159:			Wall:       reading.wall,
+         .          .    160:			Elapsed:    reading.tick,
+         .          .    161:			TraceID:    ts.traceID,
+         .          .    162:			RootSpanID: ts.rootSpanID,
+ROUTINE ======================== go.lostcrafters.com/trail.Span.AddEvent in <repo>/span.go
+    3.05MB    13.73MB (flat, cum) 97.87% of Total
+         .          .     72:func (s Span) AddEvent(name string, opts ...EventOption) {
+         .          .     73:	if s.state != nil {
+    3.05MB     3.05MB     74:		var cfg startConfig
+         .          .     75:		for _, opt := range opts {
+         .          .     76:			if opt != nil {
+         .          .     77:				opt(&cfg)
+         .          .     78:			}
+         .          .     79:		}
+         .    10.68MB     80:		s.state.addEvent(name, cfg.attributes, nil)
+         .          .     81:	}
+         .          .     82:}
+         .          .     83:
+         .          .     84:// RecordError records one event named "error" carrying an error.message
+         .          .     85:// attribute derived from err.Error(), plus any supplied attributes; the
