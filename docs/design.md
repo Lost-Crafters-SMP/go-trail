@@ -540,9 +540,10 @@ test seam remains provisional. Concurrent scheduler order is not deterministic.
 The typed attribute model, bounded span/event attribute batches, streamed
 events, RecordError, last-write status, and the per-span drop counts
 serialized on span_end are implemented for v0.1, including the active-span
-capacity limit with release on every End path. Loss summary *records* and
-Flush/Shutdown loss reporting remain open until the lifecycle completion
-milestone wires them.
+capacity limit with release on every End path. Flush/Shutdown return output
+and admission-loss errors. Loss-summary *records* remain unimplemented;
+[the review recommendation](loss-summary-recommendation.md) proposes their
+scope and accounting without changing the journal schema.
 
 ### Typed attributes
 
@@ -1027,13 +1028,22 @@ immediate Process errors and future background writer errors reach the same
 policy without adding callback machinery to Span APIs. SyncProcessor returns
 per-call errors for the provider to report after unlocking; AsyncProcessor must
 also report failures that occur when no further instrumentation call is made.
-Exact constructor/error-notification wiring remains a public-contract review gate.
-Notify the first terminal output failure outside locks; avoid an error
-storm for every subsequent event. Default should emit a concise, rate-bounded
-diagnostic to stderr for terminal output failure, while also returning sticky
-errors at Flush/Shutdown. Do not dump attribute values or recursively trace the
-handler. An explicit replacement handler can suppress stderr or integrate with
-slog. Exact default policy remains a review question (section 17).
+Implemented v0.1 policy: `WithErrorHandler(func(error))` is an optional Provider
+option, with **no implicit stderr output** (nil means no notifications). Notify
+the first latched failure once and additional terminal cleanup failures once;
+repeated Process/Flush/Shutdown failures do not storm. Context cancellation and
+ordinary bounded-data drops are not terminal notifications. The first failure
+remains sticky, including ID-generation errors, and Flush/Shutdown remain the
+authoritative returned-error path regardless of whether a callback is configured.
+
+Callbacks run synchronously after admission and processor/sink locks are released.
+Pending notifications are claimed before invoking user code, allowing callback
+reentry into Start, Flush, or Shutdown without deadlock or duplicate reporting.
+Handlers must be concurrency-safe: independent operations may invoke callbacks
+concurrently; notification order across goroutines is not promised. There is no
+worker, callback lock, automatic tracing of the handler, or panic recovery for
+host callback code. Future AsyncProcessor background-failure wiring remains a
+separate implementation gate.
 
 End/AddEvent/SetAttributes retain defer-friendly void signatures; strict
 applications handle setup, callbacks, and final errors themselves. Trail never
@@ -1098,14 +1108,47 @@ not reservations. Avoid closure-heavy option builders and public lazy-value APIs
 until profiling proves they are needed. No-op mode must create no output file or
 worker: the host decides whether to construct a file sink at all.
 
-Future implementation tests must cover: zero handles, root/child IDs, canceled
+### Enabled-path baseline
+
+Measured on Windows/amd64, AMD Ryzen 7 5800X3D (8 cores, benchmark suffix `-16`),
+Go 1.27.1 resolved through mise, with no concurrent verification process:
+
+```text
+mise exec -- go test -run="^$" -bench="BenchmarkEnabled" -benchmem -benchtime=200ms -count=3 .
+```
+
+Ranges across three runs (not platform-independent budgets):
+
+| SyncProcessor sink / operation | ns/op | B/op | allocs/op |
+| --- | ---: | ---: | ---: |
+| In-memory discard / root Start + End | 491–505 | 512 | 7 |
+| In-memory discard / AddEvent | 95–115 | 144 | 2 |
+| In-memory discard / SetAttributes | 227–249 | 304 | 2 |
+| Real file / root Start + End | 11,803–13,447 | 2,465 | 20 |
+| Real file / AddEvent | 3,621–3,689 | 888 | 7 |
+| Real file / SetAttributes | 4,027–4,233 | 1,296 | 7 |
+
+The in-memory sink consumes without retaining or encoding, isolating core,
+ID/clock, admission, and SyncProcessor overhead. The real sink uses a fresh
+temporary file, exclusive creation, unbuffered JSONL writes, and default
+Sync-on-Flush **off**. File results include encoding and OS writes/page-cache
+effects, not power-loss durability, sustained-storage throughput, or isolated
+encoder cost; disk and host load can change these numbers substantially.
+Setup/capture header and cleanup are outside timing. Each root Start/End emits
+three lifecycle records; AddEvent emits one unadorned event on an already live
+span; SetAttributes updates two existing scalar keys on a live span. Benchmark
+calibration warms those keys; this is steady-state update cost, not first-key
+insertion. Handler configuration is nil, with no error-path work in timing.
+
+Implementation tests cover: zero handles, root/child IDs, canceled
 contexts, copied spans, duplicate End, simultaneous End/update/child Start,
 foreign/ended parents, root-before-child completion, multiple roots, limits,
 slice mutation, non-finite floats, deterministic clocks/IDs, short/error writes,
 callback reentrancy rules, Flush barriers, canceled/retried Shutdown, and crash
 tails. Add race-detector runs and allocation benchmarks. Use sorted attribute
 fixtures; test concurrent partial-order constraints instead of demanding one
-byte-for-byte goroutine interleaving. These tests are not implemented yet.
+byte-for-byte goroutine interleaving. Coverage continues to evolve with the
+remaining design gates; passing checks are not a claim of exhaustive coverage.
 
 ## 13. Future trace-local rotation: constraints only
 
@@ -1334,8 +1377,9 @@ allocation benchmarks.
 2. **Ended-parent boundary:** accept new-root behavior, or require OTel-like late
    parenting? The latter needs an explicit trace lease/close concept before
    promising both safe draining closure and indefinitely reusable contexts.
-3. **Processor delivery budget:** validate SyncProcessor first and benchmark its
-   enabled overhead. AsyncProcessor remains a first-class configuration option;
+3. **Processor delivery budget:** the enabled SyncProcessor baseline is recorded
+   in section 12; validate real workloads before tuning it. AsyncProcessor remains
+   a first-class configuration option;
    before implementing it, settle byte/record reservations, eligible drops,
    control barriers, error notification, and writer lifetime under cancellation.
 4. **Public pipeline surface:** settle Processor/Record names, ownership, shared
@@ -1343,8 +1387,9 @@ allocation benchmarks.
    root-admission routing separate from dequeue for future rotation; avoid a
    generic plugin system or extra Tracer/Span methods.
 5. **Limits and diagnostics:** validate the proposed byte/count limits and
-   truncation behavior. Should default terminal errors go to rate-bounded stderr,
-   or be callback/Flush/Shutdown-only? Both choices must be visible and tested.
+   truncation behavior. The default-policy gate is closed: optional
+   WithErrorHandler plus authoritative Flush/Shutdown errors, no implicit stderr.
+   Loss-summary schema remains review-only; see the linked recommendation.
 6. **Unsigned/duration conversion:** confirm whether future OTLP conversion
    should use the specified type-loss mapping or require explicit user policy.
 7. **Durability defaults:** implemented as recommended: no per-record Sync and
