@@ -1,6 +1,7 @@
 package trail
 
 import (
+	"errors"
 	"sync/atomic"
 )
 
@@ -24,9 +25,10 @@ type spanState struct {
 	start      timeReading
 	trace      *traceState
 
-	keys         map[string]struct{}
-	droppedAttrs uint64
-	droppedEvts  uint64
+	keys            map[string]struct{}
+	droppedAttrs    uint64
+	droppedEvts     uint64
+	droppedStatuses uint64
 
 	ended atomic.Bool
 }
@@ -128,17 +130,19 @@ func (s *spanState) end() {
 	s.ended.Store(true)
 	ps.liveDroppedAttrs -= s.droppedAttrs
 	ps.liveDroppedEvts -= s.droppedEvts
+	ps.liveDroppedStatuses -= s.droppedStatuses
 
 	if err := ps.processor.Process(SpanEnd{
-		Seq:               ps.nextSeq(),
-		Wall:              reading.wall,
-		Elapsed:           reading.tick,
-		TraceID:           s.traceID,
-		SpanID:            s.spanID,
-		RootSpanID:        s.rootSpanID,
-		Duration:          duration,
-		DroppedAttributes: s.droppedAttrs,
-		DroppedEvents:     s.droppedEvts,
+		Seq:                  ps.nextSeq(),
+		Wall:                 reading.wall,
+		Elapsed:              reading.tick,
+		TraceID:              s.traceID,
+		SpanID:               s.spanID,
+		RootSpanID:           s.rootSpanID,
+		Duration:             duration,
+		DroppedAttributes:    s.droppedAttrs,
+		DroppedEvents:        s.droppedEvts,
+		DroppedStatusUpdates: s.droppedStatuses,
 	}); err != nil {
 		ps.latchError(err)
 	}
@@ -194,7 +198,11 @@ func (s *spanState) setAttributes(attrs []Attribute) {
 		RootSpanID: s.rootSpanID,
 		Attributes: resolved,
 	}); err != nil {
-		ps.latchError(err)
+		if errors.Is(err, ErrQueueFull) {
+			s.addDrops(uint64(len(resolved)), 0)
+		} else {
+			ps.latchError(err)
+		}
 	}
 }
 
@@ -234,7 +242,11 @@ func (s *spanState) addEvent(name string, attrs []Attribute, err error) {
 		Name:       name,
 		Attributes: resolved,
 	}); err != nil {
-		ps.latchError(err)
+		if errors.Is(err, ErrQueueFull) {
+			s.addDrops(0, 1)
+		} else {
+			ps.latchError(err)
+		}
 	}
 }
 
@@ -266,7 +278,13 @@ func (s *spanState) setStatus(code StatusCode, description string) {
 		RootSpanID: s.rootSpanID,
 		Status:     &SpanStatus{Code: code, Description: description},
 	}); err != nil {
-		ps.latchError(err)
+		if errors.Is(err, ErrQueueFull) {
+			s.droppedStatuses++
+			ps.droppedStatuses++
+			ps.liveDroppedStatuses++
+		} else {
+			ps.latchError(err)
+		}
 	}
 }
 

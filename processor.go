@@ -7,6 +7,8 @@ import "context"
 // directly.
 //
 // Process reports acceptance of a record, not a durability guarantee.
+// It borrows payloads only until return; retaining processors must own bounded
+// copies. Async ErrQueueFull is a nonterminal rejection, not accepted data.
 // Processor implementations must be safe for concurrent use and must
 // serialize their sink calls so that WriteRecord, Flush, and Shutdown never
 // overlap for one sink.

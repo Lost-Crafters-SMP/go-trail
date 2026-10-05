@@ -39,8 +39,10 @@ type providerState struct {
 	rejectedStarts        uint64
 	droppedAttrs          uint64
 	droppedEvts           uint64
+	droppedStatuses       uint64
 	liveDroppedAttrs      uint64
 	liveDroppedEvts       uint64
+	liveDroppedStatuses   uint64
 	finalSummaryAttempted bool
 
 	stage     providerStage
@@ -98,6 +100,14 @@ func NewProvider(processor Processor, opts ...ProviderOption) (*Provider, error)
 		errorHandler: cfg.errorHandler,
 		traces:       make(map[TraceID]*traceState),
 	}
+	if ap, ok := processor.(*AsyncProcessor); ok {
+		if ap == nil {
+			return nil, errors.New("trail: NewProvider requires a non-nil processor")
+		}
+		if err := ap.bind(ps); err != nil {
+			return nil, err
+		}
+	}
 	if err := ps.submitCaptureStart(); err != nil {
 		return nil, err
 	}
@@ -149,6 +159,9 @@ func (p *Provider) Shutdown(ctx context.Context) error {
 // admissions are fully submitted first. Active spans are normal mid-capture
 // state and are not Flush loss; rejected starts are.
 func (ps *providerState) flush(ctx context.Context) error {
+	if ap, ok := ps.processor.(*AsyncProcessor); ok {
+		return ps.flushAsync(ctx, ap)
+	}
 	if err := ctx.Err(); err != nil {
 		return err
 	}
@@ -181,6 +194,9 @@ func (ps *providerState) flush(ctx context.Context) error {
 
 // shutdown processes the one-time cleanup under the admission gate.
 func (ps *providerState) shutdown(ctx context.Context) error {
+	if ap, ok := ps.processor.(*AsyncProcessor); ok {
+		return ps.shutdownAsync(ctx, ap)
+	}
 	ps.mu.Lock()
 	defer ps.unlockAndReport()
 	if ps.stage == stageClosed {
@@ -219,23 +235,29 @@ func (ps *providerState) shutdown(ctx context.Context) error {
 // Zero snapshots are intentional: absence means unknown, not zero. A failed
 // submission is latched, and shutdown never retries an uncertain final write.
 func (ps *providerState) submitLossSummary() error {
-	reading := ps.clock.now()
-	err := ps.processor.Process(LossSummary{
-		Seq:                      ps.nextSeq(),
-		Wall:                     reading.wall,
-		Elapsed:                  reading.tick,
-		RejectedStarts:           ps.rejectedStarts,
-		DroppedAttributes:        ps.droppedAttrs,
-		DroppedEvents:            ps.droppedEvts,
-		UnendedSpans:             uint64(ps.liveSpans),
-		UnendedDroppedAttributes: ps.liveDroppedAttrs,
-		UnendedDroppedEvents:     ps.liveDroppedEvts,
-	})
+	err := ps.processor.Process(ps.lossSnapshot())
 	if err != nil {
 		ps.latchError(err)
 		return fmt.Errorf("trail: submit loss summary: %w", err)
 	}
 	return nil
+}
+
+func (ps *providerState) lossSnapshot() LossSummary {
+	reading := ps.clock.now()
+	return LossSummary{
+		Seq:                         ps.nextSeq(),
+		Wall:                        reading.wall,
+		Elapsed:                     reading.tick,
+		RejectedStarts:              ps.rejectedStarts,
+		DroppedAttributes:           ps.droppedAttrs,
+		DroppedEvents:               ps.droppedEvts,
+		DroppedStatusUpdates:        ps.droppedStatuses,
+		UnendedSpans:                uint64(ps.liveSpans),
+		UnendedDroppedAttributes:    ps.liveDroppedAttrs,
+		UnendedDroppedEvents:        ps.liveDroppedEvts,
+		UnendedDroppedStatusUpdates: ps.liveDroppedStatuses,
+	}
 }
 
 // lossError reports admission loss recorded during the capture, if any.
@@ -373,7 +395,9 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 	}
 	if err := ps.processor.Process(record); err != nil {
 		ps.rejectedStarts++
-		ps.latchError(err)
+		if !errors.Is(err, ErrQueueFull) {
+			ps.latchError(err)
+		}
 		return ctx, Span{}
 	}
 	if ts == nil {
@@ -411,7 +435,11 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 				RootSpanID: rootSpanID,
 				Attributes: resolved,
 			}); err != nil {
-				ps.latchError(err)
+				if errors.Is(err, ErrQueueFull) {
+					st.addDrops(uint64(len(resolved)), 0)
+				} else {
+					ps.latchError(err)
+				}
 			}
 		}
 	}

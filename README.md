@@ -15,13 +15,13 @@ replacement for Go's runtime tracing and pprof.
 
 **v0.1 core implemented.** The explicit Provider -> Tracer -> Span API with
 context propagation, a no-op-safe global default provider, the
-Tracer -> Processor -> Sink pipeline with SyncProcessor, bounded typed
+Tracer -> Processor -> Sink pipeline with explicit SyncProcessor or AsyncProcessor, bounded typed
 attributes/events/status/RecordError, trace-completion bookkeeping, and the
 versioned Trail JSONL journal with an exclusive-create file sink
 (`go.lostcrafters.com/trail/file`) are implemented and tested, including
 race-detector runs and disabled-path allocation benchmarks.
 
-Not implemented: asynchronous processing, rotation, retention, compression,
+Not implemented: rotation, retention, compression,
 viewers, OTLP conversion, remote export, and distributed propagation. See
 [the design](docs/design.md) for contracts, the format comparison, and open
 questions. The native journal is a Trail format with OTel-aligned semantics,
@@ -32,6 +32,15 @@ is `SetDefaultProvider(p)` followed by `GetTracer("myapp")`, which resolves thro
 the Provider registered at that call. The default Provider is initially no-op;
 existing tracers keep their Provider, and callers still own Flush/Shutdown.
 There is no package-level Start.
+
+Processor selection is always explicit. `NewSyncProcessor(sink)` writes on the
+submitting path. `NewAsyncProcessor(sink, WithMaxQueuedRecords(16384),
+WithMaxQueuedBytes(16<<20))` uses a bounded owned queue and one writer; accepted
+starts reserve their lifecycle completion capacity. Neither is selected by
+default. Use Provider Flush/Shutdown for delivery checkpoints, and always shut
+down the owned pipeline. Async acceptance into RAM is not crash durability.
+See [the async contract](docs/async-processor.md) for overflow accounting,
+bounded checkpoint-lane behavior, cancellation, and byte charging.
 
 Module: `go.lostcrafters.com/trail`. Configure the vanity domain's `go.import`
 metadata to point to the hosting repository before publishing.

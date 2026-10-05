@@ -27,8 +27,9 @@ There are no timers, periodic emissions, automatic checkpoints, or per-drop reco
 
 `loss_summary` belongs to the preceding `capture_start` in the single-capture file.
 It carries no trace/span/root IDs, duration, completion flag, or emission-reason
-field. Required fields are `type`, `seq`, `timeUnixNano`, `elapsedNano`, and all six
-counters below; zero counters are present. Sequence and counters are quoted uint64
+field. Required fields are `type`, `seq`, `timeUnixNano`, `elapsedNano`, and all eight
+counters below (after the approved async status-loss extension); zero counters
+are present. Sequence and counters are quoted uint64
 decimal strings. Wall timestamp and monotonic-derived elapsed nanoseconds are
 quoted int64 decimal strings, following the ordinary record encoding.
 
@@ -36,16 +37,22 @@ quoted int64 decimal strings, following the ordinary record encoding.
 | --- | --- |
 | `rejectedStarts` | Cumulative failed admission attempts: active-span capacity, span/trace ID generation failure, or processor rejection of span_start; counted once per attempt, including children |
 | `droppedAttributes` | Cumulative bounded-data attribute drops across all admitted spans, including initial attributes and event attributes |
-| `droppedEvents` | Cumulative oversized event drops across all admitted spans |
+| `droppedEvents` | Cumulative oversized or async-rejected event drops across all admitted spans |
+| `droppedStatusUpdates` | Cumulative rejected status updates across all admitted spans |
 | `unendedSpans` | Point-in-time count of logically live admitted spans |
 | `unendedDroppedAttributes` | Attribute-drop subtotal on those logically live spans |
 | `unendedDroppedEvents` | Event-drop subtotal on those logically live spans |
+| `unendedDroppedStatusUpdates` | Status-update-drop subtotal on those logically live spans |
 
 Starts on disabled providers or after admission closes are intentional no-ops,
 not rejections. Rejected attempts have no admitted identity; reason categories
 are deliberately omitted for the smallest clean contract. Valid truncation and
 ignored invalid status codes retain their existing semantics and are not newly
-classified as loss. Pipeline errors are not attributed as attribute/event drops;
+classified as loss. Async capacity rejection drops entire events or updates:
+rejected event counts once, rejected update attributes count individually, and
+a rejected status payload counts once. Initial update drops follow the same
+rules. These are ordinary nonterminal losses with no error-handler notification.
+Pipeline errors are not attributed as attribute/event/status drops;
 they remain sticky output errors and sequence/reconstruction diagnostics, not a
 fabricated count of missing delivered records. No other existing numeric
 capture-loss counter is omitted.

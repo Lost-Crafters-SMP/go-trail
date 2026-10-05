@@ -2,10 +2,11 @@
 
 **Positioning:** Lightweight local-first tracing for Go applications.
 
-**Status:** research/design only, reviewed against the sources below on
-2026-10-05. Nothing in the proposed API or file format is implemented. This is a
-recommendation for review, not a public API or format specification. No runtime
-dependencies are selected or added by this document.
+**Status:** research baseline reviewed on 2026-10-05, updated alongside the
+implemented v0.1 core, journal, and explicit Sync/Async processors. Historical
+examples remain illustrative where marked proposed; the implementation-status
+sections and linked contracts describe implemented behavior. Journal v1 is still
+unreleased and awaiting real-capture freeze review. Production uses only stdlib.
 
 ## 1. Recommendation at a glance
 
@@ -22,18 +23,19 @@ dependencies are selected or added by this document.
   OTLP, but **do not label the journal OTLP JSON or OTel compliant**. An actual
   OTLP conversion/export mode is deferred.
 - Introduce **Tracer -> Processor -> Sink** now. Processor choice is provider
-  configuration, not a span semantic. SyncProcessor is the v0.1 implementation;
-  AsyncProcessor is a first-class future option with bounded buffering.
+  configuration, not a span semantic. SyncProcessor and AsyncProcessor are both
+  implemented first-class explicit options; neither is chosen automatically.
 - Keep a three-method record sink shared by both processors. The processor owns
   delivery/barriers and its sink; the file sink owns serialization/file cleanup.
-  No async queue, batching framework, or rotation implementation yet.
+  Async uses one bounded queue/writer; no batching or rotation is implemented.
 - Support multiple concurrent root traces per provider/file. A root is not a
   process, and ending it does not end its active descendants.
 - Make trace completion explicit internally. Reject ended-span parenting by
   starting a new root; this deliberate OTel API difference makes eventual
   segment closure well-defined without inventing a public trace-session API.
 - Target zero allocations for the bare disabled Start/End path; measure option
-  construction separately. No performance results exist yet.
+  construction separately. Measurements are recorded below and in the
+  [async contract](async-processor.md).
 
 The major tradeoff is interoperability versus incomplete-span recovery. If
 direct OTLP file ingestion is more important than recording unfinished spans,
@@ -192,19 +194,18 @@ Interoperability expectations:
 
 ## 4. API and ownership proposal
 
-All signatures and examples below are illustrative, **not available Go APIs**.
+Core signatures below are implemented; application examples remain illustrative.
 Prefer concrete handles with private state instead of extensible Tracer/Span
 interfaces. Processor and Sink are the pipeline extension boundaries, not
 alternative Tracer/Span implementations. Value copies of Tracer
 and Span share their underlying state; copying a span cannot duplicate End.
 
 ```go
-// Proposed root-package surface, not an implementation.
+// Implemented root-package surface.
 func NewProvider(processor Processor, opts ...ProviderOption) (*Provider, error)
 func NewSyncProcessor(sink Sink) (*SyncProcessor, error)
 
-// Future configuration alternative; not part of the first implementation:
-// func NewAsyncProcessor(sink Sink, opts ...AsyncOption) (*AsyncProcessor, error)
+func NewAsyncProcessor(sink Sink, opts ...AsyncOption) (*AsyncProcessor, error)
 
 func (p *Provider) Tracer(scope string) Tracer
 func (p *Provider) Flush(ctx context.Context) error
@@ -692,7 +693,7 @@ arbitrary processor composition are unnecessary in v0.1.
 ### Shared lifecycle and concurrency
 
 - Provider, Tracer, and Span methods are safe for normal concurrent use.
-- A span mutex linearizes its own updates/End. IDs are immutable; Enabled and
+- The provider admission gate linearizes span updates/End. IDs are immutable; Enabled and
   IsRecording are advisory. Processor selection is configuration at construction,
   never a SpanOption or a different completion predicate.
 - A short provider admission gate serializes Process submissions, assigns
@@ -706,7 +707,7 @@ arbitrary processor composition are unnecessary in v0.1.
   its records are still queued. **Delivered completion** requires the ordered
   trace_end to reach the sink; **durability** depends on sink Flush/Sync policy.
   Future segment closure must wait for delivered completion, not runtime counts.
-- Lock order is span state -> provider admission -> processor acceptance. Neither
+- Lock order is provider admission -> processor acceptance. Neither
   async dequeue nor sink calls may acquire span locks or require the provider
   admission gate. Establish this before implementation and test races explicitly.
 - Processor.Process may borrow immutable record payloads only until it returns.
@@ -743,9 +744,9 @@ or Shutdown for processor-independent delivery guarantees. OTel's nonblocking-En
 expectation is a useful target for the future async mode, not a promise about sync
 configuration [S8].
 
-### Future AsyncProcessor: first-class option, not an implementation now
+### Implemented AsyncProcessor: explicit bounded processing
 
-Required architecture: finite record **and byte** queue limits, one owned writer,
+Implemented architecture: finite record **and byte** queue limits, one owned writer,
 non-blocking normal admission, explicit rejection/drop accounting, a Flush barrier,
 and draining Shutdown. Do not silently fall back to synchronous writes on overflow.
 No unbounded secondary error, completion, retry, or callback queue.
@@ -772,8 +773,26 @@ summaries, so sticky errors remain necessary.
 This credit/rejection policy addresses the unavoidable tradeoff: a finite-memory,
 non-waiting processor cannot accept every record while its writer is permanently
 stalled. It preserves lifecycle for **accepted** spans instead of promising lossless
-nonblocking tracing under arbitrary load. Exact reservation sizes and overflow
-selection remain an AsyncProcessor design gate, not extra v0.1 machinery.
+nonblocking tracing under arbitrary load. The closed and implemented
+[AsyncProcessor contract](async-processor.md) specifies exact budgets and policy:
+`NewAsyncProcessor` with `WithMaxQueuedRecords` (default 16384, minimum 6) and
+`WithMaxQueuedBytes` (default 16 MiB, minimum 2048). Owned payload is charged
+conservatively, not by encoded JSON size. Limits include in-flight records and
+future lifecycle promises. Span starts reserve one End and roots one trace_end;
+credits are released only after WriteRecord returns. Closing abandons only
+unsubmitted promises for unfinished application work, never accepted records.
+Queue-full admissions return ErrQueueFull and increment rejected starts; whole
+updates/events may be rejected nonterminally, with attribute/event/status counters.
+No fallback, eviction, timer, unbounded secondary queue, or per-span worker exists.
+
+The checkpoint lane is explicitly bounded: two record credits and 512 charged
+bytes, with one outstanding snapshot/marker operation. A second Flush waits for
+that control permit with its context **before** allocating a barrier or snapshot.
+Canceled callers do not release an enqueued marker's permit early. They cannot
+create an unbounded barrier path. Provider acquires the permit outside admission,
+enqueues its snapshot and marker atomically inside admission, then releases
+admission before waiting; concurrent span operations never wait on sink I/O.
+Direct Processor.Flush inserts a barrier without fabricating a provider snapshot.
 
 Flush establishes an admission high-water mark and waits for all retained records
 through it to be consumed, then performs Sink.Flush on the writer. Concurrent
@@ -801,10 +820,11 @@ unfinished-span reconstruction; immutable queued payloads; duplicate End;
 root-before-child End; trace completion; error latching; Flush high-water marks;
 no overlapping sink calls; and shutdown ownership, cancellation, retry, and close.
 Assertions observe the sink **after Flush/Shutdown**, not immediately after End.
-SyncProcessor runs it first; AsyncProcessor must pass it later unchanged.
+Both SyncProcessor and AsyncProcessor run this suite. Fake-sink failure injection
+is performed after a delivery barrier so it does not race the async writer.
 
 Add processor-specific tests separately: immediate sync sink-error returns, and
-future bounded queue/byte credits, stalled writer overflow, loss summaries,
+bounded queue/byte credits, stalled writer overflow, loss summaries,
 background failure callbacks, nonwaiting instrumentation, barrier progress under
 full queues, and no goroutine leaks. Shared semantic tests must not assert that
 Process/End blocks, that the sink has already seen a record on return, or that
@@ -866,11 +886,11 @@ real-capture schema-freeze review remains required before declaring v1 stable.
 {"type":"span_start","seq":"2","timeUnixNano":"1700000000000000000","elapsedNano":"0","traceId":"11111111111111111111111111111111","spanId":"2222222222222222","rootSpanId":"2222222222222222","scope":"example/resolver","name":"resolver.reconcile"}
 {"type":"span_start","seq":"3","timeUnixNano":"1700000000000000010","elapsedNano":"10","traceId":"11111111111111111111111111111111","spanId":"3333333333333333","rootSpanId":"2222222222222222","parentSpanId":"2222222222222222","scope":"example/resolver","name":"provider.lookup"}
 {"type":"event","seq":"4","timeUnixNano":"1700000000000000015","elapsedNano":"15","traceId":"11111111111111111111111111111111","spanId":"3333333333333333","rootSpanId":"2222222222222222","name":"cache.miss","attributes":[{"key":"candidates","type":"int64","value":"12"}]}
-{"type":"span_end","seq":"5","timeUnixNano":"1700000000000000020","elapsedNano":"20","traceId":"11111111111111111111111111111111","spanId":"2222222222222222","rootSpanId":"2222222222222222","durationNano":"20","droppedAttributes":"0","droppedEvents":"0"}
+{"type":"span_end","seq":"5","timeUnixNano":"1700000000000000020","elapsedNano":"20","traceId":"11111111111111111111111111111111","spanId":"2222222222222222","rootSpanId":"2222222222222222","durationNano":"20","droppedAttributes":"0","droppedEvents":"0","droppedStatusUpdates":"0"}
 {"type":"span_update","seq":"6","timeUnixNano":"1700000000000000022","elapsedNano":"22","traceId":"11111111111111111111111111111111","spanId":"3333333333333333","rootSpanId":"2222222222222222","status":{"code":"error","description":"lookup failed"}}
-{"type":"span_end","seq":"7","timeUnixNano":"1700000000000000030","elapsedNano":"30","traceId":"11111111111111111111111111111111","spanId":"3333333333333333","rootSpanId":"2222222222222222","durationNano":"20","droppedAttributes":"0","droppedEvents":"0"}
+{"type":"span_end","seq":"7","timeUnixNano":"1700000000000000030","elapsedNano":"30","traceId":"11111111111111111111111111111111","spanId":"3333333333333333","rootSpanId":"2222222222222222","durationNano":"20","droppedAttributes":"0","droppedEvents":"0","droppedStatusUpdates":"0"}
 {"type":"trace_end","seq":"8","timeUnixNano":"1700000000000000030","elapsedNano":"30","traceId":"11111111111111111111111111111111","rootSpanId":"2222222222222222"}
-{"type":"loss_summary","seq":"9","timeUnixNano":"1700000000000000040","elapsedNano":"40","rejectedStarts":"0","droppedAttributes":"0","droppedEvents":"0","unendedSpans":"0","unendedDroppedAttributes":"0","unendedDroppedEvents":"0"}
+{"type":"loss_summary","seq":"9","timeUnixNano":"1700000000000000040","elapsedNano":"40","rejectedStarts":"0","droppedAttributes":"0","droppedEvents":"0","droppedStatusUpdates":"0","unendedSpans":"0","unendedDroppedAttributes":"0","unendedDroppedEvents":"0","unendedDroppedStatusUpdates":"0"}
 ```
 
 Draft native attribute encoding: key/type/value entries, with type names
@@ -914,9 +934,12 @@ semantic total order promised by instrumentation.
    or reported losses qualify that claim; distinguish completion from fidelity.
 6. **loss_summary:** replace the capture's previous loss snapshot with the latest
    successfully read valid summary. Required quoted uint64 counters are
-   `rejectedStarts`, `droppedAttributes`, `droppedEvents`, `unendedSpans`,
-   `unendedDroppedAttributes`, and `unendedDroppedEvents`. The first three are
-   lifetime totals; the last three describe logically live spans at that sequence.
+   `rejectedStarts`, `droppedAttributes`, `droppedEvents`, `droppedStatusUpdates`,
+   `unendedSpans`, `unendedDroppedAttributes`, `unendedDroppedEvents`, and
+   `unendedDroppedStatusUpdates`. The first four are lifetime totals; the last
+   four describe logically live spans at that sequence. Status counters are the
+   approved shared pre-release v1 extension for async status-update rejection;
+   span_end also carries `droppedStatusUpdates`, zero in no-loss sync captures.
    Never sum snapshots or add totals to overlapping span_end counts. Live subtotals
    can decrease at logical End (even if its record fails delivery); lifetime totals
    must not decrease. Missing summaries mean unknown accounting, not zero. A torn
@@ -956,7 +979,7 @@ after an uncertain/partial write so later data cannot be appended to a torn line
 No automatic retry that could duplicate a record.
 
 The file sink is identical under both processors: SyncProcessor invokes it on
-the submitting path; AsyncProcessor would invoke it on its writer. The sink owns
+the submitting path; AsyncProcessor invokes it on its writer. The sink owns
 no worker/queue. This bounds transient encoding memory to a record, not a trace.
 A sink-local buffer would
 reduce syscalls but expand the loss window and require a periodic flush worker;
@@ -1042,14 +1065,14 @@ Failure policy:
 | File open/create/header or provider initialization | Returned setup error; caller explicitly decides whether tracing is optional |
 | ID generation/configuration invalidity | Setup error where possible; runtime admission failure with diagnostic, never invalid recorded IDs |
 | Invalid/oversized attribute or event | Drop according to bounds, count loss, preserve lifecycle records |
-| Future async queue/byte capacity exhausted | Reject new admissions or drop eligible updates/events without waiting; preserve reserved lifecycle records and report loss |
+| Async queue/byte capacity exhausted | Reject new admissions or drop eligible updates/events/status without waiting; preserve reserved lifecycle records and count loss |
 | Encode, short write, disk full, write failure | Latch first operational error; stop output rather than corrupt/retry the stream; release normal span bookkeeping |
 | Flush/Sync/Close failure | Return error, retain earlier failure context, still attempt owned-resource cleanup |
 | Unended spans/admission loss | Report incomplete capture in Flush/Shutdown results as applicable |
 
 Propose a pipeline-local optional `WithErrorHandler(func(error))`, not global
 logging. Wire a shared diagnostic reporter at provider/processor construction so
-immediate Process errors and future background writer errors reach the same
+immediate Process errors and background writer errors reach the same
 policy without adding callback machinery to Span APIs. SyncProcessor returns
 per-call errors for the provider to report after unlocking; AsyncProcessor must
 also report failures that occur when no further instrumentation call is made.
@@ -1066,9 +1089,13 @@ Pending notifications are claimed before invoking user code, allowing callback
 reentry into Start, Flush, or Shutdown without deadlock or duplicate reporting.
 Handlers must be concurrency-safe: independent operations may invoke callbacks
 concurrently; notification order across goroutines is not promised. There is no
-worker, callback lock, automatic tracing of the handler, or panic recovery for
-host callback code. Future AsyncProcessor background-failure wiring remains a
-separate implementation gate.
+callback queue/serialization lock, automatic tracing of the handler, or panic
+recovery for host callback code. Async background failure uses one once-launched notification
+goroutine (no callback queue), outside writer/admission locks. It permits callback
+reentry into Flush/Shutdown without making the writer wait on itself. Shutdown
+joins the writer, not arbitrary host callback code; handlers must return. Immediate
+and background observations claim the same first-error notification once. Terminal
+cleanup notifications retain the existing Provider Shutdown path.
 
 End/AddEvent/SetAttributes retain defer-friendly void signatures; strict
 applications handle setup, callbacks, and final errors themselves. Trail never
@@ -1371,7 +1398,7 @@ Recommended v0.1 acceptance slice, now implemented:
    local context and root/child
    Start/End, WithNewRoot, typed IDs and deterministic injection.
 2. Bounded typed attributes, events, independent error/status recording.
-3. Explicit Processor boundary with only SyncProcessor implemented, plus the
+3. Explicit Processor boundary with SyncProcessor and AsyncProcessor, plus the
    shared sink contract and exclusive-create JSONL file sink; multiple concurrent
    traces, early records, incomplete-span recovery semantics.
 4. Clear error reporting, Flush/Shutdown barriers, optional Sync-on-Flush, safe
@@ -1381,11 +1408,11 @@ Recommended v0.1 acceptance slice, now implemented:
    tests, race runs, and disabled allocation benchmarks. Journals are readable
    with generic JSON tooling; no dedicated viewer is required.
 
-Exclude rotation, retention, compression, resume-existing-file mode, async
-workers, remote export, distributed propagation, OTLP converter, automatic slog
+Exclude rotation, retention, compression, resume-existing-file mode,
+remote export, distributed propagation, OTLP converter, automatic slog
 integration, sampling, metrics, and monitoring. The architecture documents their
 constraints. Processor is an explicit architectural boundary; async queue,
-worker, reservation machinery, and rotation capabilities are not implemented.
+worker, and lifecycle reservations are implemented. Rotation remains deferred.
 
 For the repository, use `mise run fmt` then `mise run check`; `mise run
 test:race` adds race-detector runs and `go test -bench` runs the disabled-path
@@ -1404,10 +1431,9 @@ allocation benchmarks.
    parenting? The latter needs an explicit trace lease/close concept before
    promising both safe draining closure and indefinitely reusable contexts.
 3. **Processor delivery budget:** the enabled SyncProcessor baseline is recorded
-   in section 12; validate real workloads before tuning it. AsyncProcessor remains
-   a first-class configuration option;
-   before implementing it, settle byte/record reservations, eligible drops,
-   control barriers, error notification, and writer lifetime under cancellation.
+   in section 12; validate real workloads before tuning it. AsyncProcessor's
+   design gate is closed and implementation is explicit opt-in; see its linked
+   contract and benchmark measurements. Real workload validation remains useful.
 4. **Public pipeline surface:** settle Processor/Record names, ownership, shared
    diagnostic wiring, and sink evolution rules using the conformance suite. Keep
    root-admission routing separate from dequeue for future rotation; avoid a

@@ -20,6 +20,10 @@ func syncProcessorFactory(sink Sink) (Processor, error) {
 	return processor, nil
 }
 
+func asyncProcessorFactory(sink Sink) (Processor, error) {
+	return NewAsyncProcessor(sink)
+}
+
 // concurrencySink records records and tracks whether calls ever overlap.
 type concurrencySink struct {
 	recordingSink
@@ -79,11 +83,16 @@ func newConformanceProvider(t *testing.T, factory processorFactory, sink Sink) *
 	if err != nil {
 		t.Fatalf("NewProvider unexpected error: %v", err)
 	}
+	t.Cleanup(func() { _ = provider.Shutdown(context.Background()) })
 	return provider
 }
 
 func TestSyncProcessorConformance(t *testing.T) {
 	runProcessorConformance(t, syncProcessorFactory)
+}
+
+func TestAsyncProcessorConformance(t *testing.T) {
+	runProcessorConformance(t, asyncProcessorFactory)
 }
 
 func runProcessorConformance(t *testing.T, factory processorFactory) {
@@ -230,6 +239,9 @@ func runProcessorConformance(t *testing.T, factory processorFactory) {
 		tracer := provider.Tracer("conf")
 		_, span := tracer.Start(context.Background(), "op")
 		failure := errors.New("broken output")
+		if err := provider.Flush(context.Background()); err != nil {
+			t.Fatal(err)
+		}
 		sink.writeErr = failure
 		span.SetAttributes(String("k", "v"))
 		span.End()

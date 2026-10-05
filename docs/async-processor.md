@@ -1,6 +1,6 @@
 # AsyncProcessor contract
 
-Design closed before implementation. Processor selection is explicit; SyncProcessor
+Design closed before implementation; now implemented and tested. Processor selection is explicit; SyncProcessor
 remains supported. No Provider/Tracer/Span public signatures change.
 
 ## Configuration and ownership
@@ -61,7 +61,13 @@ admission gate. It waits for the bounded control permit **outside** that gate, a
 releases the gate before waiting for delivery. Subsequent records go behind the
 marker and cannot delay its high-water mark. Only the writer invokes Sink.Flush.
 Direct Processor.Flush inserts a marker, not a fabricated provider snapshot.
-Control-operation waiters do not retain copies of queued record data.
+The reserved snapshot transaction belongs to Provider: direct Process(LossSummary)
+uses the ordinary budget and may reject. Direct callers must handle that error
+and can Flush to drain before explicitly resubmitting; no uncertain-write retry
+is permitted. This is not an unbounded control-record bypass.
+Control-operation waiters do not retain copies of queued record data. A second
+Flush gets a new high-water mark only after obtaining the single permit; a
+canceled wait allocates no additional marker/snapshot path.
 
 Flush/Shutdown may wait; ordinary Process never waits for I/O, space, or writer
 progress. Short mutex/copy work is permitted. Context cancellation before enqueue
@@ -75,15 +81,18 @@ flush/closure. Processor Shutdown also stops Process, even on canceled entry. It
 does not wait for application spans to End. Cancellation leaves closing resumable;
 after final-summary acceptance retries enqueue cleanup only, not a duplicate final
 summary. Accepted FIFO entries continue to drain while closing. A fresh Shutdown
-finishes sink cleanup and joins the writer. Closed operations return terminal
-results without new records. Sink calls never overlap or run under acceptance
+finishes sink cleanup and joins the writer. Repeated Shutdown and closed Provider
+operations return terminal results without new records; direct processor Process/
+Flush after closure return ErrProcessorShutdown, matching SyncProcessor.
+Sink calls never overlap or run under acceptance
 locks. An in-flight WriteRecord cannot be context-canceled by this interface:
 the writer remains owned until the sink returns and shutdown completes. A custom
 sink returning cancellation from cleanup must remain resumable, not already closed.
 
 ## Failures and callbacks
 
-First non-cancellation write/flush error is sticky. The writer stops invoking
+Every WriteRecord error and every non-cancellation Flush error is sticky (writes
+have no cancellation context and may have partially succeeded). The writer stops invoking
 WriteRecord after failure, releases failed/undeliverable entries and credits,
 and remains available for barriers/cleanup. Process no longer reports successful
 deliverability. Barriers return the sticky error; Shutdown still attempts sink

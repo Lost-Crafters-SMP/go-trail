@@ -41,8 +41,8 @@ func encodeRecord(record trail.Record) ([]byte, error) {
 		if r.Seq == 0 {
 			return nil, errField("loss_summary", "seq")
 		}
-		if r.UnendedDroppedAttributes > r.DroppedAttributes || r.UnendedDroppedEvents > r.DroppedEvents ||
-			(r.UnendedSpans == 0 && (r.UnendedDroppedAttributes != 0 || r.UnendedDroppedEvents != 0)) {
+		if r.UnendedDroppedAttributes > r.DroppedAttributes || r.UnendedDroppedEvents > r.DroppedEvents || r.UnendedDroppedStatusUpdates > r.DroppedStatusUpdates ||
+			(r.UnendedSpans == 0 && (r.UnendedDroppedAttributes != 0 || r.UnendedDroppedEvents != 0 || r.UnendedDroppedStatusUpdates != 0)) {
 			return nil, errField("loss_summary", "unended drop subtotals")
 		}
 		b = append(b, `{"type":"loss_summary","seq":`...)
@@ -57,12 +57,16 @@ func encodeRecord(record trail.Record) ([]byte, error) {
 		b = appendUintString(b, r.DroppedAttributes)
 		b = append(b, `,"droppedEvents":`...)
 		b = appendUintString(b, r.DroppedEvents)
+		b = append(b, `,"droppedStatusUpdates":`...)
+		b = appendUintString(b, r.DroppedStatusUpdates)
 		b = append(b, `,"unendedSpans":`...)
 		b = appendUintString(b, r.UnendedSpans)
 		b = append(b, `,"unendedDroppedAttributes":`...)
 		b = appendUintString(b, r.UnendedDroppedAttributes)
 		b = append(b, `,"unendedDroppedEvents":`...)
 		b = appendUintString(b, r.UnendedDroppedEvents)
+		b = append(b, `,"unendedDroppedStatusUpdates":`...)
+		b = appendUintString(b, r.UnendedDroppedStatusUpdates)
 		b = append(b, '}')
 
 	case trail.SpanStart:
@@ -119,6 +123,8 @@ func encodeRecord(record trail.Record) ([]byte, error) {
 		b = appendUintString(b, r.DroppedAttributes)
 		b = append(b, `,"droppedEvents":`...)
 		b = appendUintString(b, r.DroppedEvents)
+		b = append(b, `,"droppedStatusUpdates":`...)
+		b = appendUintString(b, r.DroppedStatusUpdates)
 		b = append(b, '}')
 
 	case trail.SpanUpdate:

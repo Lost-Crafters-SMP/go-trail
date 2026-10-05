@@ -35,15 +35,16 @@ type SpanStart struct {
 // clock and is authoritative; it is not derived from wall timestamps. The
 // drop counts are totals for the span's lifetime.
 type SpanEnd struct {
-	Seq               uint64
-	Wall              time.Time
-	Elapsed           time.Duration
-	TraceID           TraceID
-	SpanID            SpanID
-	RootSpanID        SpanID
-	Duration          time.Duration
-	DroppedAttributes uint64
-	DroppedEvents     uint64
+	Seq                  uint64
+	Wall                 time.Time
+	Elapsed              time.Duration
+	TraceID              TraceID
+	SpanID               SpanID
+	RootSpanID           SpanID
+	Duration             time.Duration
+	DroppedAttributes    uint64
+	DroppedEvents        uint64
+	DroppedStatusUpdates uint64
 }
 
 // TraceEnd claims that a trace completed: its root ended and no admitted
@@ -88,15 +89,17 @@ type Event struct {
 // spans; never add them to SpanEnd counters. UnendedSpans and its drop subtotals
 // describe logically live spans at the checkpoint and may decrease.
 type LossSummary struct {
-	Seq                      uint64
-	Wall                     time.Time
-	Elapsed                  time.Duration
-	RejectedStarts           uint64
-	DroppedAttributes        uint64
-	DroppedEvents            uint64
-	UnendedSpans             uint64
-	UnendedDroppedAttributes uint64
-	UnendedDroppedEvents     uint64
+	Seq                         uint64
+	Wall                        time.Time
+	Elapsed                     time.Duration
+	RejectedStarts              uint64
+	DroppedAttributes           uint64
+	DroppedEvents               uint64
+	DroppedStatusUpdates        uint64
+	UnendedSpans                uint64
+	UnendedDroppedAttributes    uint64
+	UnendedDroppedEvents        uint64
+	UnendedDroppedStatusUpdates uint64
 }
 
 func (LossSummary) record()  {}
