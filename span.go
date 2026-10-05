@@ -122,8 +122,8 @@ func (s *spanState) end() {
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
 
-	if s.ended.Load() {
-		return // a concurrent End won the admission gate
+	if s.ended.Load() || !ps.admitting() {
+		return // a concurrent End won the gate, or the provider stopped admitting
 	}
 	s.ended.Store(true)
 
@@ -170,8 +170,8 @@ func (s *spanState) setAttributes(attrs []Attribute) {
 
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
-	if s.ended.Load() {
-		return
+	if s.ended.Load() || !ps.admitting() {
+		return // already ended, or the provider stopped admitting
 	}
 	newKeys, resolved, dropped := resolveSpanAttributes(s.keys, attrs)
 	s.keys = newKeys
@@ -212,8 +212,8 @@ func (s *spanState) addEvent(name string, attrs []Attribute, err error) {
 
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
-	if s.ended.Load() {
-		return
+	if s.ended.Load() || !ps.admitting() {
+		return // already ended, or the provider stopped admitting
 	}
 	name = truncateUTF8(name, maxNameBytes)
 	resolved, dropped := resolveEventAttributes(attrs)
@@ -252,8 +252,8 @@ func (s *spanState) setStatus(code StatusCode, description string) {
 
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
-	if s.ended.Load() {
-		return
+	if s.ended.Load() || !ps.admitting() {
+		return // already ended, or the provider stopped admitting
 	}
 	if err := ps.processor.Process(SpanUpdate{
 		Seq:        ps.nextSeq(),

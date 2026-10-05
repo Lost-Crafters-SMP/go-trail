@@ -3,6 +3,7 @@ package trail_test
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -37,8 +38,11 @@ func TestPipelineWritesJournalOnDisk(t *testing.T) {
 	child.End()
 	root.End()
 
-	if err := processor.Shutdown(context.Background()); err != nil {
-		t.Fatalf("processor.Shutdown unexpected error: %v", err)
+	if err := provider.Flush(context.Background()); err != nil {
+		t.Fatalf("provider.Flush unexpected error: %v", err)
+	}
+	if err := provider.Shutdown(context.Background()); err != nil {
+		t.Fatalf("provider.Shutdown unexpected error: %v", err)
 	}
 
 	data, err := os.ReadFile(path)
@@ -118,8 +122,13 @@ func TestUnfinishedSpanSurvivesAsJournalStart(t *testing.T) {
 	tracer := provider.Tracer("example/hang")
 	_, hanging := tracer.Start(context.Background(), "stuck.operation")
 	_ = hanging // simulate a hang: the span never ends
-	if err := processor.Shutdown(context.Background()); err != nil {
-		t.Fatalf("processor.Shutdown unexpected error: %v", err)
+	if err := provider.Shutdown(context.Background()); err == nil {
+		t.Fatal("Shutdown with a live span succeeded, want incomplete-capture error")
+	} else {
+		var incomplete *trail.IncompleteError
+		if !errors.As(err, &incomplete) || incomplete.UnendedSpans != 1 {
+			t.Fatalf("Shutdown error = %v, want IncompleteError with 1 unended span", err)
+		}
 	}
 
 	data, err := os.ReadFile(path)

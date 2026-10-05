@@ -36,8 +36,23 @@ type providerState struct {
 	liveSpans      int
 	rejectedStarts uint64
 
-	closed    bool
+	stage     providerStage
 	stickyErr error
+	termErr   error
+}
+
+// providerStage is the non-reversible lifecycle state of a provider.
+type providerStage uint8
+
+const (
+	stageRunning providerStage = iota
+	stageClosing
+	stageClosed
+)
+
+// admitting reports whether the provider still admits new spans.
+func (ps *providerState) admitting() bool {
+	return ps.stage == stageRunning
 }
 
 // traceState is the admission bookkeeping for one live trace: its root,
@@ -95,6 +110,109 @@ func (p *Provider) enabled() bool {
 	return p != nil && p.state != nil
 }
 
+// Flush inserts an admission barrier, waits for the processor to deliver
+// preceding records and flush its sink, and returns sticky output and
+// admission-loss errors. It does not end active spans or close output. A
+// nil or uninitialized Provider is a no-op.
+func (p *Provider) Flush(ctx context.Context) error {
+	if !p.enabled() {
+		return nil
+	}
+	return p.state.flush(ctx)
+}
+
+// Shutdown closes admission, reports remaining active spans and admission
+// loss as an incomplete capture, and asks the processor to drain, flush,
+// and close its owned sink. It never waits for forgotten spans to End;
+// their starts remain in the journal without ends, and subsequent span
+// methods become no-ops. Repeated calls return the same terminal result.
+// A canceled context leaves shutdown resumable with a fresh context without
+// reopening admission. A nil or uninitialized Provider is a no-op.
+func (p *Provider) Shutdown(ctx context.Context) error {
+	if !p.enabled() {
+		return nil
+	}
+	return p.state.shutdown(ctx)
+}
+
+// flush processes the Flush barrier under the admission gate so preceding
+// admissions are fully submitted first. Active spans are normal mid-capture
+// state and are not Flush loss; rejected starts are.
+func (ps *providerState) flush(ctx context.Context) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+	if ps.stage == stageClosed {
+		return ps.termErr
+	}
+	var errs []error
+	if err := ps.processor.Flush(ctx); err != nil {
+		errs = append(errs, err)
+	}
+	if ps.rejectedStarts > 0 {
+		errs = append(errs, &IncompleteError{RejectedStarts: ps.rejectedStarts})
+	}
+	return errors.Join(errs...)
+}
+
+// shutdown processes the one-time cleanup under the admission gate.
+func (ps *providerState) shutdown(ctx context.Context) error {
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+	if ps.stage == stageClosed {
+		return ps.termErr
+	}
+	ps.stage = stageClosing // admission is closed from here and never reopens
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	var errs []error
+	if err := ps.processor.Shutdown(ctx); err != nil {
+		errs = append(errs, err)
+	}
+	if ps.stickyErr != nil {
+		errs = append(errs, ps.stickyErr)
+	}
+	if loss := ps.lossError(); loss != nil {
+		errs = append(errs, loss)
+	}
+	ps.stage = stageClosed
+	ps.termErr = errors.Join(errs...)
+	return ps.termErr
+}
+
+// lossError reports admission loss recorded during the capture, if any.
+func (ps *providerState) lossError() error {
+	if ps.liveSpans == 0 && ps.rejectedStarts == 0 {
+		return nil
+	}
+	return &IncompleteError{
+		UnendedSpans:   uint64(ps.liveSpans),
+		RejectedStarts: ps.rejectedStarts,
+	}
+}
+
+// IncompleteError reports that a capture is not a complete record of the
+// work it observed: spans that never ended, or starts rejected by bounds.
+// Their journal starts remain useful evidence without fabricated ends.
+type IncompleteError struct {
+	UnendedSpans   uint64
+	RejectedStarts uint64
+}
+
+func (e *IncompleteError) Error() string {
+	switch {
+	case e.UnendedSpans > 0 && e.RejectedStarts > 0:
+		return fmt.Sprintf("trail: incomplete capture: %d unended spans, %d rejected starts", e.UnendedSpans, e.RejectedStarts)
+	case e.UnendedSpans > 0:
+		return fmt.Sprintf("trail: incomplete capture: %d unended spans", e.UnendedSpans)
+	default:
+		return fmt.Sprintf("trail: incomplete capture: %d rejected starts", e.RejectedStarts)
+	}
+}
+
 // submitCaptureStart emits the first record of the capture through the
 // processor. A failure fails provider construction.
 func (ps *providerState) submitCaptureStart() error {
@@ -136,7 +254,7 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
 
-	if ps.closed {
+	if !ps.admitting() {
 		return ctx, Span{}
 	}
 	// Active-span capacity bounds provider-owned bookkeeping; a full
