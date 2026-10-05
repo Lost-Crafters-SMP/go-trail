@@ -26,14 +26,13 @@ func (t Tracer) Scope() string {
 // Start starts a span named name as a child of the span carried by ctx.
 //
 // When the tracer is disabled, Start returns ctx unchanged and a
-// non-recording span without allocating. Parent selection and span admission
-// rules are described in docs/design.md.
+// non-recording span without allocating. An active same-provider span in ctx
+// becomes the parent; no parent, WithNewRoot, an ended parent, or a foreign
+// span starts a new root with a fresh trace. Admission failures also return
+// the original context and a non-recording span.
 func (t Tracer) Start(ctx context.Context, name string, opts ...StartOption) (context.Context, Span) {
 	if !t.Enabled() {
 		return ctx, Span{}
 	}
-	// Span admission is implemented with the lifecycle milestone; no enabled
-	// provider exists before then.
-	_, _ = name, opts
-	return ctx, Span{}
+	return t.provider.state.start(ctx, t, name, opts)
 }
