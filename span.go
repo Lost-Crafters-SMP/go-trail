@@ -120,7 +120,7 @@ func (s *spanState) end() {
 	duration := reading.tick - s.start.tick
 
 	ps.mu.Lock()
-	defer ps.mu.Unlock()
+	defer ps.unlockAndReport()
 
 	if s.ended.Load() || !ps.admitting() {
 		return // a concurrent End won the gate, or the provider stopped admitting
@@ -169,7 +169,7 @@ func (s *spanState) setAttributes(attrs []Attribute) {
 	reading := ps.clock.now()
 
 	ps.mu.Lock()
-	defer ps.mu.Unlock()
+	defer ps.unlockAndReport()
 	if s.ended.Load() || !ps.admitting() {
 		return // already ended, or the provider stopped admitting
 	}
@@ -211,7 +211,7 @@ func (s *spanState) addEvent(name string, attrs []Attribute, err error) {
 	reading := ps.clock.now()
 
 	ps.mu.Lock()
-	defer ps.mu.Unlock()
+	defer ps.unlockAndReport()
 	if s.ended.Load() || !ps.admitting() {
 		return // already ended, or the provider stopped admitting
 	}
@@ -251,7 +251,7 @@ func (s *spanState) setStatus(code StatusCode, description string) {
 	reading := ps.clock.now()
 
 	ps.mu.Lock()
-	defer ps.mu.Unlock()
+	defer ps.unlockAndReport()
 	if s.ended.Load() || !ps.admitting() {
 		return // already ended, or the provider stopped admitting
 	}

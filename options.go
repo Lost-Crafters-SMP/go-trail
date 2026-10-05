@@ -37,6 +37,17 @@ type ProviderOption func(*providerConfig)
 // initialized. The identifier and clock seams are provisional test seams;
 // production defaults fill them when unset.
 type providerConfig struct {
-	ids   idGenerator
-	clock clock
+	ids          idGenerator
+	clock        clock
+	errorHandler func(error)
+}
+
+// WithErrorHandler sets an optional notification callback for the first latched
+// failure and additional terminal cleanup failures. There is no default output.
+// Notifications run synchronously after internal locks are released and may
+// reenter the provider. Concurrent operations may invoke the handler concurrently;
+// handlers must be concurrency-safe. Flush and Shutdown remain authoritative.
+// Context cancellation and ordinary bounded-data drops are not notifications.
+func WithErrorHandler(handler func(error)) ProviderOption {
+	return func(cfg *providerConfig) { cfg.errorHandler = handler }
 }

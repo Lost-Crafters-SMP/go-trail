@@ -22,9 +22,11 @@ type Provider struct {
 
 // providerState holds the state of an enabled provider.
 type providerState struct {
-	processor Processor
-	ids       idGenerator
-	clock     clock
+	processor     Processor
+	ids           idGenerator
+	clock         clock
+	errorHandler  func(error)
+	pendingErrors []error
 
 	// mu is the admission gate: it serializes admission, sequence
 	// assignment, trace bookkeeping transitions, and lifecycle changes into
@@ -85,10 +87,11 @@ func NewProvider(processor Processor, opts ...ProviderOption) (*Provider, error)
 		}
 	}
 	ps := &providerState{
-		processor: processor,
-		ids:       cfg.ids,
-		clock:     cfg.clock,
-		traces:    make(map[TraceID]*traceState),
+		processor:    processor,
+		ids:          cfg.ids,
+		clock:        cfg.clock,
+		errorHandler: cfg.errorHandler,
+		traces:       make(map[TraceID]*traceState),
 	}
 	if err := ps.submitCaptureStart(); err != nil {
 		return nil, err
@@ -143,13 +146,19 @@ func (ps *providerState) flush(ctx context.Context) error {
 		return err
 	}
 	ps.mu.Lock()
-	defer ps.mu.Unlock()
+	defer ps.unlockAndReport()
 	if ps.stage == stageClosed {
 		return ps.termErr
 	}
 	var errs []error
 	if err := ps.processor.Flush(ctx); err != nil {
 		errs = append(errs, err)
+		if !isCancellation(err) {
+			ps.latchError(err)
+		}
+	}
+	if ps.stickyErr != nil {
+		errs = append(errs, ps.stickyErr)
 	}
 	if ps.rejectedStarts > 0 {
 		errs = append(errs, &IncompleteError{RejectedStarts: ps.rejectedStarts})
@@ -160,7 +169,7 @@ func (ps *providerState) flush(ctx context.Context) error {
 // shutdown processes the one-time cleanup under the admission gate.
 func (ps *providerState) shutdown(ctx context.Context) error {
 	ps.mu.Lock()
-	defer ps.mu.Unlock()
+	defer ps.unlockAndReport()
 	if ps.stage == stageClosed {
 		return ps.termErr
 	}
@@ -171,6 +180,10 @@ func (ps *providerState) shutdown(ctx context.Context) error {
 	var errs []error
 	if err := ps.processor.Shutdown(ctx); err != nil {
 		errs = append(errs, err)
+		if isCancellation(err) {
+			return errors.Join(errs...)
+		}
+		ps.notifyCleanupError(err)
 	}
 	if ps.stickyErr != nil {
 		errs = append(errs, ps.stickyErr)
@@ -217,7 +230,7 @@ func (e *IncompleteError) Error() string {
 // processor. A failure fails provider construction.
 func (ps *providerState) submitCaptureStart() error {
 	ps.mu.Lock()
-	defer ps.mu.Unlock()
+	defer ps.unlockAndReport()
 	reading := ps.clock.now()
 	if err := ps.processor.Process(CaptureStart{Seq: ps.nextSeq(), Wall: reading.wall}); err != nil {
 		ps.latchError(err)
@@ -241,18 +254,12 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 	}
 	name = truncateUTF8(name, maxNameBytes)
 
-	spanID, err := ps.ids.newSpanID()
-	if err != nil {
-		ps.latchError(fmt.Errorf("trail: generate span ID: %w", err))
-		return ctx, Span{}
-	}
-
 	// Sample times in the calling goroutine before waiting for admission so
 	// gate contention never extends measured durations.
 	reading := ps.clock.now()
 
 	ps.mu.Lock()
-	defer ps.mu.Unlock()
+	defer ps.unlockAndReport()
 
 	if !ps.admitting() {
 		return ctx, Span{}
@@ -262,6 +269,12 @@ func (ps *providerState) start(ctx context.Context, tracer Tracer, name string, 
 	// Flush and Shutdown reporting.
 	if ps.liveSpans >= maxActiveSpans {
 		ps.rejectedStarts++
+		return ctx, Span{}
+	}
+	// Injected ID sources and the failure latch are serialized by admission.
+	spanID, err := ps.ids.newSpanID()
+	if err != nil {
+		ps.latchError(fmt.Errorf("trail: generate span ID: %w", err))
 		return ctx, Span{}
 	}
 
@@ -373,5 +386,42 @@ func (ps *providerState) nextSeq() uint64 {
 func (ps *providerState) latchError(err error) {
 	if ps.stickyErr == nil {
 		ps.stickyErr = err
+		if ps.errorHandler != nil {
+			ps.pendingErrors = append(ps.pendingErrors, err)
+		}
+	}
+}
+
+// unlockAndReport claims notifications before unlocking, so recursive calls
+// cannot report the same failure again. No callback serialization lock is held.
+func (ps *providerState) unlockAndReport() {
+	pending := ps.pendingErrors
+	ps.pendingErrors = nil
+	ps.mu.Unlock()
+	for _, err := range pending {
+		ps.errorHandler(err)
+	}
+}
+
+func isCancellation(err error) bool {
+	return errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded)
+}
+
+// Shutdown can join the already reported write failure with new cleanup
+// failures. Walk joins without notifying again for the known sticky failure.
+func (ps *providerState) notifyCleanupError(err error) {
+	if joined, ok := err.(interface{ Unwrap() []error }); ok {
+		for _, child := range joined.Unwrap() {
+			ps.notifyCleanupError(child)
+		}
+		return
+	}
+	if ps.stickyErr != nil && errors.Is(err, ps.stickyErr) {
+		return
+	}
+	if ps.stickyErr == nil {
+		ps.latchError(err)
+	} else if ps.errorHandler != nil {
+		ps.pendingErrors = append(ps.pendingErrors, err)
 	}
 }
