@@ -1,0 +1,31 @@
+File: control-AddEvent.test.exe
+Build ID: <profile-dir>/control-AddEvent.test.exe2026-10-05 23:27:36.9298897 +0100 BST
+Type: alloc_objects
+Time: 2026-10-05 23:28:36 BST
+Showing nodes accounting for 700200, 99.42% of 704279 total
+Dropped 525 nodes (cum <= 3521)
+      flat  flat%   sum%        cum   cum%
+    200701 28.50% 28.50%     200701 28.50%  internal/strconv.AppendUint <cache>/toolchains/go/src/internal/strconv/itoa.go:77
+    100003 14.20% 42.70%     100003 14.20%  internal/stringslite.Clone <cache>/toolchains/go/src/internal/stringslite/strings.go:119 (inline)
+    100001 14.20% 56.90%     200002 28.40%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }] <repo>/owned_record.go:19
+    100001 14.20% 71.09%     100001 14.20%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:170
+     99994 14.20% 85.29%      99994 14.20%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:176
+     99500 14.13% 99.42%      99500 14.13%  go.lostcrafters.com/trail/file.appendIDString <repo>/file/encode.go:390 (inline)
+         0     0% 99.42%     502136 71.30%  go.lostcrafters.com/trail.(*AsyncProcessor).run <repo>/async_processor.go:357
+         0     0% 99.42%     200002 28.40%  go.lostcrafters.com/trail.(*providerState).processFreshEvent <repo>/async_provider.go:26
+         0     0% 99.42%     200002 28.40%  go.lostcrafters.com/trail.(*spanState).addEvent <repo>/span.go:233
+         0     0% 99.42%     200002 28.40%  go.lostcrafters.com/trail.Span.AddEvent <repo>/span.go:78
+         0     0% 99.42%     100001 14.20%  go.lostcrafters.com/trail.ownFreshEvent <repo>/owned_record.go:39
+         0     0% 99.42%     502017 71.28%  go.lostcrafters.com/trail/file.(*Sink).WriteRecord <repo>/file/sink.go:74
+         0     0% 99.42%     100404 14.26%  go.lostcrafters.com/trail/file.appendIntString <repo>/file/encode.go:336 (inline)
+         0     0% 99.42%     100387 14.25%  go.lostcrafters.com/trail/file.appendUintString <repo>/file/encode.go:329 (inline)
+         0     0% 99.42%     100001 14.20%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:171
+         0     0% 99.42%     100001 14.20%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:173
+         0     0% 99.42%      99862 14.18%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:181
+         0     0% 99.42%     200002 28.40%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:53
+         0     0% 99.42%     100404 14.26%  internal/strconv.AppendInt <cache>/toolchains/go/src/internal/strconv/itoa.go:64
+         0     0% 99.42%     100404 14.26%  strconv.AppendInt <cache>/toolchains/go/src/strconv/number.go:221 (inline)
+         0     0% 99.42%     100387 14.25%  strconv.AppendUint <cache>/toolchains/go/src/strconv/number.go:227 (inline)
+         0     0% 99.42%     100003 14.20%  strings.Clone <cache>/toolchains/go/src/strings/clone.go:22 (inline)
+         0     0% 99.42%     201318 28.58%  testing.(*B).launch <cache>/toolchains/go/src/testing/benchmark.go:347
+         0     0% 99.42%     201602 28.63%  testing.(*B).runN <cache>/toolchains/go/src/testing/benchmark.go:219

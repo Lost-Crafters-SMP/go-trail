@@ -1,0 +1,38 @@
+File: control-StartEnd.test.exe
+Build ID: <profile-dir>/control-StartEnd.test.exe2026-10-05 23:28:31.0196225 +0100 BST
+Type: cpu
+Time: 2026-10-05 23:28:32 BST
+Duration: 1.09s, Total samples = 1.12s (103.00%)
+Showing nodes accounting for 1.12s, 100% of 1.12s total
+Showing top 30 nodes out of 91
+      flat  flat%   sum%        cum   cum%
+        1s 89.29% 89.29%         1s 89.29%  runtime.cgocall
+     0.02s  1.79% 91.07%      0.02s  1.79%  runtime.sysUsedOS
+     0.01s  0.89% 91.96%      1.01s 90.18%  go.lostcrafters.com/trail/file.(*Sink).WriteRecord
+     0.01s  0.89% 92.86%      0.01s  0.89%  internal/chacha8rand.block
+     0.01s  0.89% 93.75%      0.01s  0.89%  runtime.(*mcentral).fullUnswept (inline)
+     0.01s  0.89% 94.64%      0.01s  0.89%  runtime.acquirem (inline)
+     0.01s  0.89% 95.54%      0.01s  0.89%  runtime.extractHeapBitsSmall
+     0.01s  0.89% 96.43%      0.01s  0.89%  runtime.memclrNoHeapPointers
+     0.01s  0.89% 97.32%      0.01s  0.89%  runtime.osyield.func1
+     0.01s  0.89% 98.21%      0.01s  0.89%  runtime.preemptM
+     0.01s  0.89% 99.11%      0.01s  0.89%  runtime.scanObject
+     0.01s  0.89%   100%      0.01s  0.89%  runtime.stealWork
+         0     0%   100%      0.01s  0.89%  context.WithValue
+         0     0%   100%      0.01s  0.89%  crypto/internal/fips140/drbg.Read
+         0     0%   100%      0.01s  0.89%  crypto/internal/sysrand.Read
+         0     0%   100%      0.01s  0.89%  crypto/internal/sysrand.read (inline)
+         0     0%   100%      0.01s  0.89%  crypto/rand.Read
+         0     0%   100%      0.01s  0.89%  go.lostcrafters.com/trail.(*AsyncProcessor).Process
+         0     0%   100%      0.01s  0.89%  go.lostcrafters.com/trail.(*AsyncProcessor).admitLocked
+         0     0%   100%      1.01s 90.18%  go.lostcrafters.com/trail.(*AsyncProcessor).run
+         0     0%   100%      0.02s  1.79%  go.lostcrafters.com/trail.(*providerState).start
+         0     0%   100%      0.01s  0.89%  go.lostcrafters.com/trail.(*randomIDGenerator).newSpanID
+         0     0%   100%      0.01s  0.89%  go.lostcrafters.com/trail.(*spanState).end
+         0     0%   100%      0.01s  0.89%  go.lostcrafters.com/trail.ContextWithSpan (inline)
+         0     0%   100%      0.01s  0.89%  go.lostcrafters.com/trail.Span.End (inline)
+         0     0%   100%      0.02s  1.79%  go.lostcrafters.com/trail.Tracer.Start
+         0     0%   100%      0.02s  1.79%  go.lostcrafters.com/trail/file.appendIDString (inline)
+         0     0%   100%      0.02s  1.79%  go.lostcrafters.com/trail/file.encodeRecord
+         0     0%   100%      0.98s 87.50%  go.lostcrafters.com/trail/file.writeAll
+         0     0%   100%      0.03s  2.68%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1

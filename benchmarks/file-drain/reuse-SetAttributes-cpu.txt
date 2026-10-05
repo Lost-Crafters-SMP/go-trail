@@ -1,0 +1,36 @@
+File: reuse-SetAttributes.test.exe
+Build ID: <profile-dir>/reuse-SetAttributes.test.exe2026-10-05 23:30:52.1709422 +0100 BST
+Type: cpu
+Time: 2026-10-05 23:30:53 BST
+Duration: 357.74ms, Total samples = 350ms (97.84%)
+Showing nodes accounting for 350ms, 100% of 350ms total
+      flat  flat%   sum%        cum   cum%
+     320ms 91.43% 91.43%      320ms 91.43%  runtime.cgocall
+      10ms  2.86% 94.29%       20ms  5.71%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1
+      10ms  2.86% 97.14%       10ms  2.86%  internal/runtime/maps.memHashAES
+      10ms  2.86%   100%       10ms  2.86%  runtime.semasleep
+         0     0%   100%      320ms 91.43%  go.lostcrafters.com/trail.(*AsyncProcessor).run
+         0     0%   100%       10ms  2.86%  go.lostcrafters.com/trail.(*spanState).setAttributes
+         0     0%   100%       10ms  2.86%  go.lostcrafters.com/trail.Span.SetAttributes (inline)
+         0     0%   100%       10ms  2.86%  go.lostcrafters.com/trail.resolveSpanAttributes
+         0     0%   100%      320ms 91.43%  go.lostcrafters.com/trail/file.(*Sink).WriteRecord
+         0     0%   100%      320ms 91.43%  go.lostcrafters.com/trail/file.writeAll
+         0     0%   100%      320ms 91.43%  internal/poll.(*FD).Write
+         0     0%   100%      320ms 91.43%  internal/poll.(*FD).Write.func1
+         0     0%   100%      320ms 91.43%  internal/poll.(*FD).execIO
+         0     0%   100%      320ms 91.43%  os.(*File).Write
+         0     0%   100%      320ms 91.43%  os.(*File).write (inline)
+         0     0%   100%       10ms  2.86%  runtime.gopreempt_m (inline)
+         0     0%   100%       10ms  2.86%  runtime.goschedImpl
+         0     0%   100%       10ms  2.86%  runtime.lock (inline)
+         0     0%   100%       10ms  2.86%  runtime.lock2
+         0     0%   100%       10ms  2.86%  runtime.lockWithRank (inline)
+         0     0%   100%       10ms  2.86%  runtime.mapassign_faststr
+         0     0%   100%       10ms  2.86%  runtime.morestack
+         0     0%   100%       10ms  2.86%  runtime.newstack
+         0     0%   100%      320ms 91.43%  syscall.SyscallN
+         0     0%   100%      320ms 91.43%  syscall.WriteFile (inline)
+         0     0%   100%      320ms 91.43%  syscall.syscalln
+         0     0%   100%      320ms 91.43%  syscall.writeFile
+         0     0%   100%       20ms  5.71%  testing.(*B).launch
+         0     0%   100%       20ms  5.71%  testing.(*B).runN

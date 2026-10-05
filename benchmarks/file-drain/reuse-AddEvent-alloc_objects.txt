@@ -1,0 +1,21 @@
+File: reuse-AddEvent.test.exe
+Build ID: <temp>/go-build1783583037/b001/trail.test.exe2026-10-05 23:30:47.7904481 +0100 BST
+Type: alloc_objects
+Time: 2026-10-05 23:30:48 BST
+Showing nodes accounting for 200004, 98.93% of 202171 total
+Dropped 490 nodes (cum <= 1010)
+      flat  flat%   sum%        cum   cum%
+    100003 49.46% 49.46%     100003 49.46%  internal/stringslite.Clone <cache>/toolchains/go/src/internal/stringslite/strings.go:119 (inline)
+    100001 49.46% 98.93%     200002 98.93%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }] <repo>/owned_record.go:19
+         0     0% 98.93%       1228  0.61%  go.lostcrafters.com/trail.(*Provider).Flush <repo>/provider.go:140 (inline)
+         0     0% 98.93%       1228  0.61%  go.lostcrafters.com/trail.(*providerState).flush <repo>/provider.go:163
+         0     0% 98.93%       1182  0.58%  go.lostcrafters.com/trail.(*providerState).flushAsync <repo>/async_provider.go:58
+         0     0% 98.93%     200002 98.93%  go.lostcrafters.com/trail.(*providerState).processFreshEvent <repo>/async_provider.go:26
+         0     0% 98.93%     200002 98.93%  go.lostcrafters.com/trail.(*spanState).addEvent <repo>/span.go:233
+         0     0% 98.93%     200002 98.93%  go.lostcrafters.com/trail.Span.AddEvent <repo>/span.go:78
+         0     0% 98.93%     100001 49.46%  go.lostcrafters.com/trail.ownFreshEvent <repo>/owned_record.go:39
+         0     0% 98.93%     200002 98.93%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:53
+         0     0% 98.93%       1220   0.6%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:59
+         0     0% 98.93%     100003 49.46%  strings.Clone <cache>/toolchains/go/src/strings/clone.go:22 (inline)
+         0     0% 98.93%     201318 99.58%  testing.(*B).launch <cache>/toolchains/go/src/testing/benchmark.go:347
+         0     0% 98.93%     201610 99.72%  testing.(*B).runN <cache>/toolchains/go/src/testing/benchmark.go:219

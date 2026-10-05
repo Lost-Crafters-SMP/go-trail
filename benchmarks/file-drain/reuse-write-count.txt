@@ -1,0 +1,5 @@
+=== RUN   TestMeasuredWrites
+    scratch_test.go:185: records=7 os.File.Write calls=7 bytes=1622 bytes/write=231.71
+--- PASS: TestMeasuredWrites (0.00s)
+PASS
+ok  	go.lostcrafters.com/trail/file	0.020s

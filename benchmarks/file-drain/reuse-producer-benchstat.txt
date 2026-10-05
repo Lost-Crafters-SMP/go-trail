@@ -1,0 +1,32 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+                                   │ benchmarks/file-drain/control-producer.txt │ benchmarks/file-drain/reuse-producer.txt │
+                                   │                   sec/op                   │      sec/op       vs base                │
+AsyncEnabled/file/StartEnd-16                                     1388.5n ± 38%       833.4n ± 55%  -39.98% (p=0.003 n=10)
+AsyncEnabled/file/AddEvent-16                                      224.6n ±  2%       242.0n ±  2%   +7.70% (p=0.000 n=10)
+AsyncEnabled/file/SetAttributes-16                                 561.4n ±  2%       587.4n ±  4%   +4.63% (p=0.000 n=10)
+geomean                                                            559.5n             491.1n        -12.22%
+
+                                   │ benchmarks/file-drain/control-producer.txt │ benchmarks/file-drain/reuse-producer.txt │
+                                   │                drain-sec/op                │   drain-sec/op    vs base                │
+AsyncEnabled/file/StartEnd-16                                      10.249µ ± 6%       8.953µ ±  8%  -12.65% (p=0.000 n=10)
+AsyncEnabled/file/AddEvent-16                                       3.699µ ± 8%       3.385µ ± 12%   -8.50% (p=0.029 n=10)
+AsyncEnabled/file/SetAttributes-16                                  3.724µ ± 5%       3.228µ ±  9%  -13.32% (p=0.000 n=10)
+geomean                                                             5.207µ            4.607µ        -11.51%
+
+                                   │ benchmarks/file-drain/control-producer.txt │ benchmarks/file-drain/reuse-producer.txt │
+                                   │                    B/op                    │       B/op        vs base                │
+AsyncEnabled/file/StartEnd-16                                        666.0 ± 4%         528.0 ± 0%  -20.72% (p=0.000 n=10)
+AsyncEnabled/file/AddEvent-16                                        149.0 ± 1%         128.0 ± 0%  -14.09% (p=0.000 n=10)
+AsyncEnabled/file/SetAttributes-16                                   402.5 ± 1%         320.0 ± 0%  -20.50% (p=0.000 n=10)
+geomean                                                              341.8              278.6       -18.49%
+
+                                   │ benchmarks/file-drain/control-producer.txt │ benchmarks/file-drain/reuse-producer.txt │
+                                   │                 allocs/op                  │    allocs/op     vs base                 │
+AsyncEnabled/file/StartEnd-16                                        8.000 ± 0%        8.000 ± 0%       ~ (p=1.000 n=10) ¹
+AsyncEnabled/file/AddEvent-16                                        2.000 ± 0%        2.000 ± 0%       ~ (p=1.000 n=10) ¹
+AsyncEnabled/file/SetAttributes-16                                   5.000 ± 0%        5.000 ± 0%       ~ (p=1.000 n=10) ¹
+geomean                                                              4.309             4.309       +0.00%
+¹ all samples are equal

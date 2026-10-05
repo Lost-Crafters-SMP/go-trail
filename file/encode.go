@@ -25,7 +25,12 @@ var headerLine = `{"format":"trail","version":` + strconv.Itoa(journalVersion) +
 // encodeRecord renders one record as a complete JSON line without the
 // trailing newline.
 func encodeRecord(record trail.Record) ([]byte, error) {
-	var b []byte
+	return encodeRecordInto(nil, record)
+}
+
+// encodeRecordInto appends to caller-owned scratch; no bytes are emitted until
+// validation and encoding finish. The caller must serialize scratch access.
+func encodeRecordInto(b []byte, record trail.Record) ([]byte, error) {
 	switch r := record.(type) {
 	case trail.CaptureStart:
 		if err := validateCaptureStart(r); err != nil {

@@ -1,0 +1,14 @@
+{
+  "controlSource": "c1017681025ca2741e46caee50e2a9ad2262fbe5",
+  "go": "go version go1.27.1 windows/amd64",
+  "os": "Microsoft Windows 10.0.26200",
+  "architecture": "amd64",
+  "cpu": "AMD Ryzen 7 5800X3D 8-Core Processor",
+  "GOMAXPROCS": "default (16 logical processors)",
+  "queueRecords": 2048,
+  "queueBytes": 4194304,
+  "windowOperations": 256,
+  "fileOptions": "defaults; syncOnFlush=false; exclusive-create; unbuffered",
+  "benchmarkTempDirectory": "<temp>",
+  "captured": "2026-10-05T23:26:37.4759689+01:00"
+}

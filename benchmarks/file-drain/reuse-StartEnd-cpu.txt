@@ -1,0 +1,51 @@
+File: reuse-StartEnd.test.exe
+Build ID: <profile-dir>/reuse-StartEnd.test.exe2026-10-05 23:30:44.4263045 +0100 BST
+Type: cpu
+Time: 2026-10-05 23:30:45 BST
+Duration: 1.01s, Total samples = 1000ms (98.63%)
+Showing nodes accounting for 1000ms, 100% of 1000ms total
+      flat  flat%   sum%        cum   cum%
+     930ms 93.00% 93.00%      930ms 93.00%  runtime.cgocall
+      10ms  1.00% 94.00%      940ms 94.00%  go.lostcrafters.com/trail.(*AsyncProcessor).run
+      10ms  1.00% 95.00%       10ms  1.00%  go.lostcrafters.com/trail.asyncRecordSize
+      10ms  1.00% 96.00%       10ms  1.00%  internal/runtime/maps.memHashAES
+      10ms  1.00% 97.00%       20ms  2.00%  internal/stringslite.Clone (inline)
+      10ms  1.00% 98.00%       10ms  1.00%  runtime.mallocgcTinySC2
+      10ms  1.00% 99.00%       10ms  1.00%  runtime.nextFreeFast (inline)
+      10ms  1.00%   100%       10ms  1.00%  runtime.procyieldAsm
+         0     0%   100%       30ms  3.00%  go.lostcrafters.com/trail.(*AsyncProcessor).Process
+         0     0%   100%       10ms  1.00%  go.lostcrafters.com/trail.(*AsyncProcessor).admitLocked
+         0     0%   100%       30ms  3.00%  go.lostcrafters.com/trail.(*providerState).processFreshStart
+         0     0%   100%       30ms  3.00%  go.lostcrafters.com/trail.(*providerState).start
+         0     0%   100%       30ms  3.00%  go.lostcrafters.com/trail.(*spanState).end
+         0     0%   100%       30ms  3.00%  go.lostcrafters.com/trail.Span.End (inline)
+         0     0%   100%       30ms  3.00%  go.lostcrafters.com/trail.Tracer.Start
+         0     0%   100%       20ms  2.00%  go.lostcrafters.com/trail.ownFreshStart
+         0     0%   100%       30ms  3.00%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; ParentSpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Scope string; Name string }]
+         0     0%   100%      930ms 93.00%  go.lostcrafters.com/trail/file.(*Sink).WriteRecord
+         0     0%   100%      930ms 93.00%  go.lostcrafters.com/trail/file.writeAll
+         0     0%   100%       60ms  6.00%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1
+         0     0%   100%      930ms 93.00%  internal/poll.(*FD).Write
+         0     0%   100%      930ms 93.00%  internal/poll.(*FD).Write.func1
+         0     0%   100%      930ms 93.00%  internal/poll.(*FD).execIO
+         0     0%   100%       10ms  1.00%  internal/runtime/maps.MemHash
+         0     0%   100%       10ms  1.00%  internal/sync.(*Mutex).Lock (inline)
+         0     0%   100%       10ms  1.00%  internal/sync.(*Mutex).lockSlow
+         0     0%   100%       10ms  1.00%  internal/sync.runtime_doSpin
+         0     0%   100%      930ms 93.00%  os.(*File).Write
+         0     0%   100%      930ms 93.00%  os.(*File).write (inline)
+         0     0%   100%       10ms  1.00%  runtime.convT
+         0     0%   100%       20ms  2.00%  runtime.mallocgc
+         0     0%   100%       10ms  1.00%  runtime.mallocgcSmallScanNoHeader
+         0     0%   100%       10ms  1.00%  runtime.mapaccess2
+         0     0%   100%       10ms  1.00%  runtime.memhash (inline)
+         0     0%   100%       10ms  1.00%  runtime.memhash128
+         0     0%   100%       10ms  1.00%  runtime.procyield (inline)
+         0     0%   100%       20ms  2.00%  strings.Clone (inline)
+         0     0%   100%       10ms  1.00%  sync.(*Mutex).Lock (inline)
+         0     0%   100%      930ms 93.00%  syscall.SyscallN
+         0     0%   100%      930ms 93.00%  syscall.WriteFile (inline)
+         0     0%   100%      930ms 93.00%  syscall.syscalln
+         0     0%   100%      930ms 93.00%  syscall.writeFile
+         0     0%   100%       60ms  6.00%  testing.(*B).launch
+         0     0%   100%       60ms  6.00%  testing.(*B).runN

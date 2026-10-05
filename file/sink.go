@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"sync"
 
@@ -35,14 +36,26 @@ func WithSyncOnFlush(sync bool) Option {
 // so a torn line is never extended.
 type Sink struct {
 	path string
-	f    *os.File
+	f    sinkFile
 
 	mu          sync.Mutex
 	syncOnFlush bool
 	err         error
 	termErr     error
 	closed      bool
+	scratch     []byte
 }
+
+// sinkFile is the file owner's narrow boundary, also allowing precise write
+// counting and partial-write failure injection without changing public APIs.
+type sinkFile interface {
+	io.Writer
+	Sync() error
+	Close() error
+}
+
+const initialScratchBytes = 1024
+const maxRetainedScratchBytes = 64 << 10
 
 // Open creates a new file at path and writes the journal header. Creation
 // is exclusive: an existing file is never overwritten or truncated. No
@@ -71,14 +84,23 @@ func Open(path string, opts ...Option) (*Sink, error) {
 // partial line. The first write failure latches and permanently stops this
 // stream; later calls return the same error.
 func (s *Sink) WriteRecord(record trail.Record) error {
-	line, err := encodeRecord(record)
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.scratch == nil {
+		s.scratch = make([]byte, 0, initialScratchBytes)
+	}
+	line, err := encodeRecordInto(s.scratch[:0], record)
 	if err != nil {
 		return err
 	}
 	line = append(line, '\n')
-
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	if cap(line) <= maxRetainedScratchBytes {
+		s.scratch = line[:0]
+	} else {
+		// Large direct callers may encode successfully without pinning their
+		// transient output allocation for the remainder of the sink lifetime.
+		s.scratch = nil
+	}
 	if s.closed {
 		return ErrSinkShutdown
 	}
@@ -146,13 +168,14 @@ func (s *Sink) Shutdown(ctx context.Context) error {
 		errs = append(errs, s.err)
 	}
 	s.closed = true
+	s.scratch = nil
 	s.termErr = errors.Join(errs...)
 	return s.termErr
 }
 
 // writeAll writes all of buf, treating a short write as an error because a
 // partial line must stop the stream.
-func writeAll(f *os.File, buf []byte) (int, error) {
+func writeAll(f io.Writer, buf []byte) (int, error) {
 	written := 0
 	for written < len(buf) {
 		n, err := f.Write(buf[written:])

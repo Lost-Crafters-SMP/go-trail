@@ -1,0 +1,38 @@
+File: reuse-AddEvent.test.exe
+Build ID: <temp>/go-build1783583037/b001/trail.test.exe2026-10-05 23:30:47.7904481 +0100 BST
+Type: alloc_space
+Time: 2026-10-05 23:30:48 BST
+Showing nodes accounting for 12852.27kB, 97.78% of 13144.30kB total
+Dropped 462 nodes (cum <= 65.72kB)
+Showing top 30 nodes out of 42
+      flat  flat%   sum%        cum   cum%
+10937.61kB 83.21% 83.21% 12500.12kB 95.10%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Name string; Attributes []go.lostcrafters.com/trail.Attribute }] <repo>/owned_record.go:19
+ 1562.55kB 11.89% 95.10%  1562.55kB 11.89%  internal/stringslite.Clone <cache>/toolchains/go/src/internal/stringslite/strings.go:119 (inline)
+  128.05kB  0.97% 96.07%   128.05kB  0.97%  os.init.func1 <cache>/toolchains/go/src/os/dir_windows.go:44
+     128kB  0.97% 97.05%      128kB  0.97%  go.lostcrafters.com/trail.NewAsyncProcessor <repo>/async_processor.go:110
+      96kB  0.73% 97.78%       96kB  0.73%  regexp.(*bitState).reset <cache>/toolchains/go/src/regexp/backtrack.go:91
+    0.07kB 0.00053% 97.78%   106.27kB  0.81%  go.lostcrafters.com/trail_test.BenchmarkFileDrain <repo>/file_drain_bench_test.go:17
+         0     0% 97.78%   109.69kB  0.83%  go.lostcrafters.com/trail.(*Provider).Flush <repo>/provider.go:140 (inline)
+         0     0% 97.78%   109.69kB  0.83%  go.lostcrafters.com/trail.(*providerState).flush <repo>/provider.go:163
+         0     0% 97.78%   104.66kB   0.8%  go.lostcrafters.com/trail.(*providerState).flushAsync <repo>/async_provider.go:58
+         0     0% 97.78% 12500.12kB 95.10%  go.lostcrafters.com/trail.(*providerState).processFreshEvent <repo>/async_provider.go:26
+         0     0% 97.78% 12500.12kB 95.10%  go.lostcrafters.com/trail.(*spanState).addEvent <repo>/span.go:233
+         0     0% 97.78% 12500.12kB 95.10%  go.lostcrafters.com/trail.Span.AddEvent <repo>/span.go:78
+         0     0% 97.78%  1562.52kB 11.89%  go.lostcrafters.com/trail.ownFreshEvent <repo>/owned_record.go:39
+         0     0% 97.78%   129.28kB  0.98%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:22
+         0     0% 97.78% 12500.12kB 95.10%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:53
+         0     0% 97.78%   108.94kB  0.83%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1 <repo>/file_drain_bench_test.go:59
+         0     0% 97.78%    74.83kB  0.57%  main.main _testmain.go:300
+         0     0% 97.78%   133.06kB  1.01%  os.(*File).Readdirnames <cache>/toolchains/go/src/os/dir.go:73
+         0     0% 97.78%   132.59kB  1.01%  os.(*File).readdir <cache>/toolchains/go/src/os/dir_windows.go:115
+         0     0% 97.78%   135.87kB  1.03%  os.RemoveAll <cache>/toolchains/go/src/os/path.go:74
+         0     0% 97.78%   134.79kB  1.03%  os.removeAll <cache>/toolchains/go/src/os/removeall_at.go:56
+         0     0% 97.78%   133.06kB  1.01%  os.removeAllFrom <cache>/toolchains/go/src/os/removeall_at.go:111
+         0     0% 97.78%   124.72kB  0.95%  regexp.(*Regexp).MatchString <cache>/toolchains/go/src/regexp/regexp.go:506 (inline)
+         0     0% 97.78%      108kB  0.82%  regexp.(*Regexp).backtrack <cache>/toolchains/go/src/regexp/backtrack.go:317
+         0     0% 97.78%   124.72kB  0.95%  regexp.(*Regexp).doMatch <cache>/toolchains/go/src/regexp/exec.go:514 (inline)
+         0     0% 97.78%   115.31kB  0.88%  regexp.(*Regexp).find <cache>/toolchains/go/src/regexp/exec.go:535
+         0     0% 97.78%    76.58kB  0.58%  runtime.main <cache>/toolchains/go/src/runtime/proc.go:302
+         0     0% 97.78%  1562.55kB 11.89%  strings.Clone <cache>/toolchains/go/src/strings/clone.go:22 (inline)
+         0     0% 97.78%   129.70kB  0.99%  sync.(*Pool).Get <cache>/toolchains/go/src/sync/pool.go:156
+         0     0% 97.78%   103.41kB  0.79%  testing.(*B).Run <cache>/toolchains/go/src/testing/benchmark.go:817

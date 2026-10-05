@@ -1,0 +1,36 @@
+goos: windows
+goarch: amd64
+pkg: go.lostcrafters.com/trail
+cpu: AMD Ryzen 7 5800X3D 8-Core Processor           
+BenchmarkAsyncEnabled/file/StartEnd-16         	  100000	       838.9 ns/op	      9841 drain-ns/op	     640 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	  100000	       864.1 ns/op	      9925 drain-ns/op	     637 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	  100000	       933.7 ns/op	     10279 drain-ns/op	     648 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	  100000	      1434 ns/op	     10303 drain-ns/op	     667 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	  100000	      1397 ns/op	     10880 drain-ns/op	     665 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	  100000	      1405 ns/op	     10028 drain-ns/op	     666 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	  100000	      1415 ns/op	     10218 drain-ns/op	     669 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	  100000	      1374 ns/op	     11863 drain-ns/op	     666 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	  100000	      1380 ns/op	     10114 drain-ns/op	     668 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/file/StartEnd-16         	  100000	      1411 ns/op	     10902 drain-ns/op	     667 B/op	       8 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	  100000	       221.0 ns/op	      3575 drain-ns/op	     149 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	  100000	       220.4 ns/op	      3835 drain-ns/op	     149 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	  100000	       222.1 ns/op	      3689 drain-ns/op	     148 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	  100000	       227.2 ns/op	      3820 drain-ns/op	     148 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	  100000	       225.7 ns/op	      3993 drain-ns/op	     148 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	  100000	       229.9 ns/op	      4372 drain-ns/op	     150 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	  100000	       226.6 ns/op	      3709 drain-ns/op	     149 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	  100000	       218.5 ns/op	      3541 drain-ns/op	     149 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	  100000	       232.7 ns/op	      3578 drain-ns/op	     149 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/file/AddEvent-16         	  100000	       223.6 ns/op	      3581 drain-ns/op	     149 B/op	       2 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	  100000	       564.7 ns/op	      4126 drain-ns/op	     400 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	  100000	       566.5 ns/op	      3805 drain-ns/op	     402 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	  100000	       564.3 ns/op	      3722 drain-ns/op	     402 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	  100000	       553.7 ns/op	      3608 drain-ns/op	     405 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	  100000	       558.6 ns/op	      3583 drain-ns/op	     404 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	  100000	       575.1 ns/op	      3649 drain-ns/op	     402 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	  100000	       556.2 ns/op	      3726 drain-ns/op	     401 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	  100000	       574.0 ns/op	      3903 drain-ns/op	     405 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	  100000	       551.8 ns/op	      3669 drain-ns/op	     403 B/op	       5 allocs/op
+BenchmarkAsyncEnabled/file/SetAttributes-16    	  100000	       557.4 ns/op	      3807 drain-ns/op	     403 B/op	       5 allocs/op
+PASS
+ok  	go.lostcrafters.com/trail	21.012s

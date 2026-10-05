@@ -1,0 +1,35 @@
+File: control-SetAttributes.test.exe
+Build ID: <profile-dir>/control-SetAttributes.test.exe2026-10-05 23:28:41.4315494 +0100 BST
+Type: cpu
+Time: 2026-10-05 23:28:42 BST
+Duration: 401.37ms, Total samples = 380ms (94.67%)
+Showing nodes accounting for 380ms, 100% of 380ms total
+      flat  flat%   sum%        cum   cum%
+     360ms 94.74% 94.74%      360ms 94.74%  runtime.cgocall
+      10ms  2.63% 97.37%       10ms  2.63%  go.lostcrafters.com/trail.(*Provider).enabled (inline)
+      10ms  2.63%   100%       10ms  2.63%  runtime.(*mcache).releaseAll
+         0     0%   100%      360ms 94.74%  go.lostcrafters.com/trail.(*AsyncProcessor).run
+         0     0%   100%       10ms  2.63%  go.lostcrafters.com/trail.(*Provider).Flush (inline)
+         0     0%   100%      360ms 94.74%  go.lostcrafters.com/trail/file.(*Sink).WriteRecord
+         0     0%   100%      360ms 94.74%  go.lostcrafters.com/trail/file.writeAll
+         0     0%   100%       10ms  2.63%  go.lostcrafters.com/trail_test.BenchmarkFileDrain.func1
+         0     0%   100%      360ms 94.74%  internal/poll.(*FD).Write
+         0     0%   100%      360ms 94.74%  internal/poll.(*FD).Write.func1
+         0     0%   100%      360ms 94.74%  internal/poll.(*FD).execIO
+         0     0%   100%      360ms 94.74%  os.(*File).Write
+         0     0%   100%      360ms 94.74%  os.(*File).write (inline)
+         0     0%   100%       10ms  2.63%  runtime.(*mcache).prepareForSweep
+         0     0%   100%       10ms  2.63%  runtime.forEachP (inline)
+         0     0%   100%       10ms  2.63%  runtime.forEachP.func1
+         0     0%   100%       10ms  2.63%  runtime.forEachPInternal
+         0     0%   100%       10ms  2.63%  runtime.gcBgMarkWorker
+         0     0%   100%       10ms  2.63%  runtime.gcMarkDone
+         0     0%   100%       10ms  2.63%  runtime.gcMarkTermination
+         0     0%   100%       10ms  2.63%  runtime.gcMarkTermination.func4
+         0     0%   100%       10ms  2.63%  runtime.systemstack
+         0     0%   100%      360ms 94.74%  syscall.SyscallN
+         0     0%   100%      360ms 94.74%  syscall.WriteFile (inline)
+         0     0%   100%      360ms 94.74%  syscall.syscalln
+         0     0%   100%      360ms 94.74%  syscall.writeFile
+         0     0%   100%       10ms  2.63%  testing.(*B).launch
+         0     0%   100%       10ms  2.63%  testing.(*B).runN

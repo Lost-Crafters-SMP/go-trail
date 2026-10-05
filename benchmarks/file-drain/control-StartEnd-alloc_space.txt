@@ -1,0 +1,38 @@
+File: control-StartEnd.test.exe
+Build ID: <profile-dir>/control-StartEnd.test.exe2026-10-05 23:27:31.7720125 +0100 BST
+Type: alloc_space
+Time: 2026-10-05 23:28:30 BST
+Showing nodes accounting for 236.23MB, 99.39% of 237.68MB total
+Dropped 504 nodes (cum <= 1.19MB)
+Showing top 30 nodes out of 43
+      flat  flat%   sum%        cum   cum%
+   73.23MB 30.81% 30.81%    73.23MB 30.81%  go.lostcrafters.com/trail/file.appendIDString <repo>/file/encode.go:390 (inline)
+   48.71MB 20.49% 51.30%    48.71MB 20.49%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:124
+   46.67MB 19.63% 70.94%    46.67MB 19.63%  internal/strconv.AppendUint <cache>/toolchains/go/src/internal/strconv/itoa.go:77
+   12.21MB  5.14% 76.07%    12.21MB  5.14%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:408
+   10.68MB  4.49% 80.57%    10.68MB  4.49%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:133
+   10.68MB  4.49% 85.06%    12.21MB  5.14%  go.lostcrafters.com/trail.processFresh[go.shape.struct { Seq uint64; Wall time.Time; Elapsed time.Duration; TraceID go.lostcrafters.com/trail.TraceID; SpanID go.lostcrafters.com/trail.SpanID; ParentSpanID go.lostcrafters.com/trail.SpanID; RootSpanID go.lostcrafters.com/trail.SpanID; Scope string; Name string }] <repo>/owned_record.go:19
+    6.10MB  2.57% 87.63%     6.10MB  2.57%  go.lostcrafters.com/trail.(*spanState).end <repo>/span.go:155
+    6.08MB  2.56% 90.19%     6.08MB  2.56%  go.lostcrafters.com/trail/file.appendUintString <repo>/file/encode.go:330 (inline)
+    4.58MB  1.93% 92.12%     4.58MB  1.93%  context.WithValue <cache>/toolchains/go/src/context/context.go:738
+    4.58MB  1.93% 94.04%     4.58MB  1.93%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:402
+    3.05MB  1.28% 95.33%     3.05MB  1.28%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:108
+    3.05MB  1.28% 96.61%     3.05MB  1.28%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:196
+    3.05MB  1.28% 97.89%     3.05MB  1.28%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:79
+    2.03MB  0.85% 98.75%     2.03MB  0.85%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:110
+    1.53MB  0.64% 99.39%     1.53MB  0.64%  internal/stringslite.Clone <cache>/toolchains/go/src/internal/stringslite/strings.go:119 (inline)
+         0     0% 99.39%   186.72MB 78.56%  go.lostcrafters.com/trail.(*AsyncProcessor).run <repo>/async_processor.go:357
+         0     0% 99.39%    12.21MB  5.14%  go.lostcrafters.com/trail.(*providerState).processFreshStart <repo>/async_provider.go:12
+         0     0% 99.39%    12.21MB  5.14%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:394
+         0     0% 99.39%     4.58MB  1.93%  go.lostcrafters.com/trail.(*providerState).start <repo>/provider.go:444
+         0     0% 99.39%     4.58MB  1.93%  go.lostcrafters.com/trail.ContextWithSpan <repo>/context.go:15 (inline)
+         0     0% 99.39%    16.78MB  7.06%  go.lostcrafters.com/trail.Span.End <repo>/span.go:42
+         0     0% 99.39%    33.57MB 14.12%  go.lostcrafters.com/trail.Tracer.Start <repo>/tracer.go:37
+         0     0% 99.39%     1.53MB  0.64%  go.lostcrafters.com/trail.ownFreshStart <repo>/owned_record.go:24
+         0     0% 99.39%   186.53MB 78.48%  go.lostcrafters.com/trail/file.(*Sink).WriteRecord <repo>/file/sink.go:74
+         0     0% 99.39%    36.67MB 15.43%  go.lostcrafters.com/trail/file.appendIntString <repo>/file/encode.go:336 (inline)
+         0     0% 99.39%    10.02MB  4.21%  go.lostcrafters.com/trail/file.appendUintString <repo>/file/encode.go:329 (inline)
+         0     0% 99.39%     4.07MB  1.71%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:109
+         0     0% 99.39%    12.21MB  5.14%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:111
+         0     0% 99.39%    24.41MB 10.27%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:115
+         0     0% 99.39%     5.90MB  2.48%  go.lostcrafters.com/trail/file.encodeRecord <repo>/file/encode.go:197
