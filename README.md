@@ -27,6 +27,15 @@ viewers, OTLP conversion, remote export, and distributed propagation. See
 questions. The native journal is a Trail format with OTel-aligned semantics,
 not an OTLP-compliance claim.
 
+Optional stdlib instrumentation adapters live under
+`go.lostcrafters.com/trail/instrumentation`: `trailslog` decorates a
+`slog.Handler` with trace/span correlation fields, `trailosexec` wraps
+`os/exec` commands with one execution span per run, and `trailhttp` provides
+HTTP server middleware and a client `http.RoundTripper`. Each adapter records
+a documented minimal field set by default and keeps query strings, peer
+addresses, argv, environment, working directories, and raw error text
+opt-in; see `docs/design.md` for the privacy boundary.
+
 Explicit providers remain primary: `p.Tracer("myapp")`. Optional global convenience
 is `SetDefaultProvider(p)` followed by `GetTracer("myapp")`, which resolves through
 the Provider registered at that call. The default Provider is initially no-op;
