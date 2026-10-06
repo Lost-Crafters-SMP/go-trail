@@ -197,6 +197,7 @@ func (c *Cmd) Output() ([]byte, error) {
 	c.started = true
 	c.beginSpan()
 	out, err := c.Cmd.Output()
+	c.recordStartAttrs()
 	c.finishSpan(err, false)
 	return out, err
 }
@@ -208,8 +209,19 @@ func (c *Cmd) CombinedOutput() ([]byte, error) {
 	c.started = true
 	c.beginSpan()
 	out, err := c.Cmd.CombinedOutput()
+	c.recordStartAttrs()
 	c.finishSpan(err, false)
 	return out, err
+}
+
+// recordStartAttrs records attributes that are normally recorded after a
+// successful Start: the process PID and, if opted in, the executable path.
+func (c *Cmd) recordStartAttrs() {
+	attrs := []trail.Attribute{trail.Int("process.pid", c.Process.Pid)}
+	if c.opts.path {
+		attrs = append(attrs, trail.String("exec.path", c.Path))
+	}
+	c.span.SetAttributes(attrs...)
 }
 
 // beginSpan opens the execution span and records the construction-time

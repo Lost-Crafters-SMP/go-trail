@@ -374,6 +374,9 @@ func TestOutputSingleSpan(t *testing.T) {
 	if got := attrsFor(sink, start.SpanID)["process.exit.code"].Int64(); got != 0 {
 		t.Fatalf("exit code = %d", got)
 	}
+	if _, ok := attrsFor(sink, start.SpanID)["process.pid"]; !ok {
+		t.Fatal("process.pid not recorded for Output")
+	}
 	assertNoRecordText(t, sink, "stdout-data")
 }
 
@@ -386,7 +389,10 @@ func TestCombinedOutputSingleSpan(t *testing.T) {
 	if !strings.Contains(string(out), "stderr-data") {
 		t.Fatalf("combined output = %q", out)
 	}
-	singleStart(t, sink)
+	start := singleStart(t, sink)
+	if _, ok := attrsFor(sink, start.SpanID)["process.pid"]; !ok {
+		t.Fatal("process.pid not recorded for CombinedOutput")
+	}
 	assertNoRecordText(t, sink, "stderr-data")
 }
 
