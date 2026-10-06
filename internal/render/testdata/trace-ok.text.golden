@@ -1,0 +1,8 @@
+TRACE 11111111111111111111111111111111  incomplete  lifetime=unknown  root-duration=0s
+  started: 1970-01-01T00:00:00Z (siblings may overlap)
+"root with a long name and quoted \"label\""  0s  OK
+  event "checkpoint" elapsed=0s
+ORPHAN parent=4444444444444444
+"unended child"  unknown  - UNENDED
+DIAGNOSTICS
+  unresolved_parent line 0: parent missing or started after child

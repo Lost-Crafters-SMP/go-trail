@@ -1,0 +1,19 @@
+CAPTURE "capture.trail.jsonl"
+CAPTURE TOTALS (whole file)
+  journal: trail version 1
+  started: 1970-01-01T00:00:00Z
+  observed elapsed: 1ns (not capture end)
+  traces: 1, completed: 0
+  spans: 2, ended: 1, unended: 1
+  events: 1
+  loss accounting: known (checkpoint snapshot)
+  incomplete: 1, unresolved: 0
+  ended status: OK=0 ERR=0 unset=1
+  ended durations: count=1 min=0s max=0s total=0 ns
+INCOMPLETE / UNRESOLVED TRACES
+  11111111111111111111111111111111  incomplete  unended=1
+  derived ended-span drops: attributes=0 events=0 status=0 (not added to summary)
+  latest loss summary seq=7: rejected starts=0 dropped attributes=0 events=0 status=0
+DIAGNOSTICS
+  unresolved_parent line 0: parent missing or started after child
+  TORN TAIL line 8: incomplete JSON at EOF

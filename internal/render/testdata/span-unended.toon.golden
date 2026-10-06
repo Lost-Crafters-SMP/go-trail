@@ -1,0 +1,18 @@
+schema_version: trail.cli.v1
+span:
+  attributes: []
+  children: []
+  diagnostics[1]{line,message,parent_span_id,span_id,trace_id,type}:
+    "0",parent missing or started after child,"4444444444444444","3333333333333333","11111111111111111111111111111111",unresolved_parent
+  ended: false
+  events: []
+  name: unended child
+  parent_resolved: false
+  parent_span_id: "4444444444444444"
+  root_span_id: "2222222222222222"
+  scope: test.child
+  span_id: "3333333333333333"
+  start_elapsed_nanos: "1"
+  trace_id: "11111111111111111111111111111111"
+  unresolved_parent: true
+  wall_start: "1970-01-01T00:00:00.000000001Z"

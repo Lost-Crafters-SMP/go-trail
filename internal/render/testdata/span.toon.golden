@@ -1,0 +1,48 @@
+schema_version: trail.cli.v1
+span:
+  attributes[7]:
+    - key: duration
+      type: duration
+      value: "25000000"
+    - key: empty
+      type: string
+      value: ""
+    - key: enabled
+      type: bool
+      value: false
+    - key: int
+      type: int64
+      value: "-9223372036854775808"
+    - key: labels
+      type: strings
+      value[2]: "a,b","quoted \"value\""
+    - key: ratio
+      type: float64
+      value: 2.5
+    - key: uint
+      type: uint64
+      value: "18446744073709551615"
+  children: []
+  diagnostics: []
+  dropped_attrs: "0"
+  dropped_events: "0"
+  dropped_status: "0"
+  duration_nanos: "0"
+  ended: true
+  events[1]:
+    - attributes: []
+      elapsed_nanos: "0"
+      name: checkpoint
+      seq: "4"
+      wall_time: "1970-01-01T00:00:00Z"
+  name: "root with a long name and quoted \"label\""
+  parent_resolved: false
+  parent_span_id: ""
+  root_span_id: "2222222222222222"
+  scope: test
+  span_id: "2222222222222222"
+  start_elapsed_nanos: "0"
+  trace_id: "11111111111111111111111111111111"
+  unresolved_parent: false
+  wall_end: "1970-01-01T00:00:00Z"
+  wall_start: "1970-01-01T00:00:00Z"

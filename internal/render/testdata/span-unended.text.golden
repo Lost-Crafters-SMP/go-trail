@@ -1,0 +1,14 @@
+SPAN 3333333333333333
+  trace: 11111111111111111111111111111111
+  root: 2222222222222222
+  parent: 4444444444444444 (resolved=false)
+  name: "unended child"
+  scope: "test.child"
+  started: 1970-01-01T00:00:00.000000001Z
+  ended: false
+  duration: unknown
+  status: unset
+  drops: unknown (span unended)
+  children (0):
+DIAGNOSTICS
+  unresolved_parent line 0: parent missing or started after child

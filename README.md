@@ -22,7 +22,7 @@ versioned Trail JSONL journal with an exclusive-create file sink
 race-detector runs and disabled-path allocation benchmarks.
 
 Not implemented: rotation, retention, compression,
-viewers, OTLP conversion, remote export, and distributed propagation. See
+interactive viewers, OTLP conversion, remote export, and distributed propagation. See
 [the design](docs/design.md) for contracts, the format comparison, and open
 questions. The native journal is a Trail format with OTel-aligned semantics,
 not an OTLP-compliance claim.
@@ -54,6 +54,23 @@ bounded checkpoint-lane behavior, cancellation, and byte charging.
 Module: `go.lostcrafters.com/trail`. Configure the vanity domain's `go.import`
 metadata to point to the hosting repository before publishing.
 
+## Inspecting captures
+
+The optional `cmd/trail` CLI provides `inspect`, `trace`, `span`, `query`, `stats`,
+and `export` over explicit journal files. Build with
+`mise exec -- go build ./cmd/trail`, then try:
+
+```sh
+trail inspect capture.trail.jsonl --top 5
+trail query capture.trail.jsonl --status error --format ndjson
+```
+
+JSON is the canonical machine format; TOON shares its exact typed projection.
+NDJSON and compact exports emit trace-finalized items incrementally. This does
+not imply constant memory: live trace metadata and completion IDs remain needed
+for validation. See [CLI usage and retention](docs/cli.md) for flags, schema,
+corruption handling, loss semantics and measured TOON/JSON tradeoffs.
+
 ## Development
 
 Install [mise](https://mise.jdx.dev/), then prepare the pinned tools:
@@ -81,4 +98,6 @@ changes while fixing staged files.
 Tests cover identifiers, handles, globals, lifecycle and completion
 contracts, bounded attributes and events, the conformance suite, journal
 encoding, torn-tail recovery, and end-to-end pipeline behavior against a
-real file. Production code depends only on the Go standard library.
+real file. The core library depends only on the Go standard library; the optional
+CLI uses `github.com/urfave/cli/v3` for commands/help and
+`github.com/toon-format/toon-go` for TOON rendering.
